@@ -1,0 +1,37 @@
+# The shared pipeline workspace — a separate git repo (potentialInc/claude-fullstack-workspace).
+# Must stay excluded: git would otherwise record it as a nested gitlink/submodule pointer.
+claude-fullstack-workspace/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+.next/
+.vite/
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+tests/storageState-*.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
