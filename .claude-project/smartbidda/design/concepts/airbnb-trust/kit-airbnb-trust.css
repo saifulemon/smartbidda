@@ -1,0 +1,161 @@
+/* kit-airbnb-trust.css — Airbnb DNA: warm marketplace trust — photo-led cards
+   with soft elevation, serif display, one coral accent, pill search + chips.
+   SEED only — structure is authored per screen. */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&family=Hind+Siliguri:wght@400;600;700&display=swap');
+
+:root {
+  --at-shadow-card: 0 6px 20px rgba(34, 34, 34, 0.11);
+}
+
+/* — atoms — */
+.pimg { object-fit: cover; display: block; width: 100%; height: 100%; }
+
+/* — chrome (frontend): white serif appbar, soft shadow; pill tabbar — */
+.kat-appbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: var(--space-md);
+  background: var(--c-surface); box-shadow: var(--shadow-1);
+  padding: calc(var(--space-md) + env(safe-area-inset-top)) var(--space-lg) var(--space-md);
+}
+.kat-wordmark { font-family: var(--font-display); font-weight: 700; font-size: 21px; color: var(--c-primary);
+  letter-spacing: -0.01em; }
+.kat-wordmark::after { content: ''; display: block; height: 2px; background: var(--at-accent); border-radius: 2px; }
+.kat-appbar-title { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--c-ink); }
+.kat-round { width: 38px; height: 38px; border-radius: var(--radius-pill); border: 1px solid var(--c-hairline);
+  background: var(--c-surface); color: var(--c-ink); display: grid; place-items: center; cursor: pointer;
+  box-shadow: var(--shadow-1); }
+
+.kat-tabbar {
+  position: sticky; bottom: 0; z-index: 20;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-xs);
+  background: var(--c-surface); border-top: 1px solid var(--c-hairline);
+  box-shadow: 0 -6px 20px rgba(34, 34, 34, 0.07);
+  padding: var(--space-xs) var(--space-sm) calc(var(--space-xs) + env(safe-area-inset-bottom));
+}
+.kat-tab { display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: var(--space-xs) 4px; border-radius: var(--radius-md);
+  color: var(--c-muted); font-size: 12px; font-weight: 600; text-decoration: none; }
+.kat-tab.is-on { background: var(--c-primary-soft); color: var(--c-primary); }
+
+/* — chrome (console): warm rail on a soft canvas — */
+.kat-side { width: 234px; flex: 0 0 234px; background: var(--at-warm);
+  border-right: 1px solid var(--c-hairline); padding: var(--space-lg) var(--space-md);
+  display: flex; flex-direction: column; gap: 2px; }
+.kat-side-item { display: flex; align-items: center; gap: var(--space-sm); padding: 10px var(--space-md);
+  border-radius: var(--radius-md); color: var(--c-body); text-decoration: none; font-size: 14.5px; font-weight: 600; }
+.kat-side-item.is-on { background: var(--c-surface); color: var(--c-primary); box-shadow: var(--shadow-1); }
+.kat-console { display: flex; min-height: 100dvh; background: var(--at-warm); }
+/* console work area — the warm rail holds the nav, the work area stays white */
+.kat-work { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--c-canvas); }
+.kat-side-brand { display: block; padding: var(--space-sm) var(--space-md) var(--space-lg); }
+@media (max-width: 860px) {
+  .kat-console { flex-direction: column; }
+  .kat-side { flex: none; width: auto; flex-direction: row; flex-wrap: wrap;
+    align-items: center; border-right: 0;
+    border-bottom: var(--border-w) solid var(--c-hairline); }
+  .kat-side-brand { padding: var(--space-sm) var(--space-md); }
+}
+
+/* — shared forms — */
+.kat-card { background: var(--c-surface); border: 1px solid var(--c-hairline);
+  border-radius: var(--radius-lg); box-shadow: var(--at-shadow-card); overflow: hidden; }
+.kat-card-body { padding: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-sm); }
+.kat-hd { font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--c-ink); }
+.kat-eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: 0.01em; color: var(--c-primary); }
+.kat-stack { display: flex; flex-direction: column; gap: var(--space-lg); min-width: 0; }
+
+.kat-search { display: flex; align-items: center; gap: var(--space-sm); background: var(--c-surface);
+  border: 1px solid var(--c-hairline); border-radius: var(--radius-pill);
+  box-shadow: var(--at-shadow-card); padding: 13px 18px; min-width: 0; }
+.kat-search input { border: 0; outline: 0; flex: 1; min-width: 0; font: inherit;
+  font-size: 15.5px; color: var(--c-ink); background: transparent; }
+.kat-search input::placeholder { color: var(--c-muted); }
+
+.kat-trust { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--c-success); font-weight: 600; }
+
+.kat-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm);
+  font-size: 16px; font-weight: 600; padding: 14px 26px; border: 0; cursor: pointer;
+  border-radius: var(--radius-md); background: var(--c-primary); color: var(--c-on-primary);
+  text-decoration: none; min-width: 0; box-shadow: var(--shadow-1);
+}
+.kat-btn.is-quiet { background: var(--c-surface); color: var(--c-ink); border: 1px solid var(--c-hairline-strong);
+  box-shadow: none; }
+.kat-btn.is-block { display: flex; width: 100%; }
+
+.kat-chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px;
+  border: 1px solid var(--c-hairline-strong); border-radius: var(--radius-pill);
+  background: var(--c-surface); color: var(--c-ink); font-size: 14px; font-weight: 500; cursor: pointer; }
+.kat-chip.is-on { background: var(--c-ink); color: var(--c-surface); border-color: var(--c-ink); }
+
+.kat-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px;
+  border-radius: var(--radius-pill); background: var(--c-primary-soft); color: var(--c-primary);
+  font-size: 12.5px; font-weight: 600; }
+.kat-badge.is-ok { background: #E3F4EA; color: var(--c-success); }
+.kat-badge.is-bad { background: #FBE7E5; color: var(--c-error); }
+
+.kat-row { display: flex; align-items: center; gap: var(--space-md); min-width: 0;
+  padding: var(--space-md) 0; border-bottom: 1px solid var(--c-hairline); }
+.kat-row:last-child { border-bottom: 0; }
+
+/* ======================================================================
+ * Shared components of the six hero screens.
+ * Anything used on 2+ screens lives here once; a page <style> may hold only
+ * selectors that appear on that one page (Hard rule 8).
+ * ====================================================================== */
+
+/* content measure shared by the five frontend screens */
+.kat-col { width: 100%; max-width: 760px; margin-inline: auto; min-width: 0; }
+
+/* section heading row — serif title left, secondary link right */
+.kat-sec { display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md); }
+.kat-sec > * { min-width: 0; }
+
+/* photo-led card — the concept's signature (cover media + soft elevation) */
+.kat-photo { display: flex; flex-direction: column; min-width: 0;
+  background: var(--c-surface); border: var(--border-w) solid var(--c-hairline);
+  border-radius: var(--radius-lg); box-shadow: var(--at-shadow-card);
+  overflow: hidden; color: var(--c-body); text-decoration: none; }
+.kat-photo:hover { text-decoration: none; box-shadow: var(--shadow-hover); }
+.kat-photo > .media { border-radius: 0; }
+.kat-photo-body { padding: var(--space-lg); display: flex; flex-direction: column;
+  gap: var(--space-sm); min-width: 0; }
+
+/* photo avatar — sits on the shared .avatar (64px; .is-lg for switcher cards) */
+.kat-face { width: 64px; height: 64px; font-size: var(--t-body-md-size); }
+.kat-face.is-lg { width: 96px; height: 96px; font-size: var(--t-display-md-size); }
+
+/* card grids — 2-up listing grid; .is-3 stacks below 700px */
+.kat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md); }
+.kat-grid.is-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 700px) { .kat-grid.is-3 { grid-template-columns: minmax(0, 1fr); } }
+
+/* warm panel — the soft reassurance surface (screen time, forecast) */
+.kat-warm { background: var(--at-warm); border: var(--border-w) solid var(--c-hairline);
+  border-radius: var(--radius-lg); padding: var(--space-lg);
+  display: flex; flex-direction: column; gap: var(--space-sm); min-width: 0; }
+
+/* roomier card body for hero-sized cards */
+.kat-card-body.is-roomy { padding: var(--space-xl); gap: var(--space-md); }
+
+/* pill primary action (search-bar / continue CTA rhythm) */
+.kat-btn.is-pill { border-radius: var(--radius-pill); padding-inline: var(--space-xl); }
+
+/* badge variants of the concept's pill vocabulary */
+.kat-badge.is-warn { background: var(--c-surface-soft); color: var(--c-warning); }
+
+/* removable pill filter chip (class filter on the admin listing) */
+.kat-chip .chip-remove { display: inline-flex; align-items: center; cursor: pointer;
+  color: var(--c-muted); background: none; border: 0; padding: 0; }
+.kat-chip .chip-remove:hover { color: var(--c-ink); }
+
+/* appbar action cluster (frontend chrome) */
+.kat-appbar-actions { display: flex; align-items: center; gap: var(--space-sm);
+  margin-left: auto; }
+
+/* the router's own active marker styles the tab too */
+.kat-tab[aria-current="page"] { background: var(--c-primary-soft); color: var(--c-primary); }

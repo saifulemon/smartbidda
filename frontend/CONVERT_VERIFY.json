@@ -1,0 +1,28 @@
+{
+  "frontend": "frontend",
+  "total": 56,
+  "scaffolded": 21,
+  "unconverted_stubs": [
+    "app/pages/parent/alerts.tsx",
+    "app/pages/parent/onboarding.tsx",
+    "app/pages/parent/parent-analytics.tsx",
+    "app/pages/parent/parent-dashboard.tsx",
+    "app/pages/parent/parent-progress.tsx",
+    "app/pages/parent/parent-settings.tsx",
+    "app/pages/parent/screen-time.tsx",
+    "app/pages/parent/subscription.tsx",
+    "app/pages/student/chapter-list.tsx",
+    "app/pages/student/exam-list.tsx",
+    "app/pages/student/exam-result.tsx",
+    "app/pages/student/exam.tsx",
+    "app/pages/student/home.tsx",
+    "app/pages/student/leaderboard.tsx",
+    "app/pages/student/lesson.tsx",
+    "app/pages/student/quiz-result.tsx",
+    "app/pages/student/quiz.tsx",
+    "app/pages/student/retake-class.tsx",
+    "app/pages/student/rewards.tsx",
+    "app/pages/student/settings.tsx",
+    "app/pages/student/subject-list.tsx"
+  ]
+}

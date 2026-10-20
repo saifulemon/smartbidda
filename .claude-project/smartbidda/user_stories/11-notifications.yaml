@@ -1,0 +1,82 @@
+id: US-11-NOTIFICATIONS
+role: admin
+feature: "Admin notification console — inspect the template/delivery log with channels, categories, suppression state and date range, then author Bangla/English templates and send a test"
+page: 11-notifications.html
+goal: |
+  As an admin on the নোটিফিকেশন page I can list every template and delivery (including suppressed sends),
+  filter by category, suppression and date range, search by key, sort by key/category/failure rate, and
+  author a Bangla/English template or fire a test send — so that parents and students always receive the
+  right alert in the right channel and nothing silently disappears.
+scenarios_total: 24
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Notification log loads with template keys, categories, channels, mandatory flags, sends and failure rates"
+    ui_route: /admin/notifications
+    endpoint: GET /api/admin/notifications
+    expected: "200 — heading 'নোটিফিকেশন' (notifs-heading) with '১৪ টি টেমপ্লেট' (notifs-count); table notifs-table renders notifs-row 'weakness.detected' · দুর্বলতা · অ্যাপ · ইমেইল · বাধ্যতামূলক 'না' · ৪,১২০ · ০.৪%, 'exam.upcoming' · পরীক্ষা, 'screentime.blocked' · স্ক্রিন টাইম · অ্যাপ · বাধ্যতামূলক 'হ্যাঁ' · ১,১৪০ · ০.০%"
+  - id: AC-2
+    description: "Category filter narrows the log server-side"
+    ui_route: /admin/notifications
+    endpoint: GET /api/admin/notifications
+    expected: "200 — selecting category 'স্ক্রিন টাইম' requests ?category=screentime and only notifs-row 'screentime.blocked' remains while notifs-count updates to the filtered count"
+  - id: AC-3
+    description: "Suppression state filter exposes suppressed sends for audit"
+    ui_route: /admin/notifications
+    endpoint: GET /api/admin/notifications
+    expected: "200 — toggling the suppression filter requests ?suppressed=only and rows that were never delivered (suppressed sends) render with their suppressed marker instead of a send count"
+  - id: AC-4
+    description: "Date-range filter scopes the delivery log"
+    ui_route: /admin/notifications
+    endpoint: GET /api/admin/notifications
+    expected: "200 — a 30-day range requests ?from=2026-09-17&to=2026-10-17 and the '৩০ দিনে পাঠানো' counts (৪,১২০ / ২,৮৬০ / ১,১৪০) reflect only that window"
+  - id: AC-5
+    description: "Search by template key filters the list"
+    ui_route: /admin/notifications
+    endpoint: GET /api/admin/notifications
+    expected: "200 — typing 'weakness' into notifs-search (placeholder 'টেমপ্লেটের কুই দিয়ে খুঁজুন') requests ?search=weakness and only the 'weakness.detected' row remains; clearing restores '১৪ টি টেমপ্লেট'"
+  - id: AC-6
+    description: "Sortable headers re-order the log via the API"
+    ui_route: /admin/notifications
+    endpoint: GET /api/admin/notifications
+    expected: "200 — 'কুই' (data-sort=key, initially aria-sort=ascending), 'ক্যাটাগরি' and 'ব্যর্থতার হার' (data-sort=failureRate) each send their own sort key and the rows re-order in notifs-table"
+  - id: AC-7
+    description: "Author or edit a Bangla/English template from the shared modal (no spine endpoint)"
+    ui_route: /admin/notifications
+    endpoint: none
+    expected: "no HTTP call (endpoint: none) — 'নতুন টেমপ্লেট' (notifs-create) and 'সম্পাদনা' (notifs-menu-edit) open notifs-modal 'নতুন টেমপ্লেট' with notifs-f-key, notifs-f-category, notifs-f-bn-subject, notifs-f-bn-body '{{student_name}}-এর দুর্বলতা শনাক্ত হয়েছে।', notifs-f-en-subject and notifs-f-en-body '{{student_name}} has a detected weakness.'; 'সংরক্ষণ' (notifs-modal-save) writes nothing until a spine endpoint exists"
+  - id: AC-8
+    description: "Test-send a template from the row menu (no spine endpoint)"
+    ui_route: /admin/notifications
+    endpoint: none
+    expected: "no HTTP call (endpoint: none) — 'পরীক্ষামূলক পাঠান' (notifs-menu-test-send) opens the channel preview for 'অ্যাপ · ইমেইল' on the selected key and confirms the previewed body; no delivery row is written"
+
+boundary_cases:
+  - case: "Template key that is not unique lowercase snake_case ('Weakness Detected' or an existing key) — rejected with the help 'লোয়ারকেস স্নেক_কেস এবং অনন্য — যেমন weakness.detected' and the modal keeps the typed value"
+  - case: "Bangla and English bodies declare different variables — save blocked with the edge 'বাংলা ও ইংরেজি ভ্যারিয়েবল মিলতে হবে' (help: 'বাংলা ও ইংরেজি ভ্যারিয়েবল একই হতে হবে।')"
+  - case: "A body variable missing from the subject — rejected with the help 'দেহে ব্যবহৃত সব ভ্যারিয়েবল বিষয়েও থাকতে হবে।'; adding {{student_name}} to both subjects clears the error"
+  - case: "Whitespace-only search ('   ') counts as no query — notifs-count returns to '১৪ টি টেমপ্লেট'; a nonsense key returns zero rows with the empty slot"
+  - case: "Suppressed + date-range combination matching nothing — tbody replaced by the empty slot and pagination shows 'পৃষ্ঠা ১ / ১' with 'আগের'/'পরের' disabled"
+  - case: "Mandatory notification edited while a send is queued — the row keeps 'হ্যাঁ' in বাধ্যতামূলক and the failure-rate cell is not recomputed for in-flight sends"
+
+error_scenarios:
+  - scenario: "401 expired admin session on GET /api/admin/notifications — redirect to /auth/login and back to /admin/notifications after re-login; no log exposed"
+  - scenario: "403 — a non-admin session reaching /admin/notifications is bounced to /auth/login without seeing delivery data"
+  - scenario: "500 from GET /api/admin/notifications — inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with 'আবার চেষ্টা' retry button; sort headers stay disabled until retry succeeds"
+  - scenario: "409 concurrent edit — saving a template another admin already changed shows 'অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।' and requires a reload instead of overwriting"
+  - scenario: "404 unknown key on 'পরীক্ষামূলক পাঠান' — the row shows the missing-key error and the table keeps its current rows"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton card with three 16px bars at 72% / 100% / 54% (st-frame); notifs-table, bulk bar and CTAs hidden until GET /api/admin/notifications resolves"
+  - state: empty
+    expected: "Empty slot 'কোনো টেমপ্লেট নেই' in place of the tbody with the recovery CTA 'নতুন টেমপ্লেট' (notifs-create)"
+  - state: error
+    expected: "Inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with 'আবার চেষ্টা' retry button; search and filters disabled until retry succeeds"
+  - state: concurrent-edit
+    expected: "Modal conflict edge 'অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।' with reload, save blocked"
+  - state: variable-mismatch
+    expected: "Save attempt with mismatched variables shows 'বাংলা ও ইংরেজি ভ্যারিয়েবল মিলতে হবে' under notifs-f-en-subject and keeps the modal open"
+
+fixture_refs:
+  - admin_notifications

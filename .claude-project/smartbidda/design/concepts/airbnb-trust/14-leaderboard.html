@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>লিডারবোর্ড — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-airbnb-trust.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local layout only — colour / type / radius / elevation are tokens */
+  .lb-page { background: var(--at-warm); }
+  .lb-stack { display: flex; flex-direction: column; gap: var(--space-xl);
+    padding-top: var(--space-lg);
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px)); }
+
+  .lb-head { display: flex; flex-direction: column; gap: var(--space-xxs); }
+  .lb-scopes { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+
+  /* podium card — the winner's shelf (own form, no photo per privacy rule) */
+  .lb-top { display: flex; flex-direction: column; align-items: center;
+    gap: var(--space-sm); min-width: 0; text-align: center;
+    padding: var(--space-lg); background: var(--c-surface);
+    border: var(--border-w) solid var(--c-hairline);
+    border-radius: var(--radius-lg); box-shadow: var(--at-shadow-card); }
+  .lb-top.is-first { background: var(--c-primary-soft);
+    border-color: var(--c-primary); padding: var(--space-xl) var(--space-lg); }
+  .lb-top-name { word-break: keep-all; overflow-wrap: anywhere; }
+  .lb-rank-pill { padding: var(--space-xxs) var(--space-md);
+    background: var(--c-surface-soft); color: var(--c-ink);
+    border-radius: var(--radius-pill); }
+  .lb-top.is-first .lb-rank-pill { background: var(--c-surface); color: var(--c-primary); }
+
+  .lb-list { display: flex; flex-direction: column; min-width: 0; }
+  .lb-row { display: flex; align-items: center; gap: var(--space-md);
+    min-width: 0; padding: var(--space-md) 0;
+    border-bottom: var(--border-w) solid var(--c-hairline); }
+  .lb-row:last-child { border-bottom: 0; }
+  .lb-row.is-mine { background: var(--c-primary-soft);
+    border-radius: var(--radius-md); padding-inline: var(--space-md);
+    border-bottom: 0; }
+  .lb-rank { flex-shrink: 0; min-width: 34px; text-align: center; color: var(--c-muted); }
+  .lb-row.is-mine .lb-rank { color: var(--c-primary); }
+  .lb-who { display: flex; flex-direction: column; gap: var(--space-xxs);
+    flex: 1; min-width: 0; }
+  .lb-points { flex-shrink: 0; }
+
+  .lb-privacy { display: flex; align-items: flex-start; gap: var(--space-sm); }
+  .lb-ico { flex-shrink: 0; color: var(--c-success); }
+
+  /* PRD L2048: my-rank bar, sticky above the tab bar */
+  .lb-mine { position: sticky; bottom: 58px; z-index: 2;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: var(--space-sm) var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--c-primary); color: var(--c-on-primary);
+    border-radius: var(--radius-pill); box-shadow: var(--shadow-2); }
+</style>
+</head>
+<body class="lb-page" data-app="frontend" data-layout="StudentLayout">
+
+  <header class="kat-appbar" data-shell="topbar">
+    <span class="kat-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="kat-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="kat-appbar-actions">
+      <button class="kat-round" type="button" aria-label="নোটিফিকেশন" data-testid="appbar-notifications">
+        <i data-lucide="bell" aria-hidden="true"></i>
+      </button>
+      <button class="kat-round" type="button" aria-label="প্রোফাইল" data-testid="appbar-profile">
+        <i data-lucide="user" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+    <div class="kat-col lb-stack">
+
+      <!-- 1 · heading + scope line (label, not a filter) -->
+      <div class="lb-head">
+        <h1 class="t-display-md" data-testid="lb-heading">লিডারবোর্ড</h1>
+        <p class="t-caption" data-testid="lb-sub">পয়েন্ট অনুযায়ী · সব সময়</p>
+      </div>
+
+      <!-- 2 · class chips — refetch on tap -->
+      <div class="lb-scopes" role="group" aria-label="শ্রেণি">
+        <button class="kat-chip" type="button" aria-pressed="false" data-testid="lb-class-1">১</button>
+        <button class="kat-chip" type="button" aria-pressed="false" data-testid="lb-class-2">২</button>
+        <button class="kat-chip" type="button" aria-pressed="false" data-testid="lb-class-3">৩</button>
+        <button class="kat-chip is-on" type="button" aria-pressed="true" data-testid="lb-class-4">৪</button>
+        <button class="kat-chip" type="button" aria-pressed="false" data-testid="lb-class-5">৫</button>
+      </div>
+
+      <!-- 3 · podium — display names only, no photos -->
+      <section aria-labelledby="lb-podium-heading">
+        <div class="kat-sec">
+          <h2 class="t-title-md" id="lb-podium-heading" data-testid="lb-podium-heading">শীর্ষ তিন</h2>
+          <p class="t-caption" data-testid="lb-podium-scope">চতুর্থ শ্রেণি</p>
+        </div>
+        <div class="kat-grid is-3" data-component="list" data-testid="lb-podium">
+          <div class="lb-top is-first">
+            <span class="kat-badge" data-testid="lb-first-crown">
+              <i data-lucide="crown" class="icon-sm" aria-hidden="true"></i>
+              ১ম
+            </span>
+            <span class="avatar kat-face" aria-hidden="true" data-testid="lb-podium-avatar">ম</span>
+            <p class="t-title-md lb-top-name" data-testid="lb-podium-name">মাবুল</p>
+            <p class="t-caption" data-testid="lb-podium-class">চতুর্থ শ্রেণি</p>
+            <p class="t-title-md lb-rank-pill" data-testid="lb-podium-rank">১</p>
+          </div>
+          <div class="lb-top">
+            <span class="avatar kat-face" aria-hidden="true" data-testid="lb-podium-avatar">স</span>
+            <p class="t-title-md lb-top-name" data-testid="lb-podium-name">সাদিয়া</p>
+            <p class="t-caption" data-testid="lb-podium-class">চতুর্থ শ্রেণি</p>
+            <p class="t-title-md lb-rank-pill" data-testid="lb-podium-rank">২</p>
+          </div>
+          <div class="lb-top">
+            <span class="avatar kat-face" aria-hidden="true" data-testid="lb-podium-avatar">ত</span>
+            <p class="t-title-md lb-top-name" data-testid="lb-podium-name">তানজিলা</p>
+            <p class="t-caption" data-testid="lb-podium-class">চতুর্থ শ্রেণি</p>
+            <p class="t-title-md lb-rank-pill" data-testid="lb-podium-rank">৩</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · the rest of the list -->
+      <section class="kat-card" data-component="list" aria-labelledby="lb-list-label">
+        <div class="kat-card-body">
+          <p class="t-body t-semibold" id="lb-list-label" data-testid="lb-list-label">৪ থেকে ১০০</p>
+          <div class="lb-list">
+            <div class="lb-row is-mine" data-testid="lb-row">
+              <span class="lb-rank t-body-sm t-bold" data-testid="lb-rank">৪</span>
+              <span class="avatar" aria-hidden="true">র</span>
+              <span class="lb-who">
+                <span class="t-body-sm t-semibold" data-testid="lb-name">রাফিদ</span>
+                <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+              </span>
+              <span class="t-body-sm t-bold lb-points" data-testid="lb-points">১,২৪০</span>
+            </div>
+            <div class="lb-row" data-testid="lb-row">
+              <span class="lb-rank t-body-sm t-bold" data-testid="lb-rank">৫</span>
+              <span class="avatar" aria-hidden="true">আ</span>
+              <span class="lb-who">
+                <span class="t-body-sm t-semibold" data-testid="lb-name">আরিশা</span>
+                <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+              </span>
+              <span class="t-body-sm t-bold lb-points" data-testid="lb-points">১,১৯০</span>
+            </div>
+            <div class="lb-row" data-testid="lb-row">
+              <span class="lb-rank t-body-sm t-bold" data-testid="lb-rank">৬</span>
+              <span class="avatar" aria-hidden="true">ন</span>
+              <span class="lb-who">
+                <span class="t-body-sm t-semibold" data-testid="lb-name">নাফিসা</span>
+                <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+              </span>
+              <span class="t-body-sm t-bold lb-points" data-testid="lb-points">১,১০৫</span>
+            </div>
+          </div>
+          <button class="kat-btn is-quiet is-block" type="button" data-testid="lb-more">
+            আরও দেখুন
+          </button>
+        </div>
+      </section>
+
+      <!-- 5 · privacy note — the list shows names and classes only -->
+      <section class="kat-card" data-component="card">
+        <div class="kat-card-body">
+          <div class="lb-privacy">
+            <i data-lucide="shield-check" class="lb-ico" aria-hidden="true"></i>
+            <div>
+              <p class="t-body t-semibold" data-testid="lb-privacy-title">নিরাপদ তালিকা</p>
+              <p class="t-caption" data-testid="lb-privacy-body">
+                শুধু প্রদর্শন নাম ও শ্রেণি দেখা যায় — কোনো ছবি বা ব্যক্তিগত তথ্য নয়। অভিভাবক চাইলে নাম লুকানো যাবে।
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 · my rank — sticky above the tab bar -->
+      <div class="lb-mine" data-testid="lb-myrank">
+        <span class="t-body-sm" data-testid="lb-myrank-label">আমার অবস্থান</span>
+        <span class="t-body-sm t-bold" data-testid="lb-myrank-text">#৪ · ১,২৪০</span>
+      </div>
+
+    </div>
+  </main>
+
+  <nav class="kat-tabbar" data-shell="bottomnav" aria-label="প্রধান নেভিগেশন">
+    <a class="kat-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="kat-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="icon-md" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="kat-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="kat-tab" href="14-leaderboard.html" aria-current="page" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="icon-md" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="kat-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>সাবস্ক্রিপশন · অবস্থা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* state sheet — every class below is shared (styles/components.css) */
+</style>
+</head>
+<body data-component="dev-states" data-app="frontend" data-layout="ParentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-md"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+        <div class="stwrap" data-testid="st-wrap">
+        <div class="stnote" data-testid="st-intro">
+          <i data-lucide="layers" class="icon-md" aria-hidden="true"></i>
+          <p class="t-caption">প্রতিটি কার্ড একটি আলাদা অবস্থা · একসাথে কখনও দেখানো হবে না</p>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="st-1-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">লোডিং</span>
+            <code class="t-code" data-testid="st-ref">/parent/subscription</code>
+          </div>
+          <p class="t-body t-semibold" id="st-1-label" data-testid="st-label">লোড হচ্ছে</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="skeleton" style="height:16px;width:72%"></div>
+            <div class="skeleton" style="height:16px;width:100%"></div>
+            <div class="skeleton" style="height:16px;width:54%"></div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-2-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">খালি</span>
+            <code class="t-code" data-testid="st-ref">/parent/subscription</code>
+          </div>
+          <p class="t-body t-semibold" id="st-2-label" data-testid="st-label">কিছু নেই</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="empty-state" data-testid="st-empty">
+              <p class="t-body">কোনো পেমেন্ট হিস্ট্রি নেই।</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-3-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">ত্রুটি</span>
+            <code class="t-code" data-testid="st-ref">/parent/subscription</code>
+          </div>
+          <p class="t-body t-semibold" id="st-3-label" data-testid="st-label">লোড করা যায়নি</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-error">পেমেন্ট লোড হয়নি। আবার চেষ্টা করো।</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-4-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">ত্রুটি বার্তা</span>
+            <code class="t-code" data-testid="st-ref">/parent/subscription</code>
+          </div>
+          <p class="t-body t-semibold" id="st-4-label" data-testid="st-label">কোন অবস্থায় কী দেখাবে</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">ইন্টারনেট সংযোগ</span>
+              <span class="t-body-sm" data-testid="st-err-msg">ইন্টারনেট সংযোগ নেই।</span>
+            </div>
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">সার্ভার ত্রুটি</span>
+              <span class="t-body-sm" data-testid="st-err-msg">পেমেন্ট শুরু হয়নি।</span>
+            </div>
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">পেমেন্ট গেটওয়ে</span>
+              <span class="t-body-sm" data-testid="st-err-msg">পেমেন্ট সম্পন্ন হয়নি। আবার চেষ্টা করুন।</span>
+            </div>
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">অনুমতি নেই</span>
+              <span class="t-body-sm" data-testid="st-err-msg">পেমেন্ট করতে পারবেন না।</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-5-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">বিশেষ অবস্থা</span>
+            <code class="t-code" data-testid="st-ref">/parent/subscription</code>
+          </div>
+          <p class="t-body t-semibold" id="st-5-label" data-testid="st-label">পেমেন্ট যাচাই</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <span class="spinner" role="status" aria-label="যাচাই হচ্ছে" data-testid="st-spinner"></span>
+            <p class="t-body" data-testid="st-extra">পেমেন্ট যাচাই হচ্ছে...</p>
+            <p class="t-caption t-muted" data-testid="st-note">গেটওয়ে থেকে ফল ফিরে আসার আগ পর্যন্ত</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-6-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/parent/subscription</code>
+          </div>
+          <p class="t-body t-semibold" id="st-6-label" data-testid="st-label">সর্বোচ্চ সীমা</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">আপনার আগে থেকেই সক্রিয় প্ল্যান আছে</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-7-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/parent/subscription</code>
+          </div>
+          <p class="t-body t-semibold" id="st-7-label" data-testid="st-label">পরিত্যক্ত</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">পেমেন্ট সম্পন্ন হয়নি।</p>
+          </div>
+        </section>
+        </div>
+</main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="18-parent-dashboard.html" data-testid="nav-dashboard" aria-current="page">
+      <i data-lucide="layout-dashboard" class="icon-md"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="tabbar-item" href="19-parent-progress.html" data-testid="nav-progress">
+      <i data-lucide="trending-up" class="icon-md"></i>
+      অগ্রগতি
+    </a>
+    <a class="tabbar-item" href="21-screen-time.html" data-testid="nav-screentime">
+      <i data-lucide="timer" class="icon-md"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="tabbar-item" href="22-alerts.html" data-testid="nav-alerts">
+      <i data-lucide="bell" class="icon-md"></i>
+      অ্যালার্ট
+    </a>
+    <a class="tabbar-item" href="24-parent-settings.html" data-testid="nav-settings">
+      <i data-lucide="settings" class="icon-md"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

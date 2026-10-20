@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>অ্যালার্ট — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / size / radius / shadow is a token */
+  /* nothing page-local — this screen composes from the shared vocabulary only */
+
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-alerts {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="ksr-appbar" data-shell="topbar">
+    <span class="ksr-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="ksr-round" type="button" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="ksr-round" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="ksr-main sf-alerts" data-shell="content">
+
+    <div>
+      <div class="row">
+        <p class="t-title-lg ksr-grow" data-testid="al-heading">অ্যালার্ট</p>
+        <span class="ksr-badge" data-testid="al-unread">৩ টি নতুন</span>
+      </div>
+      <p class="t-body-sm t-muted" style="margin-top:var(--space-xxs)" data-testid="al-sub">শেষ ৭ দিন · ১২ টি বার্তা</p>
+    </div>
+
+    <!-- filters -->
+    <div class="row" style="flex-wrap:wrap" role="group" aria-label="বার্তার ধরন">
+      <button class="ksr-chip is-on" type="button" aria-pressed="true" data-testid="al-filter-all">সব</button>
+      <button class="ksr-chip" type="button" aria-pressed="false" data-testid="al-filter-result">ফলাফল</button>
+      <button class="ksr-chip" type="button" aria-pressed="false" data-testid="al-filter-weakness">দুর্বলতা</button>
+      <button class="ksr-chip" type="button" aria-pressed="false" data-testid="al-filter-payment">পেমেন্ট</button>
+      <button class="ksr-chip" type="button" aria-pressed="false" data-testid="al-filter-other">অন্যান্য</button>
+    </div>
+
+    <button class="ksr-btn is-quiet is-block" type="button" data-testid="al-markall">সব পড়া হয়েছে</button>
+
+    <!-- message list -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="al-list-label">
+      <p class="t-body-sm t-semibold" id="al-list-label" data-testid="al-list-label">বার্তা</p>
+      <ul class="ksr-list" style="margin-top:var(--space-sm)">
+        <li class="ksr-item" style="align-items:flex-start" data-testid="al-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="target" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="row" style="gap:var(--space-sm)">
+              <span class="t-body-sm t-semibold" data-testid="al-title">ইংরেজিতে দুর্বলতা</span>
+              <span class="ksr-badge is-warn" data-testid="al-badge">দুর্বলতা</span>
+              <span data-testid="al-unread-dot" aria-hidden="true" style="width:8px;height:8px;border-radius:var(--radius-pill);background:var(--c-primary);flex-shrink:0;margin-left:auto"></span>
+            </span>
+            <span class="t-caption" data-testid="al-body">বাক্য গঠনে ২ বার ভুল · রিমিডিয়াল পাঠ সুপারিশ করা হয়েছে</span>
+            <span class="t-caption" data-testid="al-meta">আজ · রাফিদ</span>
+          </span>
+        </li>
+        <li class="ksr-item" style="align-items:flex-start" data-testid="al-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="timer" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="row" style="gap:var(--space-sm)">
+              <span class="t-body-sm t-semibold" data-testid="al-title">স্ক্রিন টাইম শেষ</span>
+              <span class="ksr-badge is-quiet" data-testid="al-badge">অন্যান্য</span>
+              <span data-testid="al-unread-dot" aria-hidden="true" style="width:8px;height:8px;border-radius:var(--radius-pill);background:var(--c-primary);flex-shrink:0;margin-left:auto"></span>
+            </span>
+            <span class="t-caption" data-testid="al-body">বৃহস্পতিবার ৬০ মিনিট পূর্ণ হয়েছে</span>
+            <span class="t-caption" data-testid="al-meta">১৫ অক্টোবর · রাফিদ</span>
+          </span>
+        </li>
+        <li class="ksr-item" style="align-items:flex-start" data-testid="al-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="file-text" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="row" style="gap:var(--space-sm)">
+              <span class="t-body-sm t-semibold" data-testid="al-title">১ম সাময়িক পরীক্ষা</span>
+              <span class="ksr-badge" data-testid="al-badge">ফলাফল</span>
+              <span data-testid="al-unread-dot" aria-hidden="true" style="width:8px;height:8px;border-radius:var(--radius-pill);background:var(--c-primary);flex-shrink:0;margin-left:auto"></span>
+            </span>
+            <span class="t-caption" data-testid="al-body">১০–১৬ অক্টোবর · ফলাফল প্রকাশিত</span>
+            <span class="t-caption" data-testid="al-meta">১৪ অক্টোবর · সকল সন্তান</span>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <button class="ksr-btn is-quiet is-block" type="button" data-testid="al-more">আরও দেখুন</button>
+
+  </main>
+
+  <nav class="ksr-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="ksr-tab" href="18-parent-dashboard.html" data-testid="nav-dashboard">
+      <i data-lucide="layout-dashboard" class="ksr-tab-ico" aria-hidden="true"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="ksr-tab" href="19-parent-progress.html" data-testid="nav-progress">
+      <i data-lucide="trending-up" class="ksr-tab-ico" aria-hidden="true"></i>
+      অগ্রগতি
+    </a>
+    <a class="ksr-tab" href="21-screen-time.html" data-testid="nav-screentime">
+      <i data-lucide="timer" class="ksr-tab-ico" aria-hidden="true"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="ksr-tab" href="22-alerts.html" data-testid="nav-alerts" aria-current="page">
+      <i data-lucide="bell" class="ksr-tab-ico" aria-hidden="true"></i>
+      অ্যালার্ট
+    </a>
+    <a class="ksr-tab" href="24-parent-settings.html" data-testid="nav-settings">
+      <i data-lucide="settings" class="ksr-tab-ico" aria-hidden="true"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+id: US-03-PARENTS
+role: admin
+feature: "Parent/family registry — family-code table with search, plan filter, sort, pagination, export and the shared create/edit modal"
+page: 03-parents.html
+goal: |
+  As an admin on the parents page I can search and sort every family by code, name, email, plan and status,
+  export the ledger, and open the shared modal to add or edit a parent, so that I can resolve family and
+  subscription questions without hunting through payments or student records.
+scenarios_total: 19
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The family table loads with code, parent, email, children ratio, plan, status and created date"
+    ui_route: /admin/parents
+    endpoint: GET /api/admin/parents
+    expected: "200 — 'অভিভাবক' heading (parents-heading) with 'মোট ৯৮২ জন' (parents-count); rows (parents-row) render e.g. SB-FAM-20260902-1041 · ফারহানা রহমান · farhana@example.com · ২ / ৩ · পরিবার প্ল্যান · badge 'সক্রিয়' · 2026-09-02; the expired row shows badge 'মেয়াদোত্তীর্ণ'"
+  - id: AC-2
+    description: "Search plus the removable plan chip narrow the list and update the result count"
+    ui_route: /admin/parents
+    endpoint: GET /api/admin/parents
+    expected: "200 — searching via parents-search (placeholder 'নাম বা ইমেইল দিয়ে খুঁজুন') updates parents-result-count to '২৪৮ জন পাওয়া গেছে' while the chip 'পরিবার প্ল্যান' (parents-filter-plan) is active; tapping 'ফিল্টার সরান' (parents-filter-plan-remove) clears the chip and re-lists"
+  - id: AC-3
+    description: "Sortable headers and pagination re-request the ledger with sort/page parameters"
+    ui_route: /admin/parents
+    endpoint: GET /api/admin/parents
+    expected: "200 — 'তৈরির সময়' column ships aria-sort=ascending; tapping পরিবার কোড, নাম, ইমেইল, প্ল্যান or অবস্থা toggles asc/desc; 'আগের' (parents-page-prev) is disabled on page 1 and 'পরের' (parents-page-next) moves to 'পৃষ্ঠা ২ / ১০' (parents-page-info)"
+  - id: AC-4
+    description: "রপ্তানি exports the currently filtered family ledger as CSV"
+    ui_route: /admin/parents
+    endpoint: GET /api/admin/parents
+    expected: "200 — tapping 'রপ্তানি' (parents-export) downloads a CSV built from the fetched rows (family code, name, email, children, plan, status, createdAt); no separate export endpoint is called"
+  - id: AC-5
+    description: "Row menu exposes বিস্তারিত, সম্পাদনা and পাসওয়ার্ড রিসেট for each family"
+    ui_route: /admin/parents
+    endpoint: none
+    expected: "Tapping parents-row-actions-trigger opens the menu with parents-menu-view 'বিস্তারিত', parents-menu-edit 'সম্পাদনা' (opens parents-modal prefilled) and parents-menu-reset-password 'পাসওয়ার্ড রিসেট' — the reset has no spine endpoint, so it shows a confirmation toast and issues no request"
+  - id: AC-6
+    description: "The create/edit modal carries the family fields with plan options and the 3-child cap"
+    ui_route: /admin/parents
+    endpoint: none
+    expected: "'নতুন অভিভাবক' (parents-create) opens parents-modal titled 'নতুন অভিভাবক' with 'নাম', 'ইমেইল' (type=email, required), 'প্ল্যান' (পরিবার প্ল্যান / ক্র্যাশ প্যাক / নিঃশুল্ক ট্রায়াল) and 'সন্তান সংখ্যা' (min 0, max 3, help 'সর্বোচ্চ ৩ জন — বেশি হলে অনুমোদন লাগবে।'); 'বাতিল' (parents-modal-cancel) closes with no API call — no POST /api/admin/parents exists in the spine"
+
+boundary_cases:
+  - case: "সন্তান সংখ্যা outside 0–3 — typing 4 (or −1) is rejected by the number input bounds; 'সংরক্ষণ' (parents-modal-save) stays blocked while help 'সর্বোচ্চ ৩ জন — বেশি হলে অনুমোদন লাগবে।' remains visible"
+  - case: "Whitespace-only search — the query trims to empty, all ৯৮২ families return, and parents-result-count hides instead of showing '০ জন'"
+  - case: "Family at capacity — a row with children '৩ / ৩' renders without clipping the সন্তান column; the create modal refuses a 4th linked child (approval flow required)"
+  - case: "Long family code overflow — 'SB-FAM-20260902-1041' (t-code) stays on one line and does not change the row height of the fixed-layout table"
+
+error_scenarios:
+  - scenario: "401 — expired admin session on GET /api/admin/parents redirects to /auth/login preserving /admin/parents as the post-login return route"
+  - scenario: "403 — a teacher or student session reaching /admin/parents is bounced by the auth:admin guard; the family table never mounts"
+  - scenario: "500 — GET /api/admin/parents fails — the table body shows inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করুন' retry button; 'মোট ৯৮২ জন' is not replaced with a stale zero"
+  - scenario: "409 — saving an edit after another admin changed the family shows 'অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।' (st-edge) inside the modal and nothing is overwritten"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton lines at 72% / 100% / 54% stand in for the table body (st-label 'লোড হচ্ছে'); pagination buttons stay disabled"
+  - state: empty
+    expected: "No families yet — 'মোট ০ জন' under the heading and the 'নতুন অভিভাবক' CTA (parents-create) is the primary action; the table keeps its header row"
+  - state: error
+    expected: "Failed load shows the inline retry card 'কিছু লোড হয়নি। আবার চেষ্টা করো।'; search and export are disabled until a successful load"
+  - state: concurrent-edit
+    expected: "Save conflict renders 'অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।' (st-edge, st-label 'একসাথে সম্পাদনা'); the modal stays open with the admin's typed values intact"
+  - state: linked-record
+    expected: "Deleting/archiving a family that still has an active subscription blocks with 'আগে সাবস্ক্রিপশন বাতিল করুন' (st-edge, st-label 'সংযুক্ত রেকর্ড') and links the admin to the subscriptions section"
+
+fixture_refs:
+  - admin_parents_list
+  - identity.parent

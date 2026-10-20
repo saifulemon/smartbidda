@@ -1,0 +1,55 @@
+/* concepts/strava-streak/theme.css — token overrides (contrast-gated).
+   DNA: Strava — stat-first hierarchy, condensed heavy numerals, vivid orange
+   for graphics over a charcoal/white field. White text needs a deepened orange
+   (#C93C08 ≥ 4.5:1); the brand's vivid #FC4C02 lives in --ks-fire as a
+   non-text accent (bars, rings, underlines). Plain hex only. */
+:root {
+  /* colour */
+  --c-primary: #C93C08;
+  --c-primary-active: #9E2F05;
+  --c-primary-soft: #FCE4DA;
+  --c-on-primary: #FFFFFF;
+  --c-canvas: #F7F7F8;
+  --c-surface: #FFFFFF;
+  --c-surface-soft: #EFEFEF;
+  --c-ink: #16171A;
+  --c-body: #2E3035;
+  --c-muted: #63666E;
+  --c-link: #C93C08;
+  --c-hairline: #E3E4E6;
+  --c-hairline-strong: #C9CBCF;
+  --c-success: #1E7A2E;
+  --c-warning: #A66A00;
+  --c-error: #C41430;
+  --c-focus-ring: #FC4C02;
+  --hero-bg: linear-gradient(180deg, #242428, #0F1012);
+  --overlay-scrim: rgba(29, 29, 32, 0.6);
+  --ks-fire: #FC4C02;          /* brand orange — graphics only, never text */
+
+  /* type — tight, numeric, tracked captions */
+  --font-display: 'Anek Bangla', 'Hind Siliguri', system-ui, sans-serif;
+  --font-body: 'Hind Siliguri', system-ui, sans-serif;
+  --font-mono: 'Anek Bangla', ui-monospace, monospace;
+  --t-display-xl-size: 46px;  --t-display-xl-weight: 800; --t-display-xl-ls: -0.02em;
+  --t-display-lg-size: 36px;  --t-display-lg-weight: 800; --t-display-lg-ls: -0.02em;
+  --t-display-md-size: 27px;  --t-display-md-weight: 700; --t-display-md-ls: -0.01em;
+  --t-title-lg-size: 20px;    --t-title-lg-weight: 700;   --t-title-lg-ls: -0.01em;
+  --t-title-md-size: 17px;    --t-title-md-weight: 600;
+  --t-body-lg-size: 16px;
+  --t-body-md-size: 15px;
+  --t-body-sm-size: 14px;
+  --t-caption-size: 12.5px;   --t-caption-weight: 600;    --t-caption-ls: 0.03em;
+  --t-button-size: 15.5px;    --t-button-weight: 700;
+  --t-weight-bold: 800; --t-weight-semibold: 600; --t-weight-medium: 500; --t-weight-regular: 400;
+
+  /* shape — sharp: 4/6/8, pill reserved for status */
+  --radius-xs: 2px; --radius-sm: 4px; --radius-md: 6px;
+  --radius-lg: 8px; --radius-xl: 12px; --radius-pill: 999px;
+
+  /* elevation — nearly flat: hairlines and blocks do the work */
+  --shadow-0: none;
+  --shadow-1: 0 1px 2px rgba(22, 23, 26, 0.08);
+  --shadow-2: 0 4px 12px rgba(22, 23, 26, 0.1);
+  --shadow-3: 0 8px 24px rgba(22, 23, 26, 0.12);
+  --shadow-hover: 0 2px 6px rgba(22, 23, 26, 0.12);
+}

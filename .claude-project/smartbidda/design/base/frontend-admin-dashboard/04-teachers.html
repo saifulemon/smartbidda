@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>শিক্ষক — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  .teachers-pane { padding-bottom: env(safe-area-inset-bottom, 0px); }
+</style>
+</head>
+<body data-app="frontend-admin-dashboard" data-layout="AdminLayout">
+<div class="app-shell">
+    <aside class="sidebar" data-shell="sidebar" data-component="nav" aria-label="প্রধান নেভিগেশন">
+      <span class="nav-brand" style="padding:var(--space-sm) var(--space-md)" data-testid="admin-brand">স্মার্টবিদ্যা</span>
+      <a class="nav-link" href="01-dashboard.html" data-testid="side-dashboard"><i data-lucide="layout-dashboard" class="icon-md"></i>ড্যাশবোর্ড</a>
+      <a class="nav-link" href="02-students.html" data-testid="side-students"><i data-lucide="users" class="icon-md"></i>শিক্ষার্থী</a>
+      <a class="nav-link" href="03-parents.html" data-testid="side-parents"><i data-lucide="users-round" class="icon-md"></i>অভিভাবক</a>
+      <a class="nav-link" href="04-teachers.html" data-testid="side-teachers" aria-current="page"><i data-lucide="graduation-cap" class="icon-md"></i>শিক্ষক</a>
+      <a class="nav-link" href="05-curriculum.html" data-testid="side-curriculum"><i data-lucide="library" class="icon-md"></i>পাঠ্যক্রম</a>
+      <a class="nav-link" href="06-content.html" data-testid="side-content"><i data-lucide="play-square" class="icon-md"></i>কনটেন্ট</a>
+      <a class="nav-link" href="07-questions.html" data-testid="side-questions"><i data-lucide="help-circle" class="icon-md"></i>প্রশ্নব্যাংক</a>
+      <a class="nav-link" href="08-exams.html" data-testid="side-exams"><i data-lucide="file-text" class="icon-md"></i>পরীক্ষা</a>
+      <a class="nav-link" href="09-remedial.html" data-testid="side-remedial"><i data-lucide="refresh-cw" class="icon-md"></i>রিমিডিয়াল</a>
+      <a class="nav-link" href="10-subscriptions.html" data-testid="side-subscriptions"><i data-lucide="credit-card" class="icon-md"></i>সাবস্ক্রিপশন</a>
+      <a class="nav-link" href="11-notifications.html" data-testid="side-notifications"><i data-lucide="mail" class="icon-md"></i>নোটিফিকেশন</a>
+      <a class="nav-link" href="12-audit.html" data-testid="side-audit"><i data-lucide="scroll-text" class="icon-md"></i>অডিট লগ</a>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar" data-shell="topbar">
+        <button class="nav-toggle" data-testid="admin-nav-toggle" aria-label="মেনু" aria-expanded="false"
+          onclick="const s=this.closest('.app-shell').querySelector('.sidebar');const o=s.classList.toggle('is-open');this.setAttribute('aria-expanded',o)">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="topbar-title">
+          <h1 data-slot="title" data-testid="admin-title">শিক্ষক</h1>
+        </div>
+        <div class="row" style="margin-left:auto">
+          <button class="btn btn-ghost btn-sm" data-testid="admin-user-menu" aria-label="ব্যবহারকারী মেনু">
+            <span class="avatar" aria-hidden="true">প</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-body" data-shell="content">
+        <div class="card teachers-pane" style="padding:0;overflow:hidden">
+          <div class="card-header listing-head" style="padding:var(--space-lg);margin:0">
+            <div>
+              <h2 class="t-title-md" data-testid="teachers-heading">শিক্ষক</h2>
+              <p class="t-caption" data-testid="teachers-count">মোট ৪৬ জন</p>
+            </div>
+            <div class="listing-filters">
+              <button class="btn btn-secondary btn-sm" data-testid="teachers-export">
+                <i data-lucide="download" class="icon-sm"></i>
+                রপ্তানি
+              </button>
+              <button class="btn btn-primary btn-sm" data-testid="teachers-create">
+                <i data-lucide="plus" class="icon-sm"></i>
+                নতুন শিক্ষক
+              </button>
+            </div>
+          </div>
+
+          <div class="listing-body">
+            <div class="search" data-component="search-bar">
+              <i data-lucide="search" class="icon-sm"></i>
+              <input class="input" type="search" placeholder="নাম বা বিষয় দিয়ে খুঁজুন" aria-label="শিক্ষক খুঁজুন" data-testid="teachers-search">
+            </div>
+
+          </div>
+
+          <div class="bulk-bar" data-component="bulk-actions" hidden data-testid="teachers-bulk-bar">
+            <span class="t-body-sm" data-testid="teachers-bulk-count">৩ জন নির্বাচিত</span>
+            <button class="btn btn-secondary btn-sm" data-testid="teachers-bulk-action">
+              সামূহিক কাজ
+            </button>
+            <button class="btn btn-danger btn-sm" data-testid="teachers-bulk-delete">
+              মুছুন
+            </button>
+          </div>
+
+          <div class="table-scroll">
+            <table class="table" data-listing="writable" data-component="data-table" data-testid="teachers-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" class="row-check" data-component="row-select" aria-label="সব নির্বাচন করুন" data-testid="teachers-select-all"></th>
+                  <th class="sortable" data-sort="displayName">নাম <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="email">ইমেইল <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="role">ভূমিকা <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th>কনটেন্ট সংখ্যা</th>
+                  <th class="sortable" data-sort="status">অবস্থা <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="lastLogin" aria-sort="ascending">সর্বশেষ লগইন <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-testid="teachers-row" data-id="te-1">
+                  <td><input type="checkbox" class="row-check" data-component="row-select" aria-label="রুবেল মিয়া নির্বাচন করুন" data-testid="teachers-row-select"></td>
+                  <td><div class="row"><span class="avatar" aria-hidden="true">র</span><span class="t-body-sm t-semibold truncate" title="রুবেল মিয়া">রুবেল মিয়া</span></div></td>
+                  <td>rubel@example.com</td>
+                  <td>শিক্ষক</td>
+                  <td>২৮</td>
+                  <td><span class="badge badge-success">সক্রিয়</span></td>
+                  <td>২ ঘণ্টা আগে</td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="teachers-row-actions">
+                      <button class="row-actions-trigger" aria-label="রুবেল মিয়া-এর কার্যক্রম" data-testid="teachers-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="teachers-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="teachers-menu-edit">সম্পাদনা</button>
+                        <button class="row-menu-item" data-testid="teachers-menu-change-role">ভূমিকা বদল</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-testid="teachers-row" data-id="te-2">
+                  <td><input type="checkbox" class="row-check" data-component="row-select" aria-label="সাবিনা ইয়াসমিন নির্বাচন করুন" data-testid="teachers-row-select"></td>
+                  <td><div class="row"><span class="avatar" aria-hidden="true">স</span><span class="t-body-sm t-semibold truncate" title="সাবিনা ইয়াসমিন">সাবিনা ইয়াসমিন</span></div></td>
+                  <td>sabina@example.com</td>
+                  <td>শিক্ষক</td>
+                  <td>১৭</td>
+                  <td><span class="badge badge-success">সক্রিয়</span></td>
+                  <td>গতকাল</td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="teachers-row-actions">
+                      <button class="row-actions-trigger" aria-label="সাবিনা ইয়াসমিন-এর কার্যক্রম" data-testid="teachers-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="teachers-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="teachers-menu-edit">সম্পাদনা</button>
+                        <button class="row-menu-item" data-testid="teachers-menu-change-role">ভূমিকা বদল</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-testid="teachers-row" data-id="te-3">
+                  <td><input type="checkbox" class="row-check" data-component="row-select" aria-label="তারেক হোসেন নির্বাচন করুন" data-testid="teachers-row-select"></td>
+                  <td><div class="row"><span class="avatar" aria-hidden="true">ত</span><span class="t-body-sm t-semibold truncate" title="তারেক হোসেন">তারেক হোসেন</span></div></td>
+                  <td>tarek@example.com</td>
+                  <td>শিক্ষক</td>
+                  <td>০</td>
+                  <td><span class="badge badge-warning">অনুমোদন অপেক্ষা</span></td>
+                  <td>২ দিন আগে</td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="teachers-row-actions">
+                      <button class="row-actions-trigger" aria-label="তারেক হোসেন-এর কার্যক্রম" data-testid="teachers-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="teachers-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="teachers-menu-edit">সম্পাদনা</button>
+                        <button class="row-menu-item" data-testid="teachers-menu-change-role">ভূমিকা বদল</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="padding:var(--space-lg)">
+            <div class="pagination" data-testid="teachers-pagination">
+              <button class="btn btn-secondary btn-sm" data-testid="teachers-page-prev" disabled>
+                <i data-lucide="chevron-left" class="icon-sm"></i>
+                আগের
+              </button>
+              <span class="t-caption" data-testid="teachers-page-info">পৃষ্ঠা ১ / ২</span>
+              <button class="btn btn-secondary btn-sm" data-testid="teachers-page-next">
+                পরের
+                <i data-lucide="chevron-right" class="icon-sm"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ONE shared modal serves BOTH create and edit — only the prefilled values differ -->
+        <div class="modal-scrim" hidden data-testid="teachers-modal-scrim"></div>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="teachers-modal-title" hidden data-component="entity-form-modal" data-testid="teachers-modal">
+          <div class="modal-header">
+            <h2 class="modal-title" id="teachers-modal-title" data-testid="teachers-modal-title">নতুন শিক্ষক</h2>
+            <button class="modal-close" data-testid="teachers-modal-close" aria-label="বন্ধ করুন">
+              <i data-lucide="x" class="icon-md"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="form-grid" data-component="form">
+              <div class="field">
+                <label class="label" for="teachers-f-email">ইমেইল</label>
+                <input class="input" id="teachers-f-email" type="email" required data-testid="teachers-f-email">
+                <p class="help-text">সঠিক ও অনন্য ইমেইল চাই।</p>
+              </div>
+              <div class="field">
+                <label class="label" for="teachers-f-name">নাম</label>
+                <input class="input" id="teachers-f-name" type="text" required data-testid="teachers-f-name">
+                <p class="help-text">নাম ২-৫০ অক্ষর হতে হবে।</p>
+              </div>
+              <div class="field">
+                <label class="label" for="teachers-f-role">ভূমিকা</label>
+                <select class="input" id="teachers-f-role" data-testid="teachers-f-role"><option selected>শিক্ষক</option><option>অ্যাডমিন</option></select>
+                <p class="help-text">ভূমিকা বাছাই ছাড়া খালি রাখা যাবে না।</p>
+              </div>
+              <div class="field">
+                <label class="label" for="teachers-f-password">অস্থায়ী পাসওয়ার্ড</label>
+                <input class="input" id="teachers-f-password" type="text" required minlength="8" data-testid="teachers-f-password">
+                <p class="help-text">সর্বনিম্ন ৮ অক্ষর ও কমপক্ষে ১টি সংখ্যা।</p>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-testid="teachers-modal-cancel">বাতিল</button>
+            <button class="btn btn-primary" data-testid="teachers-modal-save">সংরক্ষণ</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

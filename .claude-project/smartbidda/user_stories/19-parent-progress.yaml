@@ -1,0 +1,67 @@
+id: US-19-PARENT-PROGRESS
+role: parent
+feature: "Child progress — overall mastery, subject tabs, chapter/topic scores with low-sample honesty, detected weaknesses, before/after remedial comparison and timeline"
+page: 19-parent-progress.html
+goal: |
+  As a parent on the progress page I can drill into one child's topic mastery, subject scores and
+  recovery comparison over a window so that I know exactly which chapters need work and whether the
+  remedial retakes are actually closing the gaps.
+scenarios_total: 17
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Overall progress hero renders the child's mastery percentage"
+    ui_route: /parent/progress
+    endpoint: GET /api/parent/students/:id/progress
+    expected: "200 — hero 'সামগ্রিক অগ্রগতি' · '৩৬%' with bar and note 'চতুর্থ শ্রেণির ১২২ টি অধ্যায়ের মধ্যে ৪৩ টি শেষ' (pp-overall-label, pp-overall-value, pp-overall-note)"
+  - id: AC-2
+    description: "Subject tab switch refetches chapter mastery for that subject"
+    ui_route: /parent/progress
+    endpoint: GET /api/parent/students/:id/progress
+    expected: "200 — tapping 'বাংলা' (pp-subject-tab) sets it pressed and clears গণিত; chapter note becomes 'বাংলা · … টি অধ্যায়ের মধ্যে … টি শেষ' and rows re-render; গণিত rows do not linger"
+  - id: AC-3
+    description: "Chapter rows show mastery percent and state badges"
+    ui_route: /parent/progress
+    endpoint: GET /api/parent/students/:id/progress
+    expected: "200 — 'অধ্যায়ভিত্তিক দক্ষতা' rows (pp-chapter-*): 'সংখ্যা পদ্ধতি' ১০০% শেষ, 'ভগ্নাংশ চিহ্নিতকরণ' ৬৫% 'রিটেক প্রয়োজন', 'ভগ্নাংশের যোগ' ০% 'শুরু হয়নি'; each row hints 'টপিক দেখতে সরান' (pp-chapter-expand)"
+  - id: AC-4
+    description: "Topic scores render weakest-first with the low-sample honesty note"
+    ui_route: /parent/progress
+    endpoint: GET /api/parent/students/:id/progress
+    expected: "200 — 'টপিকভিত্তিক নম্বর' with caption 'কম নম্বর আগে দেখানো হয়েছে': ভগ্নাংশের তুলনা ৪৮% (warning bar), ভগ্নাংশ চিহ্নিতকরণ ৭২%, জ্যামিতিক আকৃতি ৭৫% with 'কম প্রশ্নের উপর ভিত্তি করে — আরও প্রশ্ন দিলে ঠিক হবে', সংখ্যারেখা ৮০% (pp-topic-*)"
+  - id: AC-5
+    description: "Weaknesses, recovery comparison and timeline render the evidence trail"
+    ui_route: /parent/progress
+    endpoint: GET /api/parent/students/:id/progress
+    expected: "200 — 'শনাক্ত দুর্বলতা' rows 'ভগ্নাংশের তুলনা' (গণিত · ২ বার ভুল) and 'বাক্য গঠন' (ইংরেজি · ২ বার ভুল) each with 'দেখুন' → /retake/:retakeId (pp-weak-*); 'পুনরুদ্ধারের তুলনা' shows '১ম সাময়িক · ১৬ অক্টোবর ২০২৬' ৬৯% with single bar and note 'রি-এক্সাম দেওয়া হয়নি, তাই একটিমাত্র বার দেখানো হয়েছে।'; timeline lists '১ম সাময়িক পরীক্ষা' ৬৯% and quizzes ৮০% / ১০০% all 'উত্তীর্ণ' (pp-timeline-*)"
+  - id: AC-6
+    description: "Switch child and use print/analytics actions"
+    ui_route: /parent/progress
+    endpoint: none
+    expected: "Tapping মাহিন (pp-switch-mahin) re-renders hero, subjects and topics for মাহিন; 'প্রিন্ট' (pp-print) opens the print dialog for the current report; 'বিশ্লেষণ ও সুপারিশ' (pp-analytics-cta) navigates to /parent/analytics"
+
+boundary_cases:
+  - case: "Window with too few quiz samples — the affected topic renders the 'কম নমুনা' edge instead of a trusted percent, with 'কম প্রশ্নের উপর ভিত্তি করে — আরও প্রশ্ন দিলে ঠিক হবে' (pp-topic-low); the row is not dropped"
+  - case: "Topic never attempted — ০% renders with quiet badge 'শুরু হয়নি' and the bar clamps at 0 width; no division-by-zero NaN appears anywhere"
+  - case: "Chapter with no re-exam yet — recovery chart keeps exactly one bar and the note 'রি-এক্সাম দেওয়া হয়নি, তাই একটিমাত্র বার দেখানো হয়েছে।' (pp-compare-note)"
+
+error_scenarios:
+  - scenario: "403 — child id not linked to this parent: 'এই সন্তানের তথ্য দেখতে পারবেন না।' (st-err-msg); the switcher falls back to the last authorized child"
+  - scenario: "401 parent session expired — the app redirects to /parent/login for PIN re-verification (proxy mode re-auth)"
+  - scenario: "404 unknown student id — 'সন্তান পাওয়া যায়নি।' (st-err-msg); subject tabs and print stay disabled"
+  - scenario: "GET returns 500 — 'অগ্রগতি লোড হয়নি। আবার চেষ্টা করো।' with retry; offline shows 'ইন্টারনেট সংযোগ নেই।'"
+
+state_transitions:
+  - state: loading
+    expected: "Three 16px skeleton lines (72% / 100% / 54%); subject tabs and 'প্রিন্ট' not tappable until loaded"
+  - state: empty
+    expected: "empty-state 'সন্তান এখনো কিছু শেষ করেনি।' (st-empty); hero shows ০% and topic/weakness panels collapse"
+  - state: error
+    expected: "Inline 'অগ্রগতি লোড হয়নি। আবার চেষ্টা করো।' (st-error)"
+  - state: low-sample
+    expected: "Edge 'নমুনা কম' (st-edge) with per-topic 'কম প্রশ্নের উপর ভিত্তি করে — আরও প্রশ্ন দিলে ঠিক হবে' captions"
+
+fixture_refs:
+  - identity.parent
+  - identity.children
+  - parent_progress

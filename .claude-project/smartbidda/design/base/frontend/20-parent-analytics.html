@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>বিশ্লেষণ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .pa-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .pa-switch { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  .pa-forecast { display: flex; flex-direction: column; gap: var(--space-md); }
+  .pa-forecast-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .pa-forecast-bar { display: flex; align-items: baseline; gap: var(--space-sm); }
+  .pa-suggest { display: flex; flex-direction: column; gap: var(--space-md); padding: var(--space-md) 0; }
+  .pa-suggest + .pa-suggest { border-top: var(--border-w) solid var(--c-hairline); }
+  .pa-suggest-head { display: flex; gap: var(--space-sm); align-items: flex-start; }
+  .pa-suggest-text { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; flex: 1; }
+  .pa-period { display: flex; gap: var(--space-xs); flex-wrap: wrap; }
+  .pa-why-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .pa-disclaimer { display: flex; gap: var(--space-sm); align-items: flex-start; }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-md"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="pa-wrap">
+
+        <div class="pa-switch" role="group" aria-label="সন্তান নির্বাচন">
+          <button class="chip" aria-pressed="true" data-testid="pa-switch-rafid">রাফিদ</button>
+          <button class="chip" aria-pressed="false" data-testid="pa-switch-mahin">মাহিন</button>
+        </div>
+
+        <div>
+          <p class="t-title-lg" data-testid="pa-heading">বিশ্লেষণ</p>
+          <p class="t-body-sm t-muted" data-testid="pa-sub">গত ৩০ দিন · ১৭ সেপ্টেম্বর – ১৭ অক্টোবর ২০২৬</p>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="pa-forecast-label">
+          <div class="pa-forecast">
+            <div class="pa-forecast-head">
+              <p class="t-body t-semibold" id="pa-forecast-label" data-testid="pa-forecast-label">পরীক্ষার প্রস্তুতি</p>
+              <span class="badge badge-warning" data-testid="pa-forecast-badge">মাঝারি</span>
+            </div>
+            <div class="pa-forecast-bar">
+              <span class="t-display-lg" data-testid="pa-forecast-value">৬৮%</span>
+              <span class="t-body-sm t-muted" data-testid="pa-forecast-note">অনুমানিত ফলাফল</span>
+            </div>
+            <div class="progress" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="প্রস্তুতির অনুমান">
+              <div class="progress-fill is-warning" style="width:68%" data-testid="pa-forecast-bar"></div>
+            </div>
+            <p class="t-caption" data-testid="pa-forecast-detail">
+              ইংরেজি ও বিজ্ঞানে নম্বর না বাড়লে বার্ষিকে কঠিন হবে
+            </p>
+            <p class="t-caption t-muted" data-testid="pa-forecast-confidence">নির্ভরযোগ্যতা ৮৬%</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="pa-why-label">
+          <p class="t-body t-semibold" id="pa-why-label" data-testid="pa-why-label">কেন এই প্রাক্কলন</p>
+          <div style="display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md)">
+            <div class="pa-why-row">
+              <span class="t-body-sm" data-testid="pa-why-item">গত ১৪ দিনের কুইজ স্কোর</span>
+              <span class="t-body-sm t-bold" data-testid="pa-why-v">৪২ টি প্রশ্নের নামান্তর</span>
+            </div>
+            <div class="pa-why-row">
+              <span class="t-body-sm" data-testid="pa-why-item">সম্পন্ন অধ্যায়</span>
+              <span class="t-body-sm t-bold" data-testid="pa-why-v">৪৩ টি</span>
+            </div>
+            <div class="pa-why-row">
+              <span class="t-body-sm" data-testid="pa-why-item">সম্পন্ন পরীক্ষা</span>
+              <span class="t-body-sm t-bold" data-testid="pa-why-v">১ টি</span>
+            </div>
+            <div class="pa-why-row">
+              <span class="t-body-sm" data-testid="pa-why-item">চলমান রিটেক পাঠ</span>
+              <span class="t-body-sm t-bold" data-testid="pa-why-v">১ টি</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="pa-suggest-label">
+          <p class="t-body t-semibold" id="pa-suggest-label" data-testid="pa-suggest-label">সুপারিশ</p>
+
+          <div class="pa-suggest" data-testid="pa-suggest-item">
+            <div class="pa-suggest-head">
+              <i data-lucide="refresh-cw" class="icon-md" aria-hidden="true"></i>
+              <div class="pa-suggest-text">
+                <p class="t-body-sm t-semibold" data-testid="pa-suggest-title">ইংরেজি বাক্য গঠন</p>
+                <p class="t-caption" data-testid="pa-suggest-body">শিক্ষকের লাইব্রেরি থেকে একটি পাঠ নির্বাচন করা হয়েছে · ৫ মিনিট</p>
+              </div>
+              <span class="badge badge-warning" data-testid="pa-suggest-priority">জরুরি</span>
+            </div>
+            <a class="btn btn-secondary btn-sm" href="10-retake-class.html" data-testid="pa-suggest-cta">পাঠ দেখুন</a>
+          </div>
+
+          <div class="pa-suggest" data-testid="pa-suggest-item">
+            <div class="pa-suggest-head">
+              <i data-lucide="flask-conical" class="icon-md" aria-hidden="true"></i>
+              <div class="pa-suggest-text">
+                <p class="t-body-sm t-semibold" data-testid="pa-suggest-title">বিজ্ঞান · উদ্ভিদের অংশ</p>
+                <p class="t-caption" data-testid="pa-suggest-body">এই অধ্যায়ের কুইজ এখনো দেওয়া হয়নি</p>
+              </div>
+              <span class="badge" data-testid="pa-suggest-priority">সাধারণ</span>
+            </div>
+            <a class="btn btn-secondary btn-sm" href="06-chapter-list.html" data-testid="pa-suggest-cta">অধ্যায় দেখুন</a>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pa-activity-label">
+          <div class="pa-forecast-head">
+            <p class="t-body t-semibold" id="pa-activity-label" data-testid="pa-activity-label">দৈনিক কুইজ স্কোর</p>
+            <div class="pa-period" role="group" aria-label="সময়কাল">
+              <button class="chip" aria-pressed="false" data-testid="pa-period-7">৭ দিন</button>
+              <button class="chip" aria-pressed="true" data-testid="pa-period-14">১৪ দিন</button>
+              <button class="chip" aria-pressed="false" data-testid="pa-period-30">৩০ দিন</button>
+            </div>
+          </div>
+          <div class="chart" style="margin-top:var(--space-md)" data-component="chart" role="img"
+               aria-label="গত ১৪ দিনের দৈনিক কুইজ স্কোর">
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৫৪</span><span class="bar" style="height:54px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">৪</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৬২</span><span class="bar" style="height:62px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">৫</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৪৯</span><span class="bar" style="height:49px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">৬</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৫৮</span><span class="bar" style="height:58px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">৭</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৬৬</span><span class="bar" style="height:66px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">৮</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৬১</span><span class="bar" style="height:61px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">৯</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৭০</span><span class="bar" style="height:70px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">১০</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৫৯</span><span class="bar" style="height:59px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">১১</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৬৩</span><span class="bar" style="height:63px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">১২</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৬৮</span><span class="bar" style="height:68px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">১৩</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৫৭</span><span class="bar" style="height:57px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">১৪</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৭২</span><span class="bar" style="height:72px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">১৫</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৬৫</span><span class="bar" style="height:65px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">১৬</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="pa-day-value">৬৯</span><span class="bar" style="height:69px" data-testid="pa-day-bar"></span><span class="t-caption bar-label" data-testid="pa-day">আজ</span></div>
+          </div>
+          <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="pa-activity-unit">
+            অক্টোবর · শতাংশ (%) · বারে মাউস রাখলে তারিখ ও নম্বর দেখাবে
+          </p>
+        </section>
+
+        <div class="card" data-component="card">
+          <div class="pa-disclaimer">
+            <i data-lucide="info" class="icon-md" aria-hidden="true"></i>
+            <p class="t-caption" data-testid="pa-disclaimer">
+              এই অনুমান সন্তানের কুইজ ও পরীক্ষার হিসাবে তৈরি। শিক্ষকের মতামতের সাথে মিলিয়ে দেখুন।
+            </p>
+          </div>
+        </div>
+
+      </div>
+  </main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="18-parent-dashboard.html" data-testid="nav-dashboard">
+      <i data-lucide="layout-dashboard" class="icon-md"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="tabbar-item" href="19-parent-progress.html" data-testid="nav-progress" aria-current="page">
+      <i data-lucide="trending-up" class="icon-md"></i>
+      অগ্রগতি
+    </a>
+    <a class="tabbar-item" href="21-screen-time.html" data-testid="nav-screentime">
+      <i data-lucide="timer" class="icon-md"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="tabbar-item" href="22-alerts.html" data-testid="nav-alerts">
+      <i data-lucide="bell" class="icon-md"></i>
+      অ্যালার্ট
+    </a>
+    <a class="tabbar-item" href="24-parent-settings.html" data-testid="nav-settings">
+      <i data-lucide="settings" class="icon-md"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

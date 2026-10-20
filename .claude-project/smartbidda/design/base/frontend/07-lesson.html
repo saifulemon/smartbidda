@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ভগ্নাংশ চিহ্নিতকরণ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .lesson-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .lesson-video {
+    position: relative;
+    aspect-ratio: var(--aspect-video);
+    background: var(--c-surface-soft);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: grid; place-items: center;
+  }
+  .lesson-play {
+    position: absolute;
+    inset: auto auto var(--space-md) var(--space-md);
+    display: flex; align-items: center; gap: var(--space-sm);
+  }
+  .lesson-meta { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .lesson-voice { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .lesson-voice-text { display: flex; gap: var(--space-sm); align-items: center; }
+  .lesson-pdf { display: flex; align-items: center; gap: var(--space-md); }
+  .lesson-pdf-thumb {
+    width: 44px; height: 60px; flex-shrink: 0;
+    background: var(--c-primary-soft); color: var(--c-ink);
+    border: var(--border-w) solid var(--c-hairline);
+    border-radius: var(--radius-sm);
+    display: grid; place-items: center;
+  }
+  .lesson-pdf-body { flex: 1; min-width: 0; }
+  .lesson-cta { width: 100%; }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <a class="back" href="06-chapter-list.html" aria-label="ফিরে যান" data-testid="lesson-back-appbar">
+      <i data-lucide="arrow-left" class="icon-md"></i>
+    </a>
+    <span class="appbar-title" data-slot="title" data-testid="lesson-title">ভগ্নাংশ চিহ্নিতকরণ</span>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="lesson-wrap">
+
+        <div class="lesson-video" data-component="media">
+          <div class="media-placeholder" data-component="media" role="img" aria-label="ভিডিও প্লেয়ার এলাকা">
+            <i data-lucide="monitor-play" class="icon-lg" aria-hidden="true"></i>
+            <p class="t-caption" data-testid="lesson-video-caption">ভিডিও প্লেয়ার এলাকা</p>
+          </div>
+          <div class="lesson-play">
+            <button class="btn btn-primary btn-sm" data-testid="lesson-video-play">
+              <i data-lucide="play" class="icon-sm"></i>
+              চালান
+            </button>
+            <span class="t-caption" data-testid="lesson-video-time">১২:৪০</span>
+          </div>
+        </div>
+
+        <div class="progress" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"
+             aria-label="পাঠের অগ্রগতি">
+          <div class="progress-fill" style="width:65%" data-testid="lesson-progress"></div>
+        </div>
+        <p class="t-caption" data-testid="lesson-progress-label">ভিডিওর ৬৫% দেখা হয়েছে</p>
+
+        <div>
+          <div class="row" style="justify-content:space-between">
+            <span class="badge badge-primary" data-testid="lesson-subject">গণিত</span>
+            <span class="t-caption" data-testid="lesson-chapter">অধ্যায় ৪</span>
+          </div>
+          <p class="t-title-lg" style="margin-top:var(--space-sm)" data-testid="lesson-title-text">ভগ্নাংশ চিহ্নিতকরণ</p>
+          <p class="t-body-sm t-muted" style="margin-top:var(--space-xs)" data-testid="lesson-desc">
+            ভগ্নাংশ চিহ্ন দেখে কোনটি বড়, কোনটি ছোট সেটি চিনতে হবে।
+          </p>
+          <div class="lesson-meta" style="margin-top:var(--space-md)">
+            <span class="chip" data-testid="lesson-meta-duration"><i data-lucide="clock" class="icon-sm"></i> ১২ মিনিট</span>
+            <span class="chip" data-testid="lesson-meta-class">চতুর্থ শ্রেণি</span>
+          </div>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="lesson-voice-heading">
+          <div class="lesson-voice">
+            <div class="lesson-voice-text">
+              <i data-lucide="volume-2" class="icon-md" aria-hidden="true"></i>
+              <div>
+                <p class="t-body t-semibold" id="lesson-voice-heading" data-testid="lesson-voice-title">ভয়েস নির্দেশনা</p>
+                <p class="t-caption" data-testid="lesson-voice-help">বাংলা কণ্ঠে পড়ে শোনাবে</p>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" data-testid="lesson-voice-toggle" aria-pressed="true">
+              চালু আছে
+            </button>
+          </div>
+        </section>
+
+        <section class="card" data-component="media" aria-labelledby="lesson-pdf-title">
+          <div class="lesson-pdf">
+            <div class="lesson-pdf-thumb" role="img" aria-label="পাঠের পিডিএফ">
+              <i data-lucide="file-text" class="icon-md" aria-hidden="true"></i>
+            </div>
+            <div class="lesson-pdf-body">
+              <p class="t-body t-semibold" id="lesson-pdf-title" data-testid="lesson-pdf-title">পাঠের পিডিএফ</p>
+              <p class="t-caption" data-testid="lesson-pdf-meta">২ পৃষ্ঠা · বাংলা</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" data-testid="lesson-pdf-open">
+              পড়ো
+            </button>
+          </div>
+        </section>
+
+        <!-- PRD L1496: "কুইজ শুরু করো" — hidden until ≥95% watched, disabled before
+             threshold. 65% has been watched, so the row is rendered in its
+             disabled state with the threshold spelled out. -->
+        <div>
+          <a class="btn btn-primary lesson-cta" href="08-quiz.html" aria-disabled="true"
+             data-testid="lesson-cta-quiz">
+            কুইজ শুরু করো
+            <i data-lucide="arrow-right"></i>
+          </a>
+          <p class="t-caption t-muted" style="margin-top:var(--space-xs)" data-testid="lesson-cta-hint">
+            ৯৫% দেখে ফেললেই কুইজ শুরু করা যাবে — এখন ৬৫% দেখা হয়েছে।
+          </p>
+        </div>
+
+      </div>
+  </main>
+
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+id: US-22-ALERTS
+role: parent
+feature: "Parent alert inbox — seven-day message list with unread dots, result/weakness/payment filters, mark-all-read and incremental loading"
+page: 22-alerts.html
+goal: |
+  As a parent on the অ্যালার্ট page I can read weak-topic, screen-time and exam-result messages for
+  রাফিদ and মাহিন, filter them by type and clear the unread dots, so that I notice a problem while it
+  is still fixable instead of discovering it at the end of the term.
+scenarios_total: 20
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The inbox header shows the unread count and the seven-day message total"
+    ui_route: /parent/alerts
+    endpoint: GET /api/notifications
+    expected: "200 — al-heading 'অ্যালার্ট', al-unread '৩ টি নতুন', al-sub 'শেষ ৭ দিন · ১২ টি বার্তা'; the appbar bell carries the same unread count and its aria-label reads 'নোটিফিকেশন — 3 টি না পড়া'"
+  - id: AC-2
+    description: "Type filters narrow the list and keep the selected chip pressed"
+    ui_route: /parent/alerts
+    endpoint: GET /api/notifications
+    expected: "al-filter-all is-on / aria-pressed=true on load; tapping al-filter-result, al-filter-weakness, al-filter-payment or al-filter-other moves the pressed state, keeps all five chips visible, and shows only messages of that type"
+  - id: AC-3
+    description: "Each message row renders its title, type badge, body, date and child"
+    ui_route: /parent/alerts
+    endpoint: GET /api/notifications
+    expected: "al-list-label 'বার্তা'; rows 'ইংরেজিতে দুর্বলতা' (badge দুর্বলতা, body 'বাক্য গঠনে ২ বার ভুল · রিমিডিয়াল পাঠ সুপারিশ করা হয়েছে', meta 'আজ · রাফিদ'), 'স্ক্রিন টাইম শেষ' (badge অন্যান্য, body 'বৃহস্পতিবার ৬০ মিনিট পূর্ণ হয়েছে', meta '১৫ অক্টোবর · রাফিদ'), '১ম সাময়িক পরীক্ষা' (badge ফলাফল, body '১০–১৬ অক্টোবর · ফলাফল প্রকাশিত', meta '১৪ অক্টোবর · সকল সন্তান')"
+  - id: AC-4
+    description: "Tapping a message opens the screen where the parent can act on it"
+    ui_route: /parent/alerts
+    endpoint: none
+    expected: "'ইংরেজিতে দুর্বলতা' opens /parent/progress on রাফিদ with the weak-topic list in view; 'স্ক্রিন টাইম শেষ' opens /parent/screen-time for রাফিদ; '১ম সাময়িক পরীক্ষা' opens /parent/progress at the timeline row '১ম সাময়িক পরীক্ষা · ১৬ অক্টোবর ২০২৬ · ৬৯%'"
+  - id: AC-5
+    description: "'সব পড়া হয়েছে' clears every unread dot and the unread badge immediately"
+    ui_route: /parent/alerts
+    endpoint: none
+    expected: "Tapping al-markall removes all al-unread-dot markers, sets al-unread to '০ টি নতুন' and the appbar badge to ০; the list keeps all rows and no undeclared write is sent from this screen"
+  - id: AC-6
+    description: "'আরও দেখুন' appends the next page of messages and disappears at the end"
+    ui_route: /parent/alerts
+    endpoint: GET /api/notifications
+    expected: "Tapping al-more requests the next page from GET /api/notifications, appends older rows without duplicating the first three, preserves the active filter, and hides al-more when no further messages exist"
+
+boundary_cases:
+  - case: "A filter with no matches (e.g. পেমেন্ট in the last seven days) — the list is replaced by 'এই ধরনের কোনো বার্তা নেই।' plus a 'ফিল্টার মুছুন' action that returns to সব and restores all rows"
+  - case: "Everything is already read — al-unread reads '০ টি নতুন', no al-unread-dot renders, and al-markall is disabled rather than clearing a non-existent badge"
+  - case: "More than one page of messages — the second page appends below the first, the total in al-sub stays the server count (১২), and al-more is removed once the last page is loaded"
+  - case: "A long Bangla body wraps to two lines — the type badge and unread dot stay on the title row and the row's date/child meta stays below the body, never clipped"
+
+error_scenarios:
+  - scenario: "GET /api/notifications returns 500 — 'বার্তা লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করো' retry button; the filter chips stay visible but disabled"
+  - scenario: "Session expired (401) — redirect to /parent/login with the PIN pad; no cached messages remain on screen after the redirect"
+  - scenario: "Not in parent mode (403) — 'প্যারেন্ট মোডে ঢুকতে হবে।' replaces the list and the parent is offered a link back to /parent/login"
+  - scenario: "Mark-all-read cannot be confirmed — the dots are restored, 'পড়া হয়নি। আবার চেষ্টা করুন।' is shown, and al-unread returns to '৩ টি নতুন'"
+  - scenario: "Offline — 'ইন্টারনেট সংযোগ নেই।' banner; al-more and filter changes are disabled while already-loaded rows remain readable"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton bars (72% / 100% / 54%) replace the header count and the three message rows; al-markall and al-more are not tappable"
+  - state: empty
+    expected: "empty-state 'কোনো বার্তা নেই।' in place of the list; al-unread shows '০ টি নতুন' and al-markall is disabled"
+  - state: error
+    expected: "st-error 'বার্তা লোড হয়নি। আবার চেষ্টা করো।' with a refresh-cw retry button"
+  - state: filtered-empty
+    expected: "Filter stays pressed while the list shows 'এই ধরনের কোনো বার্তা নেই।' and a 'ফিল্টার মুছুন' chip that resets to সব"
+  - state: offline
+    expected: "Banner 'ইন্টারনেট সংযোগ নেই।'; previously loaded messages stay readable and al-more is disabled"
+
+fixture_refs:
+  - alerts
+  - identity.children
+  - parent_dashboard

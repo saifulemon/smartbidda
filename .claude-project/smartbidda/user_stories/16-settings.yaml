@@ -1,0 +1,54 @@
+id: US-16-SETTINGS
+role: student
+feature: "Student settings — app language (bn/en), font size, voice/sound mute and account rows, persisted via PATCH /api/student/settings"
+page: 16-settings.html
+goal: |
+  As a student on the settings page I can change the app language, text size and voice guidance so
+  that the whole app reads and sounds the way I am comfortable with, and I can see my account identity
+  and log out from one place.
+scenarios_total: 13
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Settings page renders all four sections with current values"
+    ui_route: /settings
+    endpoint: GET /api/student/settings
+    expected: "Sections render: 'ভাষা' with segmented 'অ্যাপের ভাষা' where বাংলা is pressed and helper 'পাঠের ব্যাখ্যা সবসময় বাংলায় থাকবে' (set-lang-segment, set-lang-help); 'অক্ষরের আকার' chips ছোট/মাঝারি/বড় with মাঝারি on (set-font-size); 'শব্দ' rows 'ভয়েস নির্দেশনা' and 'সব শব্দ বন্ধ' both showing চালু (set-voice-toggle, set-sound-toggle); 'অ্যাকাউন্ট' shows 'রাফিদ হাসান' · 'চতুর্থ শ্রেণি · SB-FAM-20260902-1041' and version 'স্মার্টবিদ্যা সংস্করণ ১.০.০'"
+  - id: AC-2
+    description: "Switch the app language to English — persisted and applied on the next render"
+    ui_route: /settings
+    endpoint: PATCH /api/student/settings
+    expected: "200 — tapping the 'English' segment (set-lang-option) fires PATCH { locale: 'en' }; after re-render the chrome is English while lesson explanations stay Bangla per helper 'পাঠের ব্যাখ্যা সবসময় বাংলায় থাকবে'; reopening /settings shows English pressed"
+  - id: AC-3
+    description: "Toggle voice guidance off (mute) — persisted"
+    ui_route: /settings
+    endpoint: PATCH /api/student/settings
+    expected: "200 — tapping set-voice-toggle flips its label চালু → বন্ধ and fires PATCH { voiceMute: true }; the next quiz question no longer auto-reads itself aloud"
+  - id: AC-4
+    description: "Change font size — applied across the whole app immediately"
+    ui_route: /settings
+    endpoint: none
+    expected: "Tapping 'বড়' (set-font-lg) sets aria-pressed=true on it and clears মাঝারি; body text across the app re-renders larger on the same session without a reload"
+
+boundary_cases:
+  - case: "Tap the already-selected language (বাংলা) — no PATCH /api/student/settings is fired and the segmented control keeps its previous state"
+  - case: "Rapid voice toggles (on → off → on within one second) — requests are debounced so only the final value 'চালু' is persisted and no duplicate settings rows are created"
+
+error_scenarios:
+  - scenario: "PATCH /api/student/settings returns 500 — 'সেটিংস সেভ হয়নি।' shows inline and the toggle reverts to its pre-tap value"
+  - scenario: "PATCH /api/student/settings returns 403 — 'পরিবর্তন সেভ করা যায়নি।' shows inline; the student's previous locale/voice values remain active"
+  - scenario: "401 session expired — the app redirects the student to /auth/login; a settings read failure renders 'সেটিংস লোড হয়নি। আবার চেষ্টা করো।' with a retry"
+
+state_transitions:
+  - state: loading
+    expected: "Three 16px skeleton lines (72% / 100% / 54%) while the profile hydrates; controls are not tappable until loaded"
+  - state: empty
+    expected: "No dedicated empty state — a student always has defaults (বাংলা · মাঝারি · চালু) rendered from the profile, so the form never appears blank"
+  - state: error
+    expected: "Load failure shows 'সেটিংস লোড হয়নি। আবার চেষ্টা করো।' (st-error); save failures show 'সেটিংস সেভ হয়নি।' or 'পরিবর্তন সেভ করা যায়নি।' inline with revert"
+  - state: locale-applied
+    expected: "After a successful language PATCH the page keeps the new locale through navigation; returning to /settings shows the new segment pressed"
+
+fixture_refs:
+  - identity.children
+  - settings

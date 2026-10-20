@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>আজকের পাঠ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-airbnb-trust.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local layout only — colour / type / radius / elevation are tokens */
+  .hm-page { background: var(--at-warm); }
+  .hm-stack { display: flex; flex-direction: column; gap: var(--space-xl);
+    padding-top: var(--space-lg);
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px)); }
+
+  .hm-band { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-md);
+    background: var(--c-surface); border: var(--border-w) solid var(--c-hairline);
+    border-radius: var(--radius-xl); padding: var(--space-lg);
+    box-shadow: var(--at-shadow-card); }
+  .hm-greet { display: flex; flex-direction: column; gap: var(--space-xxs);
+    flex: 1 1 190px; min-width: 0; }
+  .hm-points { display: inline-flex; align-items: center; gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md); background: var(--c-primary-soft);
+    border-radius: var(--radius-pill); color: var(--c-primary);
+    text-decoration: none; min-width: 0; }
+  .hm-points:hover { text-decoration: none; }
+
+  .hm-voice { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-sm); }
+
+  .hm-tasks { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .hm-task { display: flex; align-items: center; gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg); background: var(--c-surface);
+    border: var(--border-w) solid var(--c-hairline); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1); color: var(--c-body); text-decoration: none; min-width: 0; }
+  .hm-task:hover { text-decoration: none; color: var(--c-ink);
+    box-shadow: var(--shadow-hover); }
+  .hm-task-ico { display: grid; place-items: center; flex-shrink: 0;
+    width: 40px; height: 40px; border-radius: var(--radius-pill);
+    background: var(--c-primary-soft); color: var(--c-primary); }
+  .hm-task-label { flex: 1; min-width: 0; }
+
+  blockquote.hm-quote { margin: 0; padding-left: var(--space-md);
+    border-left: 3px solid var(--at-accent); }
+</style>
+</head>
+<body class="hm-page" data-app="frontend" data-layout="StudentLayout">
+
+  <header class="kat-appbar" data-shell="topbar">
+    <span class="kat-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="kat-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="kat-appbar-actions">
+      <button class="kat-round" type="button" aria-label="নোটিফিকেশন" data-testid="appbar-notifications">
+        <i data-lucide="bell" aria-hidden="true"></i>
+      </button>
+      <button class="kat-round" type="button" aria-label="প্রোফাইল" data-testid="appbar-profile">
+        <i data-lucide="user" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+    <div class="kat-col hm-stack">
+
+      <!-- 1 · greeting band -->
+      <section class="hm-band" aria-labelledby="home-greeting">
+        <span class="avatar kat-face" data-testid="home-avatar">
+          <img class="pimg" src="https://picsum.photos/seed/sb-rafid/192/192" alt="রাফিদ হাসানের প্রোফাইল ছবি" loading="lazy">
+        </span>
+        <div class="hm-greet">
+          <p class="t-display-md" id="home-greeting" data-testid="home-greeting">আসসালামু আলাইকুম, রাফিদ</p>
+          <p class="t-caption" data-testid="home-class">চতুর্থ শ্রেণি · ৫ দিনের ধারাবাহিকতা</p>
+        </div>
+        <a class="hm-points" href="14-leaderboard.html" data-testid="home-points-rank"
+           aria-label="লিডারবোর্ডে তোমার অবস্থান">
+          <i data-lucide="trophy" aria-hidden="true"></i>
+          <span class="t-body-sm t-bold" data-testid="home-points-value">১,২৪০ পয়েন্ট · #৪</span>
+        </a>
+      </section>
+
+      <!-- 2 · route voice -->
+      <div class="hm-voice">
+        <button class="kat-btn is-quiet is-pill" type="button" aria-pressed="true" data-testid="home-voice-toggle">
+          <i data-lucide="volume-2" aria-hidden="true"></i>
+          কণ্ঠস্বর চালু
+        </button>
+        <p class="t-caption" data-testid="home-voice-state">পাতাটি একবার পড়ে শোনানো হয়েছে</p>
+      </div>
+
+      <!-- 3 · continue lesson — photo-led -->
+      <section aria-labelledby="home-today-heading">
+        <div class="kat-sec">
+          <h2 class="t-title-md" id="home-today-heading" data-testid="home-today-heading">আজকের পাঠ</h2>
+        </div>
+        <article class="kat-photo card-interactive" data-component="card">
+          <div class="media media-photo">
+            <img class="pimg" src="https://picsum.photos/seed/sb-fraction/640/480"
+                 alt="ভগ্নাংশ চিহ্নিতকরণ পাঠের প্রচ্ছদ" loading="lazy">
+          </div>
+          <div class="kat-photo-body">
+            <div class="row">
+              <span class="kat-badge" data-testid="home-lesson-subject">গণিত</span>
+              <span class="t-caption" data-testid="home-lesson-chapter">অধ্যায় ৪ · ভগ্নাংশ</span>
+            </div>
+            <p class="t-title-lg" data-testid="home-lesson-title">ভগ্নাংশ চিহ্নিতকরণ</p>
+            <p class="kat-trust" data-testid="home-lesson-trust">
+              <i data-lucide="check" aria-hidden="true"></i>
+              NCTB অনুসারী · শ্রেণি ৪
+            </p>
+            <p class="t-caption" data-testid="home-lesson-meta">ভিডিও ১২ মিনিট · ভয়েস সহ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-xs)" role="progressbar"
+                 aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="পাঠের অগ্রগতি">
+              <div class="progress-fill" style="width:65%;background:var(--c-primary)" data-testid="home-lesson-progress"></div>
+            </div>
+            <a class="kat-btn is-pill is-block" href="../../base/frontend/07-lesson.html"
+               data-testid="home-lesson-cta" style="margin-top:var(--space-xs)">
+              <i data-lucide="play" aria-hidden="true"></i>
+              পড়া চালিয়ে যান
+            </a>
+          </div>
+        </article>
+      </section>
+
+      <!-- 4 · today's task strip — three soft cards -->
+      <section aria-labelledby="home-tasks-heading">
+        <div class="kat-sec">
+          <h2 class="t-title-md" id="home-tasks-heading" data-testid="home-tasks-heading">আজকের কাজ</h2>
+        </div>
+        <div class="hm-tasks">
+          <a class="hm-task" href="../../base/frontend/10-retake-class.html" data-testid="home-task-retake">
+            <span class="hm-task-ico" aria-hidden="true"><i data-lucide="rotate-ccw"></i></span>
+            <span class="hm-task-label t-body-sm" data-testid="home-task-retake-label">২ টি রিটেক বাকি</span>
+            <i data-lucide="chevron-right" aria-hidden="true"></i>
+          </a>
+          <a class="hm-task" href="../../base/frontend/11-exam-list.html" data-testid="home-task-exam">
+            <span class="hm-task-ico" aria-hidden="true"><i data-lucide="clipboard-check"></i></span>
+            <span class="hm-task-label t-body-sm" data-testid="home-task-exam-label">১ম সাময়িক পরীক্ষা দিতে হবে</span>
+            <i data-lucide="chevron-right" aria-hidden="true"></i>
+          </a>
+          <a class="hm-task" href="../../base/frontend/07-lesson.html" data-testid="home-task-lesson">
+            <span class="hm-task-ico" aria-hidden="true"><i data-lucide="circle-play"></i></span>
+            <span class="hm-task-label t-body-sm" data-testid="home-task-lesson-label">ভগ্নাংশ চিহ্নিতকরণ শেষ করুন</span>
+            <i data-lucide="chevron-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </section>
+
+      <!-- 5 · subject shortcuts — photo card grid -->
+      <section aria-labelledby="home-subjects-heading">
+        <div class="kat-sec">
+          <h2 class="t-title-md" id="home-subjects-heading" data-testid="home-subjects-heading">তোমার বিষয়সমূহ</h2>
+          <a class="t-body-sm" href="../../base/frontend/05-subject-list.html" data-testid="home-subjects-all">সব দেখুন</a>
+        </div>
+        <div class="kat-grid">
+          <a class="kat-photo" href="06-chapter-list.html" data-testid="home-subject-ganit">
+            <div class="media media-photo">
+              <img class="pimg" src="https://picsum.photos/seed/sb-ganit/640/480" alt="গণিত বিষয়ের প্রচ্ছদ" loading="lazy">
+            </div>
+            <div class="kat-photo-body">
+              <p class="t-body t-semibold" data-testid="home-subject-ganit-name">গণিত</p>
+              <p class="t-caption" data-testid="home-subject-ganit-progress">৩ / ১৮ অধ্যায় শেষ</p>
+            </div>
+          </a>
+          <a class="kat-photo" href="06-chapter-list.html" data-testid="home-subject-bangla">
+            <div class="media media-photo">
+              <img class="pimg" src="https://picsum.photos/seed/sb-bangla/640/480" alt="বাংলা বিষয়ের প্রচ্ছদ" loading="lazy">
+            </div>
+            <div class="kat-photo-body">
+              <p class="t-body t-semibold" data-testid="home-subject-bangla-name">বাংলা</p>
+              <p class="t-caption" data-testid="home-subject-bangla-progress">৯ / ১৬ অধ্যায় শেষ</p>
+            </div>
+          </a>
+          <a class="kat-photo" href="06-chapter-list.html" data-testid="home-subject-science">
+            <div class="media media-photo">
+              <img class="pimg" src="https://picsum.photos/seed/sb-biggan/640/480" alt="বিজ্ঞান বিষয়ের প্রচ্ছদ" loading="lazy">
+            </div>
+            <div class="kat-photo-body">
+              <p class="t-body t-semibold" data-testid="home-subject-science-name">বিজ্ঞান</p>
+              <p class="t-caption" data-testid="home-subject-science-progress">৫ / ১৪ অধ্যায় শেষ</p>
+            </div>
+          </a>
+          <a class="kat-photo" href="06-chapter-list.html" data-testid="home-subject-english">
+            <div class="media media-photo">
+              <img class="pimg" src="https://picsum.photos/seed/sb-english/640/480" alt="ইংরেজি বিষয়ের প্রচ্ছদ" loading="lazy">
+            </div>
+            <div class="kat-photo-body">
+              <p class="t-body t-semibold" data-testid="home-subject-english-name">ইংরেজি</p>
+              <p class="t-caption" data-testid="home-subject-english-progress">৭ / ১৫ অধ্যায় শেষ</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- 6 · screen time — warm panel with a coral track -->
+      <section class="kat-warm" aria-labelledby="home-time-label" data-component="kpi">
+        <div class="kat-sec">
+          <p class="t-body-sm t-semibold" id="home-time-label" data-testid="home-time-label">আজকের স্ক্রিন টাইম</p>
+          <p class="t-body-sm t-bold" data-testid="home-time-value">২৪ / ৬০ মিনিট</p>
+        </div>
+        <div class="progress" role="progressbar" aria-valuenow="24" aria-valuemin="0"
+             aria-valuemax="60" aria-label="আজকের স্ক্রিন টাইম">
+          <div class="progress-fill" style="width:40%;background:var(--c-primary)" data-testid="home-time-bar"></div>
+        </div>
+        <p class="t-caption" data-testid="home-time-remaining">আরও ৩৬ মিনিট বাকি</p>
+      </section>
+
+      <!-- 7 · nudge surface — quote card -->
+      <section class="kat-card" data-component="card" aria-labelledby="home-nudge-heading">
+        <div class="kat-card-body">
+          <p class="kat-eyebrow" id="home-nudge-heading" data-testid="home-nudge-from">মায়ের বার্তা</p>
+          <blockquote class="hm-quote">
+            <p class="t-title-md" data-testid="home-nudge-body">আজ গণিতের অধ্যায় ৪ শেষ করলে পুরস্কার পাবে।</p>
+          </blockquote>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <nav class="kat-tabbar" data-shell="bottomnav" aria-label="প্রধান নেভিগেশন">
+    <a class="kat-tab" href="01-home.html" aria-current="page" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="kat-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="icon-md" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="kat-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="kat-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="icon-md" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="kat-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

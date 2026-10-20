@@ -1,0 +1,75 @@
+id: US-07-LESSON
+role: student
+feature: "Lesson page — chapter detail with topic tags and lessons, started lesson session with video + in-browser PDF, Bangla voice/captions, watch-progress gate that unlocks the mandatory quiz"
+page: 07-lesson.html
+goal: |
+  As a student on a lesson page I watch the chapter video with Bangla voice and captions, read the
+  PDF in-app, and see my watch progress so that once I have watched enough the mandatory quiz
+  unlocks and I can prove the chapter.
+scenarios_total: 21
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Chapter detail loads with subject/chapter header and description"
+    ui_route: /learn/:classNo/:subjectSlug/:chapterSlug
+    endpoint: GET /api/curriculum/chapters/:slug
+    expected: "200 — appbar title 'ভগ্নাংশ চিহ্নিতকরণ' (sub-title), subject badge 'গণিত' (data-testid lesson-subject), 'অধ্যায় ৪' (lesson-chapter), title (lesson-title-text), description 'ভগ্নাংশ চিহ্ন দেখে কোনটি বড়, কোনটি ছোট সেটি চিনতে হবে।' (lesson-desc) and chips '১২ মিনিট' (lesson-meta-duration) + 'চতুর্থ শ্রেণি' (lesson-meta-class)"
+  - id: AC-2
+    description: "Starting the lesson opens a session with video and PDF URLs"
+    ui_route: /learn/:classNo/:subjectSlug/:chapterSlug
+    endpoint: POST /api/lessons/:slug/start
+    expected: "200 — POST /api/lessons/:slug/start returns the lesson session with video/PDF URLs; the video player (lesson-video-play, aria-label 'চালান') renders with duration chip '১২:৪০' (lesson-video-time) and the PDF tile 'পাঠের পিডিএফ' (lesson-pdf-title) shows meta '২ পৃষ্ঠা · বাংলা' (lesson-pdf-meta)"
+  - id: AC-3
+    description: "PDF opens in the in-browser viewer"
+    ui_route: /learn/:classNo/:subjectSlug/:chapterSlug
+    endpoint: none
+    expected: "Tapping 'পড়ো' (data-testid lesson-pdf-open) renders the lesson PDF inside the in-app browser viewer (no native download); returning preserves the lesson page and current watch progress"
+  - id: AC-4
+    description: "Watch progress updates live and gates the quiz CTA at 95%"
+    ui_route: /learn/:classNo/:subjectSlug/:chapterSlug
+    endpoint: POST /api/lessons/:slug/progress
+    expected: "Progress bar (data-testid lesson-progress) and caption 'ভিডিওর ৬৫% দেখা হয়েছে' (lesson-progress-label) update as playback advances; 'কুইজ শুরু করো' (lesson-cta-quiz) renders aria-disabled=true with hint '৯৫% দেখে ফেললেই কুইজ শুরু করা যাবে — এখন ৬৫% দেখা হয়েছে।' (lesson-cta-hint)"
+  - id: AC-5
+    description: "Bangla voice instruction toggle"
+    ui_route: /learn/:classNo/:subjectSlug/:chapterSlug
+    endpoint: none
+    expected: "'ভয়েস নির্দেশনা' panel (lesson-voice-title, help 'বাংলা কণ্ঠে পড়ে শোনাবে') toggles: aria-pressed=true shows 'চালু আছে' (lesson-voice-toggle); tapping flips to off and stops the Bangla narration for this lesson session"
+  - id: AC-6
+    description: "Completing the lesson triggers the mandatory quiz"
+    ui_route: /learn/:classNo/:subjectSlug/:chapterSlug
+    endpoint: none
+    expected: "At ≥95% watched the 'কুইজ শুরু করো' CTA enables (aria-disabled=false, no les-off class) and navigating it starts the mandatory quiz at route /quiz/:sessionId (fixture /quiz/quiz-20261018-001) — no chapter is marked done until the quiz result lands"
+  - id: AC-7
+    description: "Bangla captions render over the video"
+    ui_route: /learn/:classNo/:subjectSlug/:chapterSlug
+    endpoint: none
+    expected: "The video area (data-testid lesson-video-caption, aria-label 'ভিডিও প্লেয়ার এলাকা') shows the Bangla caption track by default matching the Bangla narration; toggling the voice toggle off does not remove the on-screen captions"
+
+boundary_cases:
+  - case: "Watched between 1% and 94% — the quiz CTA stays disabled and the hint reflects the live percentage (e.g. 'এখন ৯৪% দেখা হয়েছে।')"
+  - case: "Exactly 95% watched — the CTA enables immediately without a reload"
+  - case: "Premium-gated lesson segment — the permission copy 'এই অংশটি দেখতে প্রিমিয়াম সাবস্ক্রিপশন প্রয়োজন।' (state sheet kind 'অনুমতি নেই') replaces the player and the CTA stays disabled"
+  - case: "Connectivity lost mid-lesson — 'ইন্টারনেট সংযোগ নেই।' edge shows, playback pauses, and the last watched position is retained so progress resumes on reconnect"
+
+error_scenarios:
+  - scenario: "GET /api/curriculum/chapters/:slug returns 500 — 'লেসন লোড হয়নি। আবার চেষ্টা করো।' (data-testid st-error) with retry"
+  - scenario: "POST /api/lessons/:slug/start fails — the same 'লেসন লোড হয়নি। আবার চেষ্টা করো।' copy shows and retry re-fires the start call; no watch progress accrues without a session"
+  - scenario: "Entitlement missing — permission copy 'এই অংশটি দেখতে প্রিমিয়াম সাবস্ক্রিপশন প্রয়োজন।' (state sheet kind 'অনুমতি নেই') renders in place of the video"
+  - scenario: "Offline — 'ইন্টারনেট সংযোগ নেই।' (state sheet edge) shown; the PDF and video are unavailable until connectivity returns"
+  - scenario: "Session expired — 'তোমার সময় শেষ হয়ে গেছে।' permission copy shows and the student is redirected to /auth/login; the lesson resumes at the saved position after re-login"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack (16px lines at 72%/100%/54%) while the chapter and lesson session hydrate; play button and PDF 'পড়ো' disabled"
+  - state: empty
+    expected: "Empty state 'এই অধ্যায়ের কোনো লেসন নেই।' (data-testid st-empty) when the chapter has no lesson content"
+  - state: error
+    expected: "'লেসন লোড হয়নি। আবার চেষ্টা করো।' (data-testid st-error) with retry"
+  - state: quiz-ready
+    expected: "At ≥95% watched the CTA 'কুইজ শুরু করো' enables and the hint disappears; navigating routes to /quiz/:sessionId"
+  - state: offline
+    expected: "Edge 'ইন্টারনেট সংযোগ নেই।' (data-testid st-edge) — playback paused, position retained"
+
+fixture_refs:
+  - lesson
+  - chapter_list

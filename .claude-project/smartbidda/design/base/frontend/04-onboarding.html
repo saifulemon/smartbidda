@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>সেটআপ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .onboarding-body {
+    display: flex; flex-direction: column; gap: var(--space-xl);
+    padding-top: var(--space-lg);
+    /* notch / home-indicator clearance — scoped to this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+  }
+  .onboarding-progress { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .onboarding-classes { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+  .onboarding-class-tile {
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-sm);
+    padding: var(--space-lg); text-align: center; color: var(--c-body);
+  }
+  .onboarding-class-radio { width: 20px; height: 20px; accent-color: var(--c-primary); }
+  .onboarding-pin { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .onboarding-pin-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .onboarding-dots { display: flex; gap: var(--space-sm); }
+  .onboarding-dot {
+    width: 14px; height: 14px;
+    border-radius: var(--radius-pill);
+    background: transparent; border: var(--border-w) solid var(--c-hairline);
+  }
+  .onboarding-dot.is-filled { background: var(--c-primary); border-color: var(--c-primary); }
+  .onboarding-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+  .onboarding-key {
+    min-height: 46px;
+    display: grid; place-items: center;
+    background: var(--c-surface-soft); color: var(--c-body);
+    border: none; border-radius: var(--radius-md);
+    font-size: var(--t-body-size); font-weight: var(--t-body-weight);
+    cursor: pointer;
+  }
+  .onboarding-avatars { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); }
+  .onboarding-avatar-tile {
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-sm);
+    padding: var(--space-md); text-align: center; color: var(--c-body);
+  }
+  .onboarding-avatar-radio { width: 20px; height: 20px; accent-color: var(--c-primary); }
+  @media (max-width: 600px) { .onboarding-avatars { grid-template-columns: repeat(2, 1fr); } }
+  .onboarding-start { width: 100%; }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <a class="back" href="03-signup.html" aria-label="ফিরে যান" data-testid="onboarding-back">
+      <i data-lucide="arrow-left" class="icon-md"></i>
+    </a>
+    <span class="appbar-title" data-slot="title" data-testid="onboarding-title">সেটআপ</span>
+  </header>
+
+  <main class="app-body onboarding-body" data-shell="content">
+
+    <div class="onboarding-progress">
+      <div class="row" style="justify-content:space-between">
+        <h1 class="t-title-lg" data-testid="onboarding-heading">সেটআপ</h1>
+        <p class="t-body-sm t-bold" data-testid="onboarding-step-count">১ / ৩ ধাপ</p>
+      </div>
+      <div class="progress" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+        aria-label="সেটআপের অগ্রগতি">
+        <div class="progress-fill" style="width:33%" data-testid="onboarding-progress-fill"></div>
+      </div>
+    </div>
+
+    <section aria-labelledby="onboarding-class-heading">
+      <h2 class="t-title-md" id="onboarding-class-heading" style="margin-bottom:var(--space-md)"
+        data-testid="onboarding-class-heading">ধাপ ১ — শিশুর নাম ও শ্রেণি</h2>
+
+      <!-- PRD /onboarding: "Child name input | Empty | Focus ring" -->
+      <div class="field" style="margin-bottom:var(--space-lg)">
+        <label class="label" for="onboarding-name" data-testid="onboarding-name-label">শিশুর নাম</label>
+        <input class="input" type="text" id="onboarding-name" name="displayName"
+          minlength="2" maxlength="30" autocomplete="off" placeholder="যেমন: রাফিদ হাসান"
+          data-testid="onboarding-name-input">
+        <p class="help-text" data-testid="onboarding-name-help">২ থেকে ৩০ অক্ষর · এটি শুধু প্রদর্শনের নাম, পরে বদলানো যাবে</p>
+      </div>
+
+      <p class="label" style="margin-bottom:var(--space-sm)" data-testid="onboarding-class-question">কোন শ্রেণিতে পড়ো?</p>
+      <div class="onboarding-classes" data-component="list">
+        <label class="card card-interactive onboarding-class-tile">
+          <input class="onboarding-class-radio" type="radio" name="onboarding-class" value="1"
+            data-testid="onboarding-class-1">
+          <i data-lucide="school" class="icon-lg" aria-hidden="true"></i>
+          <span class="t-body t-semibold" data-testid="onboarding-class-1-label">প্রথম শ্রেণি</span>
+        </label>
+        <label class="card card-interactive onboarding-class-tile">
+          <input class="onboarding-class-radio" type="radio" name="onboarding-class" value="2"
+            data-testid="onboarding-class-2">
+          <i data-lucide="school" class="icon-lg" aria-hidden="true"></i>
+          <span class="t-body t-semibold" data-testid="onboarding-class-2-label">দ্বিতীয় শ্রেণি</span>
+        </label>
+        <label class="card card-interactive onboarding-class-tile">
+          <input class="onboarding-class-radio" type="radio" name="onboarding-class" value="3"
+            data-testid="onboarding-class-3">
+          <i data-lucide="school" class="icon-lg" aria-hidden="true"></i>
+          <span class="t-body t-semibold" data-testid="onboarding-class-3-label">তৃতীয় শ্রেণি</span>
+        </label>
+        <label class="card card-interactive onboarding-class-tile">
+          <input class="onboarding-class-radio" type="radio" name="onboarding-class" value="4" checked
+            data-testid="onboarding-class-4">
+          <i data-lucide="school" class="icon-lg" aria-hidden="true"></i>
+          <span class="t-body t-semibold" data-testid="onboarding-class-4-label">চতুর্থ শ্রেণি</span>
+        </label>
+        <label class="card card-interactive onboarding-class-tile">
+          <input class="onboarding-class-radio" type="radio" name="onboarding-class" value="5"
+            data-testid="onboarding-class-5">
+          <i data-lucide="school" class="icon-lg" aria-hidden="true"></i>
+          <span class="t-body t-semibold" data-testid="onboarding-class-5-label">পঞ্চম শ্রেণি</span>
+        </label>
+      </div>
+    </section>
+
+    <section aria-labelledby="onboarding-avatar-heading">
+      <h2 class="t-title-md" id="onboarding-avatar-heading" style="margin-bottom:var(--space-md)"
+        data-testid="onboarding-avatar-heading">ধাপ ২ — অ্যাভাটার বাছুন</h2>
+      <div class="onboarding-avatars" data-component="list">
+        <label class="card card-interactive onboarding-avatar-tile">
+          <input class="onboarding-avatar-radio" type="radio" name="onboarding-avatar" value="owl" checked
+            data-testid="onboarding-avatar-1">
+          <span class="avatar avatar-xl" aria-hidden="true" data-testid="onboarding-avatar-1-mark">উ</span>
+          <span class="t-caption" data-testid="onboarding-avatar-1-label">উল্লুখ</span>
+        </label>
+        <label class="card card-interactive onboarding-avatar-tile">
+          <input class="onboarding-avatar-radio" type="radio" name="onboarding-avatar" value="star"
+            data-testid="onboarding-avatar-2">
+          <span class="avatar avatar-xl" aria-hidden="true" data-testid="onboarding-avatar-2-mark">তা</span>
+          <span class="t-caption" data-testid="onboarding-avatar-2-label">তারা</span>
+        </label>
+        <label class="card card-interactive onboarding-avatar-tile">
+          <input class="onboarding-avatar-radio" type="radio" name="onboarding-avatar" value="flower"
+            data-testid="onboarding-avatar-3">
+          <span class="avatar avatar-xl" aria-hidden="true" data-testid="onboarding-avatar-3-mark">ফু</span>
+          <span class="t-caption" data-testid="onboarding-avatar-3-label">ফুল</span>
+        </label>
+        <label class="card card-interactive onboarding-avatar-tile">
+          <input class="onboarding-avatar-radio" type="radio" name="onboarding-avatar" value="rocket"
+            data-testid="onboarding-avatar-4">
+          <span class="avatar avatar-xl" aria-hidden="true" data-testid="onboarding-avatar-4-mark">র</span>
+          <span class="t-caption" data-testid="onboarding-avatar-4-label">রকেট</span>
+        </label>
+        <label class="card card-interactive onboarding-avatar-tile">
+          <input class="onboarding-avatar-radio" type="radio" name="onboarding-avatar" value="fish"
+            data-testid="onboarding-avatar-5">
+          <span class="avatar avatar-xl" aria-hidden="true" data-testid="onboarding-avatar-5-mark">মা</span>
+          <span class="t-caption" data-testid="onboarding-avatar-5-label">মাছ</span>
+        </label>
+        <label class="card card-interactive onboarding-avatar-tile">
+          <input class="onboarding-avatar-radio" type="radio" name="onboarding-avatar" value="bird"
+            data-testid="onboarding-avatar-6">
+          <span class="avatar avatar-xl" aria-hidden="true" data-testid="onboarding-avatar-6-mark">পা</span>
+          <span class="t-caption" data-testid="onboarding-avatar-6-label">পাখি</span>
+        </label>
+        <label class="card card-interactive onboarding-avatar-tile">
+          <input class="onboarding-avatar-radio" type="radio" name="onboarding-avatar" value="river"
+            data-testid="onboarding-avatar-7">
+          <span class="avatar avatar-xl" aria-hidden="true" data-testid="onboarding-avatar-7-mark">ন</span>
+          <span class="t-caption" data-testid="onboarding-avatar-7-label">নদী</span>
+        </label>
+        <label class="card card-interactive onboarding-avatar-tile">
+          <input class="onboarding-avatar-radio" type="radio" name="onboarding-avatar" value="sun"
+            data-testid="onboarding-avatar-8">
+          <span class="avatar avatar-xl" aria-hidden="true" data-testid="onboarding-avatar-8-mark">সূ</span>
+          <span class="t-caption" data-testid="onboarding-avatar-8-label">সূর্য</span>
+        </label>
+      </div>
+    </section>
+
+    <section aria-labelledby="onboarding-pin-heading">
+      <h2 class="t-title-md" id="onboarding-pin-heading" style="margin-bottom:var(--space-md)"
+        data-testid="onboarding-pin-heading">ধাপ ৩ — চার সংখ্যার পিন দিন</h2>
+      <p class="t-caption" style="margin-bottom:var(--space-lg)" data-testid="onboarding-pin-help">
+        শিশু এই পিন দিয়েই লগ ইন করবে। দুইবার একই পিন দিতে হবে — কেউ জানে না।
+      </p>
+
+      <div class="onboarding-pin">
+        <div class="onboarding-pin-row">
+          <span class="t-body-sm t-semibold" data-testid="onboarding-pin-label">পিন</span>
+          <span class="onboarding-dots" role="img" aria-label="পিনের চারটি ঘর" data-testid="onboarding-pin-dots">
+            <span class="onboarding-dot is-filled" data-testid="onboarding-pin-dot-1"></span>
+            <span class="onboarding-dot is-filled" data-testid="onboarding-pin-dot-2"></span>
+            <span class="onboarding-dot is-filled" data-testid="onboarding-pin-dot-3"></span>
+            <span class="onboarding-dot is-filled" data-testid="onboarding-pin-dot-4"></span>
+          </span>
+        </div>
+
+        <div class="onboarding-pin-row">
+          <span class="t-body-sm t-semibold" data-testid="onboarding-pin-confirm-label">আবার লিখুন</span>
+          <span class="onboarding-dots" role="img" aria-label="পিন নিশ্চিত করার চারটি ঘর" data-testid="onboarding-pin-confirm-dots">
+            <span class="onboarding-dot" data-testid="onboarding-pin-confirm-dot-1"></span>
+            <span class="onboarding-dot" data-testid="onboarding-pin-confirm-dot-2"></span>
+            <span class="onboarding-dot" data-testid="onboarding-pin-confirm-dot-3"></span>
+            <span class="onboarding-dot" data-testid="onboarding-pin-confirm-dot-4"></span>
+          </span>
+        </div>
+
+        <div class="onboarding-keypad" role="group" aria-label="বাংলা সংখ্যার কীপ্যাড" data-testid="onboarding-keypad">
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-1">১</button>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-2">২</button>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-3">৩</button>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-4">৪</button>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-5">৫</button>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-6">৬</button>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-7">৭</button>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-8">৮</button>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-9">৯</button>
+          <span aria-hidden="true"></span>
+          <button class="onboarding-key" type="button" data-testid="onboarding-key-0">০</button>
+          <button class="onboarding-key" type="button" aria-label="শেষ সংখ্যাটি মুছুন" data-testid="onboarding-key-back">
+            <i data-lucide="delete" class="icon-md" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <p class="error-text" data-testid="onboarding-pin-error">পিন দুইবার মিলতে হবে</p>
+      </div>
+    </section>
+
+    <!-- PRD L1269: Submit "শুরু করো", disabled until complete -->
+    <a class="btn btn-primary onboarding-start" href="01-home.html" aria-disabled="true" data-testid="onboarding-start">
+      <i data-lucide="rocket"></i>
+      শুরু করো
+    </a>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

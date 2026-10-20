@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>কুইজ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-airbnb-trust.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local layout only — colour / type / radius / elevation are tokens */
+  .qz-page { background: var(--at-warm); }
+  .qz-stack { display: flex; flex-direction: column; gap: var(--space-lg);
+    padding-top: var(--space-md);
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px)); }
+
+  .qz-head { display: flex; align-items: center; flex-wrap: wrap;
+    justify-content: space-between; gap: var(--space-sm) var(--space-md); }
+  .qz-timer { display: inline-flex; align-items: center; gap: 6px;
+    padding: var(--space-xs) var(--space-md); border-radius: var(--radius-pill);
+    background: var(--c-surface); border: var(--border-w) solid var(--c-hairline);
+    box-shadow: var(--shadow-1); color: var(--c-ink);
+    font-size: var(--t-caption-size); font-weight: var(--t-weight-semibold); }
+  .qz-timerbar { height: 6px; border-radius: var(--radius-pill);
+    background: var(--c-surface-soft); overflow: hidden;
+    border: var(--border-w) solid var(--c-hairline); }
+  .qz-timerbar-fill { height: 100%; background: var(--c-primary); }
+
+  .qz-figure { display: flex; flex-direction: column; gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg); background: var(--at-warm);
+    border: 1px dashed var(--c-hairline-strong); border-radius: var(--radius-md); }
+  .qz-strip { display: flex; align-items: center; gap: var(--space-md); min-width: 0; }
+  .qz-strip-label { flex-shrink: 0; min-width: 46px; }
+  .qz-bar { display: flex; gap: 5px; flex: 1; min-width: 0; }
+  .qz-seg { flex: 1; min-width: 0; height: 26px; background: var(--c-surface);
+    border: var(--border-w) solid var(--c-hairline-strong); border-radius: var(--radius-xs); }
+  .qz-seg.is-fill { background: var(--c-primary); border-color: var(--c-primary); }
+
+  .qz-options { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .qz-option { display: flex; align-items: center; gap: var(--space-md);
+    width: 100%; min-width: 0; text-align: left; font: inherit; cursor: pointer;
+    padding: var(--space-md) var(--space-lg); background: var(--c-surface);
+    color: var(--c-body); border: var(--border-w) solid var(--c-hairline);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
+  .qz-option:hover { border-color: var(--c-primary); color: var(--c-ink);
+    box-shadow: var(--shadow-hover); }
+  .qz-option[aria-pressed="true"] { background: var(--c-primary-soft);
+    border-color: var(--c-primary); color: var(--c-ink); }
+  .qz-letter { display: grid; place-items: center; flex-shrink: 0;
+    width: 34px; height: 34px; border-radius: var(--radius-pill);
+    background: var(--c-surface-soft); color: var(--c-ink);
+    font-size: var(--t-caption-size); font-weight: var(--t-weight-bold); }
+  .qz-option[aria-pressed="true"] .qz-letter { background: var(--c-surface);
+    color: var(--c-primary); }
+  .qz-opt-label { flex: 1; min-width: 0; }
+  .qz-picked { flex-shrink: 0; color: var(--c-primary); }
+
+  .qz-dots { display: flex; flex-wrap: wrap; gap: var(--space-sm);
+    list-style: none; margin: 0; padding: 0; }
+  .qz-dot { width: 10px; height: 10px; border-radius: var(--radius-pill);
+    background: var(--c-hairline-strong); }
+  .qz-dot.is-done { background: var(--c-primary); }
+  .qz-dot.is-current { outline: 3px solid var(--c-primary-soft); }
+  .qz-foot { display: flex; flex-direction: column; gap: var(--space-sm); }
+</style>
+</head>
+<body class="qz-page" data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="kat-appbar" data-shell="topbar">
+    <span class="kat-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="kat-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="kat-appbar-actions">
+      <button class="kat-round" type="button" aria-label="নোটিফিকেশন" data-testid="appbar-notifications">
+        <i data-lucide="bell" aria-hidden="true"></i>
+      </button>
+      <button class="kat-round" type="button" aria-label="প্রোফাইল" data-testid="appbar-profile">
+        <i data-lucide="user" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+    <div class="kat-col qz-stack">
+
+      <a class="back-link" href="../../base/frontend/07-lesson.html" data-testid="quiz-back">
+        <i data-lucide="arrow-left" aria-hidden="true"></i>
+        ফিরে যান
+      </a>
+
+      <!-- 1 · counter + countdown -->
+      <div class="qz-head">
+        <span class="t-caption" data-testid="quiz-counter">প্রশ্ন ৩ / ১০</span>
+        <span class="qz-timer" role="timer" data-testid="quiz-timer">
+          <i data-lucide="timer" class="icon-sm" aria-hidden="true"></i>
+          ৪৮ সেকেন্ড বাকি
+        </span>
+      </div>
+      <div class="qz-timerbar" role="progressbar" aria-valuenow="48" aria-valuemin="0"
+           aria-valuemax="60" aria-label="প্রশ্নের বাকি সময়" data-testid="quiz-timer-bar">
+        <div class="qz-timerbar-fill" style="width:80%" data-testid="quiz-timer-fill"></div>
+      </div>
+
+      <!-- 2 · question card with the fraction figure drawn in divs -->
+      <section class="kat-card" aria-labelledby="quiz-question">
+        <div class="kat-card-body is-roomy">
+          <p class="kat-eyebrow" data-testid="quiz-subject">গণিত · অধ্যায় ৪</p>
+          <h1 class="t-display-md" id="quiz-question" data-testid="quiz-question">
+            নিচের কোন অংশটি অর্ধেকের চেয়ে বড়?
+          </h1>
+          <p class="t-caption" data-testid="quiz-stimulus">ছবি: ভগ্নাংশের চিত্র</p>
+
+          <div class="qz-figure" data-testid="quiz-figure">
+            <div class="qz-strip">
+              <span class="t-body-sm t-bold qz-strip-label" data-testid="quiz-figure-label">১ / ২</span>
+              <span class="qz-bar" aria-hidden="true">
+                <span class="qz-seg is-fill"></span>
+                <span class="qz-seg"></span>
+              </span>
+            </div>
+            <div class="qz-strip">
+              <span class="t-body-sm t-bold qz-strip-label" data-testid="quiz-figure-label">৩ / ৪</span>
+              <span class="qz-bar" aria-hidden="true">
+                <span class="qz-seg is-fill"></span>
+                <span class="qz-seg is-fill"></span>
+                <span class="qz-seg is-fill"></span>
+                <span class="qz-seg"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 · exactly four options — tap advances -->
+      <div class="qz-options" role="group" aria-label="উত্তরের বিকল্প">
+        <button class="qz-option" type="button" aria-pressed="false" data-testid="quiz-option" data-id="q3-a">
+          <span class="qz-letter" aria-hidden="true">ক</span>
+          <span class="t-body-lg qz-opt-label">১ / ৪</span>
+        </button>
+        <button class="qz-option" type="button" aria-pressed="true" data-testid="quiz-option" data-id="q3-b">
+          <span class="qz-letter" aria-hidden="true">খ</span>
+          <span class="t-body-lg qz-opt-label">৩ / ৪</span>
+          <i data-lucide="check-circle-2" class="qz-picked" aria-hidden="true"></i>
+        </button>
+        <button class="qz-option" type="button" aria-pressed="false" data-testid="quiz-option" data-id="q3-c">
+          <span class="qz-letter" aria-hidden="true">গ</span>
+          <span class="t-body-lg qz-opt-label">১ / ৫</span>
+        </button>
+        <button class="qz-option" type="button" aria-pressed="false" data-testid="quiz-option" data-id="q3-d">
+          <span class="qz-letter" aria-hidden="true">ঘ</span>
+          <span class="t-body-lg qz-opt-label">২ / ৩</span>
+        </button>
+      </div>
+
+      <!-- 4 · voice read-aloud -->
+      <section class="kat-card" data-component="card" aria-label="প্রশ্ন শুনা" data-testid="quiz-voice-panel">
+        <div class="kat-card-body">
+          <div class="row">
+            <i data-lucide="volume-2" aria-hidden="true"></i>
+            <span class="t-body-sm" data-testid="quiz-voice-label">প্রশ্নটি শুনে নিন</span>
+            <button class="kat-btn is-quiet" type="button" style="margin-left:auto"
+                    data-testid="quiz-voice-play">
+              <i data-lucide="play" class="icon-sm" aria-hidden="true"></i>
+              শুনুন
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 · position in the quiz + auto-submit note -->
+      <div class="qz-foot">
+        <ol class="qz-dots" role="group" aria-label="কুইজের অগ্রগতি" data-testid="quiz-dots">
+          <li class="qz-dot is-done" data-testid="quiz-dot" aria-label="প্রশ্ন ১"></li>
+          <li class="qz-dot is-done" data-testid="quiz-dot" aria-label="প্রশ্ন ২"></li>
+          <li class="qz-dot is-done is-current" data-testid="quiz-dot" aria-current="step" aria-label="প্রশ্ন ৩"></li>
+          <li class="qz-dot" data-testid="quiz-dot" aria-label="প্রশ্ন ৪"></li>
+          <li class="qz-dot" data-testid="quiz-dot" aria-label="প্রশ্ন ৫"></li>
+          <li class="qz-dot" data-testid="quiz-dot" aria-label="প্রশ্ন ৬"></li>
+          <li class="qz-dot" data-testid="quiz-dot" aria-label="প্রশ্ন ৭"></li>
+          <li class="qz-dot" data-testid="quiz-dot" aria-label="প্রশ্ন ৮"></li>
+          <li class="qz-dot" data-testid="quiz-dot" aria-label="প্রশ্ন ৯"></li>
+          <li class="qz-dot" data-testid="quiz-dot" aria-label="প্রশ্ন ১০"></li>
+        </ol>
+        <p class="t-caption" data-testid="quiz-auto-note">
+          উত্তর দিলেই ০.৪ সেকেন্ড পরে পরের প্রশ্ন আসবে। শেষ প্রশ্নের উত্তর দেওয়া মাত্রই
+          নিজে থেকেই জমা হয়ে যাবে — আলাদা করে জমা দিতে হবে না।
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <nav class="kat-tabbar" data-shell="bottomnav" aria-label="প্রধান নেভিগেশন">
+    <a class="kat-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="kat-tab" href="../../base/frontend/05-subject-list.html" aria-current="page" data-testid="nav-learn">
+      <i data-lucide="book-open" class="icon-md" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="kat-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="kat-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="icon-md" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="kat-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

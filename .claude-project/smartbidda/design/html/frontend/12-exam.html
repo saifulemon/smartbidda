@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পরীক্ষা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+
+  /* question navigator chips + prev/next foot */
+  .ex-nav { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .ex-nav .is-flag { border-color: var(--c-warning); color: var(--c-warning); }
+  .ex-foot { display: flex; gap: var(--space-md); }
+
+  /* answer options — wide stacked pills (the concept's answer-tile DNA) */
+  .ex-opts { display: flex; flex-direction: column; gap: var(--space-md); }
+  .ex-opt {
+    display: flex; align-items: center; gap: var(--space-md); width: 100%;
+    min-height: calc(var(--control-h) + var(--space-sm)); padding: var(--space-md) var(--space-lg);
+    background: var(--c-lift); color: var(--c-body); text-align: start; cursor: pointer;
+    border: var(--border-w) solid var(--c-hairline-strong); border-radius: var(--radius-pill);
+    font-family: var(--t-body-md-family); font-size: var(--t-body-lg-size);
+    font-weight: var(--t-weight-semibold);
+  }
+  .ex-opt[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary); }
+
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-exam {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <!-- StudentSubLayout chrome: back + title appbar, NO tabbar -->
+  <header class="ksr-appbar" data-shell="topbar">
+    <a class="ksr-back" href="11-exam-list.html" aria-label="ফিরে যান" data-testid="sub-back">
+      <i data-lucide="arrow-left" class="icon-sm" aria-hidden="true"></i>
+      ফিরে যান
+    </a>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title">পরীক্ষা</span>
+  </header>
+
+  <main class="ksr-main sf-exam" data-shell="content">
+
+    <!-- 1 · status strip — counter · timer · autosave -->
+    <div class="row">
+      <p class="t-caption ksr-grow" data-testid="exam-counter">প্রশ্ন ২ / ৫০</p>
+      <span class="ksr-badge" role="timer" data-testid="exam-timer">
+        <i data-lucide="timer" class="icon-sm" aria-hidden="true"></i>
+        ৫৭:৩২
+      </span>
+      <span class="ksr-badge is-ok" data-testid="exam-saved">
+        <i data-lucide="check-circle-2" class="icon-sm" aria-hidden="true"></i>
+        সংরক্ষিত হয়েছে
+      </span>
+    </div>
+
+    <!-- progress — where in the 50-question paper -->
+    <div class="progress is-sm" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100"
+         aria-label="পরীক্ষার অগ্রগতি">
+      <div class="progress-fill" style="width:4%" data-testid="exam-bar"></div>
+    </div>
+
+    <!-- 2 · question navigator -->
+    <div class="ex-nav" role="group" aria-label="প্রশ্ন নেভিগেশন">
+      <button class="ksr-chip is-on" type="button" aria-pressed="true" data-testid="exam-nav-q1">১</button>
+      <button class="ksr-chip is-on is-flag" type="button" aria-pressed="true" data-testid="exam-nav-q2">
+        <i data-lucide="flag" class="icon-sm" aria-hidden="true"></i>
+        ২
+      </button>
+      <button class="ksr-chip" type="button" data-testid="exam-nav-q3">৩</button>
+      <button class="ksr-chip" type="button" data-testid="exam-nav-q4">৪</button>
+      <button class="ksr-chip" type="button" data-testid="exam-nav-q5">৫</button>
+      <button class="ksr-chip" type="button" data-testid="exam-nav-more">+৪৫</button>
+    </div>
+
+    <!-- 3 · the question -->
+    <section class="ksr-section" aria-labelledby="exam-question">
+      <div class="row">
+        <span class="ksr-badge" data-testid="exam-subject">গণিত</span>
+        <span class="t-caption" data-testid="exam-qtype">বহুনির্বাচনী</span>
+      </div>
+      <h1 class="t-display-md" id="exam-question" data-testid="exam-question">
+        ২৫ এর ২০% কত?
+      </h1>
+    </section>
+
+    <!-- 4 · exactly four tappable options, one selected -->
+    <div class="ex-opts" role="group" aria-label="উত্তরের বিকল্প">
+      <button class="ex-opt" type="button" aria-pressed="false" data-testid="exam-option">
+        <i data-lucide="circle" class="icon-sm" aria-hidden="true"></i>
+        ৫
+      </button>
+      <button class="ex-opt" type="button" aria-pressed="true" data-testid="exam-option" data-id="q2-b">
+        <i data-lucide="check-circle-2" class="icon-sm" aria-hidden="true"></i>
+        ৪
+      </button>
+      <button class="ex-opt" type="button" aria-pressed="false" data-testid="exam-option">
+        <i data-lucide="circle" class="icon-sm" aria-hidden="true"></i>
+        ৬
+      </button>
+      <button class="ex-opt" type="button" aria-pressed="false" data-testid="exam-option">
+        <i data-lucide="circle" class="icon-sm" aria-hidden="true"></i>
+        ১০
+      </button>
+    </div>
+
+    <!-- autosave note -->
+    <section class="ksr-panel" data-component="card" data-testid="exam-note">
+      <div class="row" style="align-items:flex-start">
+        <i data-lucide="info" class="icon-md ksr-mute" aria-hidden="true"></i>
+        <p class="t-caption ksr-grow" data-testid="exam-note-text">
+          উত্তর নির্বাচন করলে নিজে থেকে সংরক্ষণ হবে। পরে ফিরে এসে বদলাতে পারবে।
+        </p>
+      </div>
+    </section>
+
+    <!-- 5 · navigation + flag + submit — thumb-reach -->
+    <div class="ksr-stack">
+      <div class="ex-foot">
+        <button class="ksr-btn is-quiet" style="flex:1" type="button" data-testid="exam-prev">
+          <i data-lucide="chevron-left" class="icon-sm" aria-hidden="true"></i>
+          আগের
+        </button>
+        <button class="ksr-btn" style="flex:1" type="button" data-testid="exam-next">
+          পরের প্রশ্ন
+          <i data-lucide="chevron-right" class="icon-sm" aria-hidden="true"></i>
+        </button>
+      </div>
+      <button class="ksr-btn is-quiet is-block" type="button" aria-pressed="false" data-testid="exam-flag">
+        <i data-lucide="flag" class="icon-sm" aria-hidden="true"></i>
+        ফ্ল্যাগ
+      </button>
+      <button class="ksr-btn is-block" type="button" data-testid="exam-submit">জমা দাও</button>
+    </div>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

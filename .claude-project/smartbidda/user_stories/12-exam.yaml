@@ -1,0 +1,63 @@
+id: US-12-EXAM
+role: student
+feature: "Term exam paper — live countdown, autosaved answers, 50-question navigator, flagging and final submit"
+page: 12-exam.html
+goal: |
+  As a student on the পরীক্ষা paper for ১ম সাময়িক পরীক্ষা I answer multiple-choice questions with a
+  visible countdown, autosave badge and question navigator, so that I can flag doubtful questions,
+  return to them and submit once — without losing an answer to a dropped connection.
+scenarios_total: 19
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The paper opens on the current question with counter, timer and autosave state"
+    ui_route: /exams/:examId
+    endpoint: GET /api/exams/:id
+    expected: "200 — counter 'প্রশ্ন ২ / ৫০' (exam-counter), timer badge '৫৭:৩২' with role=timer (exam-timer), badge 'সংরক্ষিত হয়েছে' (exam-saved), progress bar at 4% (exam-bar), subject badge 'গণিত' (exam-subject), type 'বহুনির্বাচনী' (exam-qtype) and question '২৫ এর ২০% কত?' (exam-question)"
+  - id: AC-2
+    description: "Opening the paper starts a fresh attempt bound to the returned attemptId"
+    ui_route: /exams/:examId
+    endpoint: POST /api/exams/:id/attempts
+    expected: "200 — response attemptId binds the paper and the timer starts from the paper duration; feedback 'পরীক্ষা শুরু হয়েছে'; a second open of the same in-flight attempt resumes it instead of starting another"
+  - id: AC-3
+    description: "Exactly four options render and one selection is kept at a time"
+    ui_route: /exams/:examId
+    endpoint: none
+    expected: "Four pills (exam-option) read '৫', '৪', '৬', '১০'; tapping '৪' sets its aria-pressed=true and swaps the check-circle-2 icon in, while every other pill drops to aria-pressed=false with the circle icon"
+  - id: AC-4
+    description: "The navigator and prev/next controls move through the paper and keep answered state"
+    ui_route: /exams/:examId
+    endpoint: none
+    expected: "Chips '১'–'৫' plus '+৪৫' (exam-nav-q1…exam-nav-more) mark answered questions with is-on and the flagged question ২ with a flag icon; 'আগের' (exam-prev) and 'পরের প্রশ্ন' (exam-next) step the counter; 'ফ্ল্যাগ' (exam-flag) toggles aria-pressed and the matching chip's is-flag border"
+  - id: AC-5
+    description: "Submitting posts every answer and redirects to the result"
+    ui_route: /exams/:examId
+    endpoint: POST /api/exams/:id/attempts/:aid/submit
+    expected: "200 — payload carries the attempt answers; feedback 'পরীক্ষা জমা হয়েছে'; student lands on /exams/:examId/result with the returned score; 'জমা দাও' (exam-submit) is disabled while the request is in flight"
+
+boundary_cases:
+  - case: "Submit with unanswered questions still on the paper — a Bangla confirmation lists how many প্রশ্ন বাকি আছে and only 'হ্যাঁ, জমা দাও' fires the POST; 'ফিরে যাও' returns to the paper with answers intact"
+  - case: "Countdown reaches ০০:০০ — the timer badge shows '০০:০০', autosave flushes the current answer and the attempt is submitted automatically with no further taps accepted"
+  - case: "Student is on the last question (প্রশ্ন ৫০ / ৫০) — 'পরের প্রশ্ন' is inert and only 'জমা দাও' remains as the forward action"
+  - case: "Autosave fires while offline — a pending badge replaces 'সংরক্ষিত হয়েছে', the chosen option stays selected and the answer is retried before submit"
+error_scenarios:
+  - scenario: "401 session expired on POST /api/exams/:id/attempts — redirect to /auth/login for the 4-digit PIN; the paper cannot be opened with a dead attempt"
+  - scenario: "GET /api/exams/:id returns 500 — 'উত্তর জমা দেওয়া যায়নি। আবার চেষ্টা করো।' (st-error) with an 'আবার চেষ্টা করো' retry control; the timer does not start until the paper loads"
+  - scenario: "Network drops mid-paper — 'ইন্টারনেট সংযোগ নেই।' (st-edge) banner shows; option taps still register locally but 'জমা দাও' is blocked until reconnect"
+  - scenario: "Submit returns 409 because the attempt was already submitted elsewhere — 'পরীক্ষা আগেই জমা হয়েছে।' (st-err-msg) shows and the student is routed to /exams/:examId/result"
+  - scenario: "Paper is not entitled to this student (403) — 'এই পরীক্ষায় তুমি বসতে পারবে না।' (st-err-msg) shows with 'ফিরে যান' back to /exams; no attempt is created"
+state_transitions:
+  - state: loading
+    expected: "Skeleton bars 72% / 100% / 54% at 16px height under 'লোড হচ্ছে' (st-label); counter, timer and options are absent, so no answer can be tapped"
+  - state: empty
+    expected: "empty-state 'পরীক্ষা পাওয়া যায়নি।' (st-empty) with 'ফিরে যান' (sub-back) to /exams"
+  - state: error
+    expected: "inline 'উত্তর জমা দেওয়া যায়নি। আবার চেষ্টা করো।' (st-error) plus retry; the position in the paper is preserved"
+  - state: not-created
+    expected: "edge copy 'পরীক্ষা এখনো তৈরি হয়নি।' (st-edge) when the exam exists but its question set has not been generated"
+  - state: offline
+    expected: "edge copy 'ইন্টারনেট সংযোগ নেই।' (st-edge); the timer keeps running and answers are queued locally"
+
+fixture_refs:
+  - exam_paper
+  - identity.examAttemptId

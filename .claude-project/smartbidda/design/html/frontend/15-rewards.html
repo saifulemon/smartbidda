@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পুরস্কার — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+  .rw-cover { aspect-ratio: var(--aspect-video); border-radius: var(--radius-md); }
+
+  .rw-mark { display: grid; place-items: center; flex: 0 0 48px; width: 48px; height: 48px;
+    background: var(--c-primary-soft); color: var(--c-primary); border-radius: var(--radius-pill); }
+
+  /* streak — 7 day cells */
+  .rw-days-dlv { display: flex; gap: var(--space-xs); margin-top: var(--space-md); }
+  .rw-day-dlv { display: flex; flex-direction: column; align-items: center; gap: var(--space-xxs); flex: 1;
+    padding: var(--space-sm) 0; background: var(--c-lift); color: var(--c-body);
+    border-radius: var(--radius-md); }
+  .rw-day-dlv.is-done { background: var(--c-primary-soft); color: var(--c-primary); }
+
+  /* badge tiles in the rail */
+  .rw-badge-dlv { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs);
+    padding: var(--space-md) var(--space-sm); text-align: center; color: var(--c-ink); }
+  .rw-badge-dlv.is-locked { color: var(--c-muted); }
+  .rw-badge-mark-dlv { display: grid; place-items: center; width: 48px; height: 48px;
+    background: var(--c-lift); color: var(--c-primary); border-radius: var(--radius-pill); }
+  .rw-badge-dlv.is-locked .rw-badge-mark-dlv { color: var(--c-muted); }
+
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-rewards {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentLayout">
+
+  <header class="ksr-appbar" data-shell="topbar">
+    <span class="ksr-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="ksr-round" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+      </button>
+      <button class="ksr-round" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="ksr-main sf-rewards" data-shell="content">
+
+    <!-- balance — the glow hero -->
+    <section class="ksr-hero" data-component="kpi" aria-labelledby="rw-balance-label">
+      <div class="media rw-cover"><img class="pimg" src="https://picsum.photos/seed/sb-puraskar/960/480" alt="পুরস্কারের প্রতীকচিত্র" loading="lazy"></div>
+      <div class="row" style="margin-top:var(--space-lg)">
+        <span class="rw-mark" aria-hidden="true"><i data-lucide="star" class="icon-md"></i></span>
+        <span class="ksr-col ksr-grow">
+          <span class="t-caption" id="rw-balance-label" data-testid="rw-balance-label">মোট পয়েন্ট</span>
+          <span class="t-display-lg" data-testid="rw-balance">১,২৪০</span>
+        </span>
+        <a class="ksr-badge" href="14-leaderboard.html" data-testid="rw-rank">লিডারবোর্ডে ৪</a>
+      </div>
+    </section>
+
+    <!-- streak — 7 day cells -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="rw-streak-label">
+      <div class="row" style="justify-content:space-between">
+        <p class="t-body t-semibold" id="rw-streak-label" data-testid="rw-streak-label">ধারাবাহিকতা</p>
+        <span class="ksr-badge is-warn" data-testid="rw-streak-count"><i data-lucide="flame" class="icon-sm" aria-hidden="true"></i> ৫ দিন</span>
+      </div>
+      <div class="rw-days-dlv">
+        <div class="rw-day-dlv"><i data-lucide="minus" class="icon-sm" aria-hidden="true"></i><span class="t-caption" data-testid="rw-day">রবি</span></div>
+        <div class="rw-day-dlv is-done"><i data-lucide="check" class="icon-sm" aria-hidden="true"></i><span class="t-caption" data-testid="rw-day">সোম</span></div>
+        <div class="rw-day-dlv is-done"><i data-lucide="check" class="icon-sm" aria-hidden="true"></i><span class="t-caption" data-testid="rw-day">মঙ্গল</span></div>
+        <div class="rw-day-dlv is-done"><i data-lucide="check" class="icon-sm" aria-hidden="true"></i><span class="t-caption" data-testid="rw-day">বুধ</span></div>
+        <div class="rw-day-dlv is-done"><i data-lucide="check" class="icon-sm" aria-hidden="true"></i><span class="t-caption" data-testid="rw-day">বৃহঃ</span></div>
+        <div class="rw-day-dlv is-done"><i data-lucide="check" class="icon-sm" aria-hidden="true"></i><span class="t-caption" data-testid="rw-day">শুক্র</span></div>
+        <div class="rw-day-dlv"><i data-lucide="clock-4" class="icon-sm" aria-hidden="true"></i><span class="t-caption" data-testid="rw-day">আজ</span></div>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-md)" data-testid="rw-streak-next">আর ৫ দিন ধরলে পরের পদক আনলক হবে</p>
+    </section>
+
+    <!-- badges — a rail of medallions -->
+    <section class="ksr-section" aria-labelledby="rw-badges-label">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-hd" id="rw-badges-label" data-testid="rw-badges-label">পদক</h2>
+        <span class="t-caption" data-testid="rw-badges-count">৭ / ১২ অর্জিত</span>
+      </div>
+      <div class="ksr-rail" role="list">
+        <div class="ksr-tile rw-badge-dlv" role="listitem" data-testid="rw-badge">
+          <span class="rw-badge-mark-dlv"><i data-lucide="star" class="icon-md" aria-hidden="true"></i></span>
+          <span class="t-body-sm t-semibold" data-testid="rw-badge-name">প্রথম কুইজ</span>
+          <span class="ksr-badge is-ok" data-testid="rw-badge-status">অর্জিত</span>
+        </div>
+        <div class="ksr-tile rw-badge-dlv" role="listitem" data-testid="rw-badge">
+          <span class="rw-badge-mark-dlv"><i data-lucide="flame" class="icon-md" aria-hidden="true"></i></span>
+          <span class="t-body-sm t-semibold" data-testid="rw-badge-name">৫ দিন ধারা</span>
+          <span class="ksr-badge is-ok" data-testid="rw-badge-status">অর্জিত</span>
+        </div>
+        <div class="ksr-tile rw-badge-dlv" role="listitem" data-testid="rw-badge">
+          <span class="rw-badge-mark-dlv"><i data-lucide="target" class="icon-md" aria-hidden="true"></i></span>
+          <span class="t-body-sm t-semibold" data-testid="rw-badge-name">১০০ শত প্রাপ্ত</span>
+          <span class="ksr-badge is-ok" data-testid="rw-badge-status">অর্জিত</span>
+        </div>
+        <div class="ksr-tile rw-badge-dlv is-locked" role="listitem" data-testid="rw-badge">
+          <span class="rw-badge-mark-dlv"><i data-lucide="lock" class="icon-md" aria-hidden="true"></i></span>
+          <span class="t-body-sm t-semibold" data-testid="rw-badge-name">গণিত বিশারদ</span>
+          <span class="ksr-badge is-quiet" data-testid="rw-badge-status">৮ / ১০ অধ্যায়</span>
+        </div>
+        <div class="ksr-tile rw-badge-dlv is-locked" role="listitem" data-testid="rw-badge">
+          <span class="rw-badge-mark-dlv"><i data-lucide="lock" class="icon-md" aria-hidden="true"></i></span>
+          <span class="t-body-sm t-semibold" data-testid="rw-badge-name">১০ দিন ধারা</span>
+          <span class="ksr-badge is-quiet" data-testid="rw-badge-status">৫ / ১০ দিন</span>
+        </div>
+        <div class="ksr-tile rw-badge-dlv is-locked" role="listitem" data-testid="rw-badge">
+          <span class="rw-badge-mark-dlv"><i data-lucide="lock" class="icon-md" aria-hidden="true"></i></span>
+          <span class="t-body-sm t-semibold" data-testid="rw-badge-name">পরীক্ষার শীর্ষ</span>
+          <span class="ksr-badge is-quiet" data-testid="rw-badge-status">২০ শতাংশ বাকি</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- recent points — playlist rows -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="rw-recent-label">
+      <p class="t-body t-semibold" id="rw-recent-label" data-testid="rw-recent-label">সাম্প্রতিক পয়েন্ট</p>
+      <div class="ksr-list" style="margin-top:var(--space-md)">
+        <div class="ksr-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="clipboard-check" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="rw-recent-title">কুইজ: ভগ্নাংশ চিহ্নিতকরণ</span>
+            <span class="t-caption" data-testid="rw-recent-date">আজ · ১৭ অক্টোবর ২০২৬</span>
+          </span>
+          <span class="ksr-badge is-ok" data-testid="rw-recent-points">+২৫</span>
+        </div>
+        <div class="ksr-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="clipboard-check" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="rw-recent-title">কুইজ: সংখ্যারেখা</span>
+            <span class="t-caption" data-testid="rw-recent-date">১৬ অক্টোবর ২০২৬</span>
+          </span>
+          <span class="ksr-badge is-ok" data-testid="rw-recent-points">+২৫</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- daily quest — thumb-reach CTA -->
+    <section class="ksr-panel" data-component="card">
+      <div class="row" style="align-items:flex-start">
+        <i data-lucide="gift" class="icon-md ksr-mute" aria-hidden="true"></i>
+        <div class="ksr-grow">
+          <p class="t-body-sm t-semibold" data-testid="rw-quest-title">আজকের লক্ষ্য</p>
+          <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="rw-quest-body">একটি কুইজ দিলে +২৫ পয়েন্ট</p>
+        </div>
+      </div>
+      <a class="ksr-btn is-block" style="margin-top:var(--space-md)" href="05-subject-list.html" data-testid="rw-quest-cta">
+        <i data-lucide="play" class="icon-sm" aria-hidden="true"></i>
+        শুরু
+      </a>
+    </section>
+
+  </main>
+
+  <nav class="ksr-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="ksr-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="ksr-tab-ico" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="ksr-tab" href="05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="ksr-tab-ico" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="ksr-tab" href="11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="ksr-tab-ico" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="ksr-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="ksr-tab-ico" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="ksr-tab" href="15-rewards.html" data-testid="nav-rewards" aria-current="page">
+      <i data-lucide="award" class="ksr-tab-ico" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

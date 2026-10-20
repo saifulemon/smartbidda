@@ -1,0 +1,69 @@
+id: US-18-PARENT-DASHBOARD
+role: parent
+feature: "Parent dashboard — per-child mastery snapshot, screen-time KPI, subject scores, weak-topic count, forecast, alerts and the capped daily nudge"
+page: 18-parent-dashboard.html
+goal: |
+  As a parent on the parent dashboard I can switch between my children and see each one's mastery,
+  today's screen time, weak topics and forecast at a glance, and nudge my child to study, so that I
+  can act on gaps without waiting for a report card.
+scenarios_total: 18
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Dashboard loads the selected child's identity card and summary stats"
+    ui_route: /parent
+    endpoint: GET /api/parent/dashboard
+    expected: "200 — child switcher shows রাফিদ pressed and মাহিন plus 'যোগ করুন' (pd-switch-rafid, pd-switch-mahin, pd-switch-add); card 'রাফিদ হাসান' · 'চতুর্থ শ্রেণি · SB-FAM-20260902-1041' with status 'সক্রিয়'; stats পাঠ ১২, গড় ৭২%, ধারা ৫ দিন (pd-child-name, pd-stat-*)"
+  - id: AC-2
+    description: "Screen-time KPI shows today's usage against the limit with a control CTA"
+    ui_route: /parent
+    endpoint: GET /api/parent/dashboard
+    expected: "200 — 'আজকের স্ক্রিন টাইম' · '২৪ / ৬০ মিনিট', bar at 40% (pd-time-value, pd-time-bar), note 'আরও ৩৬ মিনিট বাকি · সীমা পরিবর্তন করা যাবে'; CTA 'স্ক্রিন টাইম নিয়ন্ত্রণ' navigates to /parent/screen-time"
+  - id: AC-3
+    description: "Subject scores, weak-topic card and forecast render for mastery, before/after remedial comparison and revision chapters"
+    ui_route: /parent
+    endpoint: GET /api/parent/dashboard
+    expected: "200 — rail 'বিষয়ভিত্তিক নম্বর' গণিত ৭৮%, বাংলা ৭২%, ইংরেজি ৫৮% (pd-score-*); weak card 'দুর্বলতা শনাক্ত' with badge '২ টি রিটেক বাকি' and 'দুর্বল বিষয়: ভগ্নাংশের তুলনা, বাক্য গঠন' (pd-weak-*); forecast 'প্রাক্কলন: মাঝারি' ৬৮% with revision list and CTA 'বিশ্লেষণ দেখুন' (pd-forecast-*)"
+  - id: AC-4
+    description: "Switch child — dashboard refetches and re-renders for the other child"
+    ui_route: /parent
+    endpoint: GET /api/parent/dashboard
+    expected: "200 — tapping মাহিন (pd-switch-mahin) sets aria-pressed=true on it; child card, stats, screen-time, scores and weak topics all re-render for মাহিন (দ্বিতীয় শ্রেণি); no rows from রাফিদ remain"
+  - id: AC-5
+    description: "Nudge the child to study"
+    ui_route: /parent
+    endpoint: POST /api/parent/nudge
+    expected: "200 — tapping 'মনে করিয়ে দাও' (pd-nudge) POSTs { child id, message }, an inline confirmation shows the nudge was sent and the daily remaining count decreases; the button re-arms for the next nudge under the cap"
+  - id: AC-6
+    description: "Alerts, quick actions, family quota and subscription number render"
+    ui_route: /parent
+    endpoint: none
+    expected: "'সাম্প্রতিক সতর্কতা' rows 'ইংরেজিতে দুর্বলতা' (মনোযোগ) and '১ম সাময়িকের ফলাফল' (পরীক্ষা) with appbar badge 3 (pd-alert-*, appbar-unread); quick actions অগ্রগতি দেখুন / বিশ্লেষণ / সাবস্ক্রিপশন route to their pages; footers 'পরিবারে যুক্ত ২ / ৩ সন্তান' and 'সাবস্ক্রিপশন নং SB-SUB-20260901-1041' (pd-quota, pd-subscription-no)"
+
+boundary_cases:
+  - case: "Nudge hard cap — the 5th nudge of the day succeeds; the 6th POST /api/parent/nudge returns 429 and shows 'আজ অনেকবার পাঠিয়ে দিয়েছেন।' with pd-nudge disabled until tomorrow"
+  - case: "Child with no activity yet — empty-state 'শুরু করতে সন্তানের পড়া শুরু করতে হবে।' (st-empty); score rail, weak card and forecast collapse while the child switcher stays usable"
+  - case: "Family quota full at ৩ / ৩ — 'যোগ করুন' (pd-switch-add) becomes inert and 'পরিবারে যুক্ত ৩ / ৩ সন্তান' renders; at the fixture's ২ / ৩ it stays tappable"
+
+error_scenarios:
+  - scenario: "401 parent session expired — 'প্যারেন্ট মোডে ঢুকতে হবে।' (st-err-msg) and the app redirects to /parent/login for PIN re-verification"
+  - scenario: "GET /api/parent/dashboard returns 500 — 'ড্যাশবোর্ড লোড হয়নি। আবার চেষ্টা করো।' with a retry; the appbar unread badge still renders from cache"
+  - scenario: "Network offline — 'ইন্টারনেট সংযোগ নেই।' (st-edge); child switch and 'মনে করিয়ে দাও' are inert until connectivity returns"
+  - scenario: "POST /api/parent/nudge over cap — 429 shows 'আজ অনেকবার পাঠিয়ে দিয়েছেন।' inline under the button instead of a generic error"
+
+state_transitions:
+  - state: loading
+    expected: "Three 16px skeleton lines (72% / 100% / 54%); child rail and nudge button not tappable until loaded"
+  - state: empty
+    expected: "empty-state 'শুরু করতে সন্তানের পড়া শুরু করতে হবে।' (st-empty)"
+  - state: error
+    expected: "Inline 'ড্যাশবোর্ড লোড হয়নি। আবার চেষ্টা করো।' (st-error)"
+  - state: offline
+    expected: "Edge 'ইন্টারনেট সংযোগ নেই।' (st-edge) banner across the top of the content"
+  - state: nudge-cap
+    expected: "Edge 'আজ অনেকবার পাঠিয়ে দিয়েছেন।' (st-edge) under a disabled pd-nudge for the rest of the day"
+
+fixture_refs:
+  - identity.parent
+  - identity.children
+  - parent_dashboard

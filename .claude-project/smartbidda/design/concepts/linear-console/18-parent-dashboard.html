@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>অভিভাবক ড্যাশবোর্ড — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-linear-console.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local selectors for 18-parent-dashboard only */
+  .kp-switch-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); }
+  .kp-switch { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .kp-child { display: flex; align-items: center; gap: var(--space-md); min-width: 0; }
+  .kp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-md); }
+  .kp-span { grid-column: 1 / -1; }
+  .kp-body { display: flex; flex-direction: column; gap: var(--space-md);
+    padding: 0 var(--space-lg) var(--space-lg); }
+  .kp-fore-rows { display: flex; flex-direction: column; }
+  .kp-nudge { display: flex; align-items: center; gap: var(--space-md); }
+  .kp-nudge .klc-btn { flex: 1 1 auto; }
+  .kp-nudge-btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+  .kp-nudge-count { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-xxs); flex: 0 0 auto; }
+  .kp-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .kp-actions .klc-btn { flex: 1 1 140px; }
+  .kp-track { flex: 1 1 auto; min-width: 0; }
+  .kp-w40 { width: 40%; }
+  .kp-w78 { width: 78%; }
+  .kp-w72 { width: 72%; }
+  .kp-w58 { width: 58%; }
+</style>
+</head>
+<body class="klc-page" data-app="frontend" data-layout="ParentLayout">
+
+  <header class="klc-appbar" data-shell="topbar">
+    <span class="klc-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="klc-appbar-spacer"></span>
+    <button class="klc-iconbtn" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+      <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+    </button>
+    <button class="klc-iconbtn" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+      <span class="avatar klc-avatar-sm" aria-hidden="true">র</span>
+    </button>
+  </header>
+
+  <main class="klc-main" data-shell="content">
+
+    <!-- সন্তান নির্বাচন -->
+    <div class="kp-switch-row">
+      <div class="kp-switch" role="group" aria-label="সন্তান নির্বাচন" data-testid="pd-switch">
+        <button class="klc-chip is-on" type="button" aria-pressed="true" data-testid="pd-switch-rafid">রাফিদ</button>
+        <button class="klc-chip" type="button" aria-pressed="false" data-testid="pd-switch-mahin">মাহিন</button>
+        <button class="klc-chip" type="button" data-testid="pd-switch-add">
+          <i data-lucide="plus" class="icon-sm" aria-hidden="true"></i>
+          যোগ করুন
+        </button>
+      </div>
+      <span class="t-caption" data-testid="pd-quota">পরিবারে যুক্ত ২ / ৩ সন্তান</span>
+    </div>
+
+    <!-- সন্তানের সারসংক্ষেপ -->
+    <section class="klc-panel" aria-labelledby="pd-child-name">
+      <div class="klc-panel-hd">
+        <span class="kp-child">
+          <span class="avatar avatar-lg" aria-hidden="true">র</span>
+          <span class="klc-col">
+            <span class="klc-hd" data-testid="pd-child-name">রাফিদ হাসান</span>
+            <span class="t-caption" data-testid="pd-child-class">চতুর্থ শ্রেণি · SB-FAM-20260902-1041</span>
+          </span>
+        </span>
+        <span class="klc-status" data-testid="pd-child-status"><span class="klc-dot is-ok" aria-hidden="true"></span>সক্রিয়</span>
+      </div>
+      <div class="klc-kpi">
+        <div class="klc-kpi-cell">
+          <span class="klc-eyebrow" data-testid="pd-stat-lessons-label">পাঠ</span>
+          <span class="klc-stat is-sm klc-num" data-testid="pd-stat-lessons">১২</span>
+        </div>
+        <div class="klc-kpi-cell">
+          <span class="klc-eyebrow" data-testid="pd-stat-score-label">গড়</span>
+          <span class="klc-stat is-sm klc-num" data-testid="pd-stat-score">৭২%</span>
+        </div>
+        <div class="klc-kpi-cell">
+          <span class="klc-eyebrow" data-testid="pd-stat-streak-label">ধারা</span>
+          <span class="klc-stat is-sm klc-num" data-testid="pd-stat-streak">৫ দিন</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="kp-grid">
+
+      <!-- স্ক্রিন টাইম -->
+      <section class="klc-panel" aria-labelledby="pd-time-label">
+        <div class="klc-panel-hd">
+          <span class="klc-col">
+            <span class="klc-hd" id="pd-time-label" data-testid="pd-time-label">আজকের স্ক্রিন টাইম</span>
+            <span class="t-caption" data-testid="pd-time-note">আরও ৩৬ মিনিট বাকি · সীমা পরিবর্তন করা যাবে</span>
+          </span>
+          <span class="klc-stat is-sm klc-num" data-testid="pd-time-value">২৪ / ৬০ মিনিট</span>
+        </div>
+        <div class="kp-body">
+          <span class="klc-track" role="progressbar" aria-valuenow="24" aria-valuemin="0" aria-valuemax="60" aria-label="আজকের স্ক্রিন টাইম">
+            <span class="kp-w40" data-testid="pd-time-bar"></span>
+          </span>
+          <a class="klc-btn is-quiet is-sm" href="../../base/frontend/21-screen-time.html" data-testid="pd-time-cta">
+            <i data-lucide="timer" class="icon-sm" aria-hidden="true"></i>
+            স্ক্রিন টাইম নিয়ন্ত্রণ
+          </a>
+        </div>
+      </section>
+
+      <!-- প্রাক্কলন -->
+      <section class="klc-panel" aria-labelledby="pd-forecast-label">
+        <div class="klc-panel-hd">
+          <span class="klc-col">
+            <span class="klc-hd" id="pd-forecast-label" data-testid="pd-forecast-label">প্রাক্কলন: মাঝারি</span>
+            <span class="klc-status"><span class="klc-dot is-warn" aria-hidden="true"></span>মনোযোগ প্রয়োজন</span>
+          </span>
+          <span class="klc-stat is-sm klc-num" data-testid="pd-forecast-badge">৬৮%</span>
+        </div>
+        <div class="klc-list kp-fore-rows">
+          <div class="klc-row">
+            <i data-lucide="book-open" class="icon-sm" aria-hidden="true"></i>
+            <span class="klc-col">
+              <span class="t-caption" data-testid="pd-forecast-revision">পুনরাবৃত্তির অধ্যায়: ভগ্নাংশের তুলনা, বাক্য গঠন</span>
+            </span>
+          </div>
+          <a class="klc-row is-link" href="../../base/frontend/20-parent-analytics.html" data-testid="pd-forecast-cta">
+            <i data-lucide="trending-up" class="icon-sm" aria-hidden="true"></i>
+            <span class="klc-col">
+              <span class="t-body-sm t-semibold">বিশ্লেষণ দেখুন</span>
+            </span>
+            <i data-lucide="chevron-right" class="icon-sm" aria-hidden="true"></i>
+          </a>
+        </div>
+      </section>
+
+      <!-- বিষয়ভিত্তিক নম্বর -->
+      <section class="klc-panel kp-span" aria-labelledby="pd-scores-label">
+        <div class="klc-panel-hd">
+          <h2 class="klc-hd" id="pd-scores-label" data-testid="pd-scores-label">বিষয়ভিত্তিক নম্বর</h2>
+          <a class="klc-sec-link" href="../../base/frontend/19-parent-progress.html" data-testid="pd-scores-all">সব দেখুন</a>
+        </div>
+        <div class="klc-list">
+          <a class="klc-row is-link" href="../../base/frontend/19-parent-progress.html" data-testid="pd-score-row">
+            <span class="t-body-sm t-semibold" data-testid="pd-score-subject">গণিত</span>
+            <span class="klc-track kp-track" aria-hidden="true"><span class="kp-w78"></span></span>
+            <span class="t-body-sm t-bold klc-num is-end" data-testid="pd-score-v">৭৮%</span>
+          </a>
+          <a class="klc-row is-link" href="../../base/frontend/19-parent-progress.html" data-testid="pd-score-row">
+            <span class="t-body-sm t-semibold" data-testid="pd-score-subject">বাংলা</span>
+            <span class="klc-track kp-track" aria-hidden="true"><span class="kp-w72"></span></span>
+            <span class="t-body-sm t-bold klc-num is-end" data-testid="pd-score-v">৭২%</span>
+          </a>
+          <a class="klc-row is-link" href="../../base/frontend/19-parent-progress.html" data-testid="pd-score-row">
+            <span class="t-body-sm t-semibold" data-testid="pd-score-subject">ইংরেজি</span>
+            <span class="klc-track kp-track" aria-hidden="true"><span class="kp-w58"></span></span>
+            <span class="t-body-sm t-bold klc-num is-end" data-testid="pd-score-v">৫৮%</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- সাম্প্রতিক সতর্কতা -->
+      <section class="klc-panel kp-span" aria-labelledby="pd-alerts-label" data-component="list">
+        <div class="klc-panel-hd">
+          <h2 class="klc-hd" id="pd-alerts-label" data-testid="pd-alerts-label">সাম্প্রতিক সতর্কতা</h2>
+          <a class="klc-sec-link" href="../../base/frontend/22-alerts.html" data-testid="pd-alerts-all">সব দেখুন</a>
+        </div>
+        <div class="klc-list">
+          <div class="klc-row">
+            <span class="klc-dot is-warn" aria-hidden="true"></span>
+            <span class="klc-col">
+              <span class="t-body-sm t-semibold" data-testid="pd-alert-title">ইংরেজিতে দুর্বলতা</span>
+              <span class="t-caption" data-testid="pd-alert-meta">আজ · রিমিডিয়াল পাঠ সুপারিশ করা হয়েছে</span>
+            </span>
+            <span class="t-caption klc-num is-end" data-testid="pd-alert-retake">২ টি রিটেক</span>
+          </div>
+          <div class="klc-row">
+            <span class="klc-dot is-ok" aria-hidden="true"></span>
+            <span class="klc-col">
+              <span class="t-body-sm t-semibold" data-testid="pd-alert-title">১ম সাময়িকের ফলাফল</span>
+              <span class="t-caption" data-testid="pd-alert-meta">১৬ অক্টোবর · প্রকাশিত হয়েছে</span>
+            </span>
+            <span class="t-caption" data-testid="pd-alert-badge">পরীক্ষা</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- মনে করিয়ে দাও -->
+    <div class="kp-nudge">
+      <button class="klc-btn is-quiet kp-nudge-btn" type="button" aria-disabled="true" disabled data-testid="pd-nudge">
+        <i data-lucide="bell-ring" class="icon-sm" aria-hidden="true"></i>
+        মনে করিয়ে দাও
+      </button>
+      <span class="kp-nudge-count">
+        <span class="t-body-sm t-bold klc-num" data-testid="pd-nudge-quota">৫ / ৫</span>
+        <span class="t-caption">আজ পাঠানো হয়েছে</span>
+      </span>
+    </div>
+
+    <!-- দ্রুত কাজ -->
+    <div class="kp-actions" role="group" aria-label="দ্রুত কাজ">
+      <a class="klc-btn is-quiet" href="../../base/frontend/19-parent-progress.html" data-testid="pd-action-progress">
+        <i data-lucide="trending-up" class="icon-sm" aria-hidden="true"></i>
+        অগ্রগতি দেখুন
+      </a>
+      <a class="klc-btn is-quiet" href="../../base/frontend/20-parent-analytics.html" data-testid="pd-action-analytics">
+        <i data-lucide="bar-chart-3" class="icon-sm" aria-hidden="true"></i>
+        বিশ্লেষণ
+      </a>
+      <a class="klc-btn is-quiet" href="../../base/frontend/23-subscription.html" data-testid="pd-action-subscription">
+        <i data-lucide="credit-card" class="icon-sm" aria-hidden="true"></i>
+        সাবস্ক্রিপশন
+      </a>
+    </div>
+
+  </main>
+
+  <nav class="klc-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="klc-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">হোম</span>
+    </a>
+    <a class="klc-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">পড়াশোনা</span>
+    </a>
+    <a class="klc-tab" href="08-quiz.html" data-testid="nav-quiz">
+      <i data-lucide="clipboard-check" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">কুইজ</span>
+    </a>
+    <a class="klc-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">লিডারবোর্ড</span>
+    </a>
+    <a class="klc-tab is-on" href="18-parent-dashboard.html" data-testid="nav-parent" aria-current="page">
+      <i data-lucide="users" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">অভিভাবক</span>
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

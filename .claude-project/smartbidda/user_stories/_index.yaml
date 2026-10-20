@@ -1,0 +1,367 @@
+generated: 2026-10-19T11:07:02Z
+source: per-route-page authorship (one yaml per route HTML under design/html/, recursive)
+project: smartbidda
+page_parity_generated: true
+html_count: 36
+yaml_count: 36
+stories:
+  - file: 01-dashboard.yaml
+    page: 01-dashboard.html
+    role: teacher
+    feature: "Admin dashboard — four KPI cards, weekly active-user chart, recent-activity feed and monthly summary composed from the students, subscriptions and audit-log ledgers"
+    scenarios_total: 15
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 3
+      error_scenarios: 3
+      state_transitions: 4
+  - file: 01-home.yaml
+    page: 01-home.html
+    role: student
+    feature: "Student home — greeting, today's lesson, daily task strip, subject rail, screen-time meter, parent nudge, points/rank and streak in one glance"
+    scenarios_total: 14
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 2
+      error_scenarios: 3
+      state_transitions: 4
+  - file: 02-login.yaml
+    page: 02-login.html
+    role: all
+    feature: "Student login — pick a linked child avatar, enter a 4-digit Bangla PIN on the keypad, auto-submit on the 4th digit, with wrong-PIN shake and lockout"
+    scenarios_total: 19
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 02-students.yaml
+    page: 02-students.html
+    role: admin
+    feature: "Student registry — searchable/sortable student table with status badges, suspend action, bulk-select bar, pagination and the create-student modal"
+    scenarios_total: 21
+    buckets:
+      acceptance_criteria: 7
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 6
+  - file: 03-parents.yaml
+    page: 03-parents.html
+    role: admin
+    feature: "Parent/family registry — family-code table with search, plan filter, sort, pagination, export and the shared create/edit modal"
+    scenarios_total: 19
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 03-signup.yaml
+    page: 03-signup.html
+    role: all
+    feature: "Parent signup — email, name, password plus separate ToS/Privacy/Child-Data consent checkboxes gating the create-account CTA"
+    scenarios_total: 16
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 3
+      error_scenarios: 3
+      state_transitions: 4
+  - file: 04-onboarding.yaml
+    page: 04-onboarding.html
+    role: parent
+    feature: "Child setup wizard — name + class, avatar picker, 4-digit PIN with confirm, step progress bar, and saved locale/voice preferences (max 3 children per family)"
+    scenarios_total: 19
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 04-teachers.yaml
+    page: 04-teachers.html
+    role: admin
+    feature: "Teacher registry — teacher table with role, content counts, status, last login, search/sort/pagination, role-change menu and the create-teacher modal"
+    scenarios_total: 18
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 3
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 05-curriculum.yaml
+    page: 05-curriculum.html
+    role: teacher
+    feature: "Curriculum tree — class→subject→chapter listing with sort order, topic tags, content counts and the create/edit/reorder/archive chapter modal"
+    scenarios_total: 20
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 6
+  - file: 05-subject-list.yaml
+    page: 05-subject-list.html
+    role: student
+    feature: "Subject list — NCTB subjects for the chosen class with lesson-completion counts and progress bars, class chips ১-৫, debounced URL-backed search and class/subject filter"
+    scenarios_total: 19
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 06-chapter-list.yaml
+    page: 06-chapter-list.html
+    role: student
+    feature: "Chapter list — subject hero with progress, continue CTA on the first available chapter, and per-chapter status (শেষ / রিটেক প্রয়োজন / শুরু হয়নি / লকড) derived from the quiz-pass chain"
+    scenarios_total: 19
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 06-content.yaml
+    page: 06-content.html
+    role: teacher
+    feature: "Content library — filterable lesson/remedial table with rights-attested uploads, publish/archive/delete row actions and the shared create/edit modal"
+    scenarios_total: 21
+    buckets:
+      acceptance_criteria: 7
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 6
+  - file: 07-lesson.yaml
+    page: 07-lesson.html
+    role: student
+    feature: "Lesson page — chapter detail with topic tags and lessons, started lesson session with video + in-browser PDF, Bangla voice/captions, watch-progress gate that unlocks the mandatory quiz"
+    scenarios_total: 21
+    buckets:
+      acceptance_criteria: 7
+      boundary_cases: 4
+      error_scenarios: 5
+      state_transitions: 5
+  - file: 07-questions.yaml
+    page: 07-questions.html
+    role: teacher
+    feature: "Admin question bank — list, filter, sort and page the NCTB question bank, then author, edit, duplicate and retire questions with topic tags and usage counts"
+    scenarios_total: 26
+    buckets:
+      acceptance_criteria: 9
+      boundary_cases: 6
+      error_scenarios: 5
+      state_transitions: 6
+  - file: 08-exams.yaml
+    page: 08-exams.html
+    role: teacher
+    feature: "Admin term-exam management — list, filter and sort term exams, create them with a date window and question set, edit only upcoming exams and close one early"
+    scenarios_total: 25
+    buckets:
+      acceptance_criteria: 7
+      boundary_cases: 6
+      error_scenarios: 5
+      state_transitions: 7
+  - file: 08-quiz.yaml
+    page: 08-quiz.html
+    role: student
+    feature: "Quiz session — illustrated question, four tappable fraction options, countdown timer, Bangla read-aloud and auto-advance on every answer"
+    scenarios_total: 21
+    buckets:
+      acceptance_criteria: 8
+      boundary_cases: 3
+      error_scenarios: 5
+      state_transitions: 5
+  - file: 09-quiz-result.yaml
+    page: 09-quiz-result.html
+    role: student
+    feature: "Quiz result — pass verdict with points burst, score against the pass mark, correct/wrong/time breakdown, weak-topic card and next-step actions"
+    scenarios_total: 22
+    buckets:
+      acceptance_criteria: 10
+      boundary_cases: 3
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 09-remedial.yaml
+    page: 09-remedial.html
+    role: teacher
+    feature: "Admin remedial queue — list, filter and sort AI/teacher remedial assignments and escalated retakes, then reassign content, complete, dismiss or escalate a case"
+    scenarios_total: 25
+    buckets:
+      acceptance_criteria: 9
+      boundary_cases: 6
+      error_scenarios: 5
+      state_transitions: 5
+  - file: 10-retake-class.yaml
+    page: 10-retake-class.html
+    role: student
+    feature: "Retake class — chapter refresher video and Bangla note, three-question understanding check, 2-retake cap and re-exam unlock"
+    scenarios_total: 16
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 3
+      error_scenarios: 3
+      state_transitions: 5
+  - file: 10-subscriptions.yaml
+    page: 10-subscriptions.html
+    role: admin
+    feature: "Admin subscriptions ledger — list, search and sort subscriptions and payments, inspect payment detail, reconcile mismatches and issue a compensating refund"
+    scenarios_total: 22
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 6
+      error_scenarios: 5
+      state_transitions: 5
+  - file: 11-exam-list.yaml
+    page: 11-exam-list.html
+    role: student
+    feature: "Term exam list — First Term, Half-Yearly and Annual exams with dates, pass line, last attempt and entitlement/start gating"
+    scenarios_total: 16
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 3
+      error_scenarios: 3
+      state_transitions: 5
+  - file: 11-notifications.yaml
+    page: 11-notifications.html
+    role: admin
+    feature: "Admin notification console — inspect the template/delivery log with channels, categories, suppression state and date range, then author Bangla/English templates and send a test"
+    scenarios_total: 24
+    buckets:
+      acceptance_criteria: 8
+      boundary_cases: 6
+      error_scenarios: 5
+      state_transitions: 5
+  - file: 12-audit.yaml
+    page: 12-audit.html
+    role: admin
+    feature: "Admin audit log — search, sort, paginate and date-range the read-only trail of every actor's change with secrets redacted"
+    scenarios_total: 21
+    buckets:
+      acceptance_criteria: 7
+      boundary_cases: 5
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 12-exam.yaml
+    page: 12-exam.html
+    role: student
+    feature: "Term exam paper — live countdown, autosaved answers, 50-question navigator, flagging and final submit"
+    scenarios_total: 19
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 4
+      error_scenarios: 5
+      state_transitions: 5
+  - file: 13-exam-result.yaml
+    page: 13-exam-result.html
+    role: student
+    feature: "Term exam result — verdict, score against the 60% pass line, class position, per-topic marks and weak-topic retake route"
+    scenarios_total: 17
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 4
+  - file: 14-leaderboard.yaml
+    page: 14-leaderboard.html
+    role: student
+    feature: "Leaderboard — class-filtered top-100 points ranking with a podium rail, pinned my-rank pill and parent-controlled opt-out"
+    scenarios_total: 17
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 3
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 15-rewards.yaml
+    page: 15-rewards.html
+    role: student
+    feature: "Rewards — read-only points balance, 7-day streak, badge collection, recent point ledger and daily quest CTA"
+    scenarios_total: 15
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 2
+      error_scenarios: 4
+      state_transitions: 4
+  - file: 16-settings.yaml
+    page: 16-settings.html
+    role: student
+    feature: "Student settings — app language (bn/en), font size, voice/sound mute and account rows, persisted via PATCH /api/student/settings"
+    scenarios_total: 13
+    buckets:
+      acceptance_criteria: 4
+      boundary_cases: 2
+      error_scenarios: 3
+      state_transitions: 4
+  - file: 17-parent-login.yaml
+    page: 17-parent-login.html
+    role: all
+    feature: "Parent PIN gate — 6-digit Bangla keypad verification into proxy mode, with wrong-PIN validation, 10-minute lockout and an email/password fallback"
+    scenarios_total: 15
+    buckets:
+      acceptance_criteria: 5
+      boundary_cases: 3
+      error_scenarios: 3
+      state_transitions: 4
+  - file: 18-parent-dashboard.yaml
+    page: 18-parent-dashboard.html
+    role: parent
+    feature: "Parent dashboard — per-child mastery snapshot, screen-time KPI, subject scores, weak-topic count, forecast, alerts and the capped daily nudge"
+    scenarios_total: 18
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 3
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 19-parent-progress.yaml
+    page: 19-parent-progress.html
+    role: parent
+    feature: "Child progress — overall mastery, subject tabs, chapter/topic scores with low-sample honesty, detected weaknesses, before/after remedial comparison and timeline"
+    scenarios_total: 17
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 3
+      error_scenarios: 4
+      state_transitions: 4
+  - file: 20-parent-analytics.yaml
+    page: 20-parent-analytics.html
+    role: parent
+    feature: "Parent analytics — exam-readiness forecast with confidence, the inputs behind it, revision suggestions, a daily quiz-score chart and the AI disclaimer"
+    scenarios_total: 16
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 3
+      error_scenarios: 3
+      state_transitions: 4
+  - file: 21-screen-time.yaml
+    page: 21-screen-time.html
+    role: parent
+    feature: "Parent screen-time control — today's usage meter, a ০–২৪০ minute daily-limit slider with presets, a seven-day usage chart and the server-side block state"
+    scenarios_total: 18
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 4
+  - file: 22-alerts.yaml
+    page: 22-alerts.html
+    role: parent
+    feature: "Parent alert inbox — seven-day message list with unread dots, result/weakness/payment filters, mark-all-read and incremental loading"
+    scenarios_total: 20
+    buckets:
+      acceptance_criteria: 6
+      boundary_cases: 4
+      error_scenarios: 5
+      state_transitions: 5
+  - file: 23-subscription.yaml
+    page: 23-subscription.html
+    role: parent
+    feature: "Subscription and payments — active plan cycle, what is included, monthly/annual plans, crash packs, Bangla payment methods, checkout and payment history"
+    scenarios_total: 20
+    buckets:
+      acceptance_criteria: 7
+      boundary_cases: 4
+      error_scenarios: 4
+      state_transitions: 5
+  - file: 24-parent-settings.yaml
+    page: 24-parent-settings.html
+    role: parent
+    feature: "Parent settings — account identity, linked children with add/remove, PIN change, per-child leaderboard visibility, alert categories, app language and logout"
+    scenarios_total: 23
+    buckets:
+      acceptance_criteria: 9
+      boundary_cases: 5
+      error_scenarios: 4
+      state_transitions: 5

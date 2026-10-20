@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>অভিভাবক ড্যাশবোর্ড — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-spotify-rails.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+
+  /* child switcher tiles */
+  .pd-kid { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center;
+    gap: var(--space-xs); padding: var(--space-md) var(--space-lg); cursor: pointer;
+    background: var(--c-surface); border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-lg); color: var(--c-ink); font: inherit; }
+  .pd-kid.is-on { border-color: var(--c-primary); box-shadow: inset 0 0 0 1px var(--c-primary); }
+
+  /* child summary stats */
+  .pd-stats { display: flex; gap: var(--space-sm); }
+  .pd-stat { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
+    align-items: center; gap: var(--space-xxs); text-align: center;
+    padding: var(--space-sm); background: var(--c-surface-soft); border-radius: var(--radius-md); }
+
+  /* subject score tiles */
+  .pd-score { flex: 0 0 clamp(120px, 38%, 168px); display: flex; flex-direction: column;
+    gap: var(--space-xs); padding: var(--space-md); text-align: center; text-decoration: none;
+    background: var(--c-surface-soft); border-radius: var(--radius-md); }
+  .pd-score-v { font-family: var(--font-display); font-size: var(--t-display-md-size);
+    font-weight: var(--t-weight-bold); color: var(--c-ink); }
+  .pd-score:hover .pd-score-v { color: var(--c-primary); }
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="ksr-appbar" data-shell="topbar">
+    <span class="ksr-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="ksr-round" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+      </button>
+      <button class="ksr-round" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="ksr-main" data-shell="content">
+
+    <!-- 1 · child switcher — avatar rail, active one outlined green -->
+    <section class="ksr-section" aria-labelledby="pd-switch-label">
+      <p class="ksr-eyebrow" id="pd-switch-label" data-testid="pd-switch-label">সন্তান নির্বাচন</p>
+      <div class="ksr-rail" role="group" aria-label="সন্তান নির্বাচন" data-testid="pd-switch">
+        <button class="pd-kid is-on" type="button" aria-pressed="true" data-testid="pd-switch-rafid">
+          <span class="avatar avatar-lg" aria-hidden="true">র</span>
+          <span class="t-body-sm t-semibold">রাফিদ</span>
+        </button>
+        <button class="pd-kid" type="button" aria-pressed="false" data-testid="pd-switch-mahin">
+          <span class="avatar avatar-lg" aria-hidden="true">ম</span>
+          <span class="t-body-sm t-semibold">মাহিন</span>
+        </button>
+        <button class="pd-kid" type="button" data-testid="pd-switch-add">
+          <span class="avatar avatar-lg" aria-hidden="true"><i data-lucide="plus" class="icon-sm"></i></span>
+          <span class="t-body-sm t-semibold">যোগ করুন</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- selected child -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="pd-child-name">
+      <div class="row">
+        <span class="avatar avatar-lg" aria-hidden="true">র</span>
+        <span class="ksr-col ksr-grow">
+          <span class="t-title-md" id="pd-child-name" data-testid="pd-child-name">রাফিদ হাসান</span>
+          <span class="t-caption" data-testid="pd-child-class">চতুর্থ শ্রেণি · <span class="t-code">SB-FAM-20260902-1041</span></span>
+        </span>
+        <span class="ksr-badge is-ok" data-testid="pd-child-status">সক্রিয়</span>
+      </div>
+      <div class="pd-stats" style="margin-top:var(--space-md)">
+        <div class="pd-stat">
+          <span class="t-caption" data-testid="pd-stat-lessons-label">পাঠ</span>
+          <span class="t-title-md" data-testid="pd-stat-lessons">১২</span>
+        </div>
+        <div class="pd-stat">
+          <span class="t-caption" data-testid="pd-stat-score-label">গড়</span>
+          <span class="t-title-md" data-testid="pd-stat-score">৭২%</span>
+        </div>
+        <div class="pd-stat">
+          <span class="t-caption" data-testid="pd-stat-streak-label">ধারা</span>
+          <span class="t-title-md" data-testid="pd-stat-streak">৫ দিন</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 · today's usage — KPI panel with a green track -->
+    <section class="ksr-panel" data-component="kpi" aria-labelledby="pd-time-label">
+      <div class="row">
+        <p class="t-body-sm t-semibold ksr-grow" id="pd-time-label" data-testid="pd-time-label">আজকের স্ক্রিন টাইম</p>
+        <p class="t-body-sm t-bold" data-testid="pd-time-value">২৪ / ৬০ মিনিট</p>
+      </div>
+      <div class="progress is-sm" style="margin-top:var(--space-sm)" role="progressbar"
+           aria-valuenow="24" aria-valuemin="0" aria-valuemax="60" aria-label="আজকের স্ক্রিন টাইম">
+        <div class="progress-fill" style="width:40%" data-testid="pd-time-bar"></div>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="pd-time-note">আরও ৩৬ মিনিট বাকি · সীমা পরিবর্তন করা যাবে</p>
+      <a class="ksr-btn is-quiet is-block" style="margin-top:var(--space-md)" href="../../base/frontend/21-screen-time.html" data-testid="pd-time-cta">
+        <i data-lucide="clock" class="icon-sm" aria-hidden="true"></i>
+        স্ক্রিন টাইম নিয়ন্ত্রণ
+      </a>
+    </section>
+
+    <!-- 3 · subject score rail -->
+    <section class="ksr-section" aria-labelledby="pd-scores-label">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-hd" id="pd-scores-label" data-testid="pd-scores-label">বিষয়ভিত্তিক নম্বর</h2>
+        <a class="ksr-sec-link" href="../../base/frontend/19-parent-progress.html" data-testid="pd-scores-all">সব দেখুন</a>
+      </div>
+      <div class="ksr-rail" role="list">
+        <a class="pd-score" role="listitem" href="../../base/frontend/19-parent-progress.html" data-testid="pd-score-ganit">
+          <span class="t-caption" data-testid="pd-score-subject">গণিত</span>
+          <span class="pd-score-v" data-testid="pd-score-v">৭৮%</span>
+        </a>
+        <a class="pd-score" role="listitem" href="../../base/frontend/19-parent-progress.html" data-testid="pd-score-bangla">
+          <span class="t-caption" data-testid="pd-score-subject">বাংলা</span>
+          <span class="pd-score-v" data-testid="pd-score-v">৭২%</span>
+        </a>
+        <a class="pd-score" role="listitem" href="../../base/frontend/19-parent-progress.html" data-testid="pd-score-english">
+          <span class="t-caption" data-testid="pd-score-subject">ইংরেজি</span>
+          <span class="pd-score-v" data-testid="pd-score-v">৫৮%</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 4 · weak-topic alert -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="pd-weak-label">
+      <div class="row">
+        <i data-lucide="target" class="icon-md ksr-mute" aria-hidden="true"></i>
+        <p class="t-body-sm t-semibold ksr-grow" id="pd-weak-label" data-testid="pd-weak-label">দুর্বলতা শনাক্ত</p>
+        <span class="ksr-badge is-warn" data-testid="pd-weak-badge">২ টি রিটেক বাকি</span>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="pd-weak-topics">দুর্বল বিষয়: ভগ্নাংশের তুলনা, বাক্য গঠন</p>
+    </section>
+
+    <!-- 5 · forecast -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="pd-forecast-label">
+      <div class="row">
+        <p class="t-body-sm t-semibold ksr-grow" id="pd-forecast-label" data-testid="pd-forecast-label">প্রাক্কলন: মাঝারি</p>
+        <span class="ksr-badge is-warn" data-testid="pd-forecast-badge">৬৮%</span>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="pd-forecast-revision">পুনরাবৃত্তির অধ্যায়: ভগ্নাংশের তুলনা, বাক্য গঠন</p>
+      <a class="ksr-btn is-quiet is-block" style="margin-top:var(--space-md)" href="../../base/frontend/20-parent-analytics.html" data-testid="pd-forecast-cta">
+        <i data-lucide="trending-up" class="icon-sm" aria-hidden="true"></i>
+        বিশ্লেষণ দেখুন
+      </a>
+    </section>
+
+    <!-- 6 · recent alerts -->
+    <section class="ksr-section" aria-labelledby="pd-alerts-label">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-hd" id="pd-alerts-label" data-testid="pd-alerts-label">সাম্প্রতিক সতর্কতা</h2>
+        <a class="ksr-sec-link" href="../../base/frontend/22-alerts.html" data-testid="pd-alerts-all">সব দেখুন</a>
+      </div>
+      <ul class="ksr-list" data-component="list">
+        <li class="ksr-item">
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="pd-alert-title">ইংরেজিতে দুর্বলতা</span>
+            <span class="t-caption" data-testid="pd-alert-meta">আজ · রিমিডিয়াল পাঠ সুপারিশ করা হয়েছে</span>
+          </span>
+          <span class="ksr-badge is-warn" data-testid="pd-alert-badge">মনোযোগ</span>
+        </li>
+        <li class="ksr-item">
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="pd-alert-title">১ম সাময়িকের ফলাফল</span>
+            <span class="t-caption" data-testid="pd-alert-meta">১৬ অক্টোবর · প্রকাশিত হয়েছে · <span class="t-code">SB-EXM-20261016-0487</span></span>
+          </span>
+          <span class="ksr-badge" data-testid="pd-alert-badge">পরীক্ষা</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 7 · quick actions -->
+    <div class="row" style="flex-wrap:wrap">
+      <a class="ksr-btn is-quiet ksr-grow" href="../../base/frontend/19-parent-progress.html" data-testid="pd-action-progress">
+        <i data-lucide="trending-up" class="icon-sm" aria-hidden="true"></i>
+        অগ্রগতি দেখুন
+      </a>
+      <a class="ksr-btn is-quiet ksr-grow" href="../../base/frontend/20-parent-analytics.html" data-testid="pd-action-analytics">
+        <i data-lucide="bar-chart-3" class="icon-sm" aria-hidden="true"></i>
+        বিশ্লেষণ
+      </a>
+      <a class="ksr-btn is-quiet ksr-grow" href="../../base/frontend/23-subscription.html" data-testid="pd-action-subscription">
+        <i data-lucide="wallet" class="icon-sm" aria-hidden="true"></i>
+        সাবস্ক্রিপশন
+      </a>
+    </div>
+
+    <!-- 8 · nudge — the thumb-reach primary action -->
+    <button class="ksr-btn is-block" type="button" data-component="cta" data-testid="pd-nudge">
+      <i data-lucide="bell-ring" class="icon-sm" aria-hidden="true"></i>
+      মনে করিয়ে দাও
+    </button>
+
+    <div class="ksr-col" style="gap:var(--space-xs)">
+      <p class="t-caption" data-testid="pd-quota">পরিবারে যুক্ত ২ / ৩ সন্তান</p>
+      <p class="t-caption" data-testid="pd-subscription-no">সাবস্ক্রিপশন নং <span class="t-code">SB-SUB-20260901-1041</span></p>
+    </div>
+
+  </main>
+
+  <nav class="ksr-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="ksr-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="ksr-tab-ico" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="ksr-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="ksr-tab-ico" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="ksr-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="ksr-tab-ico" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="ksr-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="ksr-tab-ico" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="ksr-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="ksr-tab-ico" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ভগ্নাংশ চিহ্নিতকরণ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+
+  /* notch / home-indicator clearance — this page's own layout class */
+  .les-body { padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom)); }
+
+  /* video frame — photo slot with the play affordance pinned bottom-left */
+  .les-video { position: relative; border-radius: var(--radius-lg); overflow: hidden;
+    background: var(--c-surface-soft); }
+  .les-play { position: absolute; inset: auto auto var(--space-md) var(--space-md);
+    display: flex; align-items: center; gap: var(--space-sm); }
+  .les-time { padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-pill);
+    background: var(--c-surface); color: var(--c-ink); }
+
+  /* PDF thumb tile */
+  .les-tile { display: inline-grid; place-items: center; flex-shrink: 0;
+    width: 44px; height: 44px; border-radius: var(--radius-md);
+    background: var(--c-lift); color: var(--c-primary); }
+
+  /* the quiz CTA is gated on ≥95% watched — 65% watched, so it renders disabled */
+  .les-off { opacity: 0.5; pointer-events: none; }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <!-- StudentSubLayout chrome: back + title appbar, NO tabbar -->
+  <header class="ksr-appbar" data-shell="topbar">
+    <a class="ksr-back" href="06-chapter-list.html" aria-label="ফিরে যান" data-testid="sub-back">
+      <i data-lucide="arrow-left" class="icon-sm" aria-hidden="true"></i>
+      ফিরে যান
+    </a>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title">ভগ্নাংশ চিহ্নিতকরণ</span>
+  </header>
+
+  <main class="ksr-main les-body" data-shell="content">
+
+    <!-- 1 · lesson video — real photo in a framed media slot -->
+    <div class="les-video" data-component="media">
+      <div class="media media-video" role="img" aria-label="ভিডিও প্লেয়ার এলাকা" data-testid="lesson-video-caption">
+        <img class="pimg" src="https://picsum.photos/seed/sb-bhagnansho-lesson/640/360"
+          alt="শিক্ষক ক্লাসে ভগ্নাংশ চিহ্ন বুঝিয়ে বলছেন" loading="lazy">
+      </div>
+      <div class="les-play">
+        <button class="ksr-play" type="button" aria-label="চালান" data-testid="lesson-video-play">
+          <i data-lucide="play" class="icon-sm" aria-hidden="true"></i>
+        </button>
+        <span class="t-caption les-time" data-testid="lesson-video-time">১২:৪০</span>
+      </div>
+    </div>
+
+    <!-- 2 · watch progress -->
+    <div class="progress" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"
+         aria-label="পাঠের অগ্রগতি">
+      <div class="progress-fill" style="width:65%" data-testid="lesson-progress"></div>
+    </div>
+    <p class="t-caption" data-testid="lesson-progress-label">ভিডিওর ৬৫% দেখা হয়েছে</p>
+
+    <!-- 3 · lesson header — subject · chapter · title · duration chips -->
+    <section class="ksr-section" aria-labelledby="lesson-title-text">
+      <div class="row">
+        <span class="ksr-badge" data-testid="lesson-subject">গণিত</span>
+        <span class="t-caption ksr-grow" data-testid="lesson-chapter">অধ্যায় ৪</span>
+      </div>
+      <p class="t-title-lg" id="lesson-title-text" data-testid="lesson-title-text">ভগ্নাংশ চিহ্নিতকরণ</p>
+      <p class="t-body-sm t-muted" data-testid="lesson-desc">
+        ভগ্নাংশ চিহ্ন দেখে কোনটি বড়, কোনটি ছোট সেটি চিনতে হবে।
+      </p>
+      <div class="row">
+        <span class="ksr-chip" data-testid="lesson-meta-duration"><i data-lucide="clock" class="icon-sm" aria-hidden="true"></i> ১২ মিনিট</span>
+        <span class="ksr-chip" data-testid="lesson-meta-class">চতুর্থ শ্রেণি</span>
+      </div>
+    </section>
+
+    <!-- 4 · voice instruction — Bangla VO toggle -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="lesson-voice-heading">
+      <div class="row">
+        <i data-lucide="volume-2" class="icon-md" aria-hidden="true"></i>
+        <span class="ksr-col ksr-grow">
+          <span class="ksr-item-t" id="lesson-voice-heading" data-testid="lesson-voice-title">ভয়েস নির্দেশনা</span>
+          <span class="t-caption" data-testid="lesson-voice-help">বাংলা কণ্ঠে পড়ে শোনাবে</span>
+        </span>
+        <button class="ksr-btn is-quiet" type="button" aria-pressed="true" data-testid="lesson-voice-toggle">
+          চালু আছে
+        </button>
+      </div>
+    </section>
+
+    <!-- 5 · lesson PDF -->
+    <section class="ksr-panel" data-component="media" aria-labelledby="lesson-pdf-title">
+      <div class="row">
+        <span class="les-tile" aria-hidden="true"><i data-lucide="file-text" class="icon-md"></i></span>
+        <span class="ksr-col ksr-grow">
+          <span class="ksr-item-t" id="lesson-pdf-title" data-testid="lesson-pdf-title">পাঠের পিডিএফ</span>
+          <span class="t-caption" data-testid="lesson-pdf-meta">২ পৃষ্ঠা · বাংলা</span>
+        </span>
+        <button class="ksr-btn is-quiet" type="button" data-testid="lesson-pdf-open">পড়ো</button>
+      </div>
+    </section>
+
+    <!-- PRD L1496: "কুইজ শুরু করো" — hidden until ≥95% watched, disabled before
+         threshold. 65% has been watched, so it renders in its disabled state
+         with the threshold spelled out. -->
+    <div class="ksr-stack">
+      <a class="ksr-btn is-block les-off" href="08-quiz.html" aria-disabled="true"
+         data-testid="lesson-cta-quiz">
+        কুইজ শুরু করো
+        <i data-lucide="arrow-right" class="icon-sm" aria-hidden="true"></i>
+      </a>
+      <p class="t-caption" data-testid="lesson-cta-hint">
+        ৯৫% দেখে ফেললেই কুইজ শুরু করা যাবে — এখন ৬৫% দেখা হয়েছে।
+      </p>
+    </div>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

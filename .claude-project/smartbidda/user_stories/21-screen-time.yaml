@@ -1,0 +1,68 @@
+id: US-21-SCREEN-TIME
+role: parent
+feature: "Parent screen-time control — today's usage meter, a ০–২৪০ minute daily-limit slider with presets, a seven-day usage chart and the server-side block state"
+page: 21-screen-time.html
+goal: |
+  As a parent on the স্ক্রিন টাইম page I can see how long রাফিদ or মাহিন has used today and set a
+  daily limit with the slider or a preset, so that the app stops at the limit the server enforces and
+  my child spends the remaining time on lessons instead of endless scrolling.
+scenarios_total: 18
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Today's usage hero shows minutes used, the daily limit, the remaining caption and an in-limit badge"
+    ui_route: /parent/screen-time
+    endpoint: GET /api/parent/students/:id/screen-time
+    expected: "200 — st-now-label 'আজ ব্যবহার হয়েছে', st-now-status 'সীমার মধ্যে', st-now-value '২৪ মিনিট', progressbar aria-valuenow=24 / aria-valuemax=60 with st-now-bar at 40%, st-now-note 'দৈনিক সীমা ৬০ মিনিট · আরও ৩৬ মিনিট বাকি'"
+  - id: AC-2
+    description: "The daily-limit control renders the current limit, the ০–২৪০ slider and its end labels"
+    ui_route: /parent/screen-time
+    endpoint: GET /api/parent/students/:id/screen-time
+    expected: "st-limit-label 'দৈনিক সীমা', st-limit-value '৬০ মিনিট'; st-limit-slider is type=range with min=0, max=240, step=15, value=60 and aria-label 'দৈনিক স্ক্রিন টাইম সীমা'; st-limit-min '০ মিনিট' and st-limit-max '২৪০ মিনিট'"
+  - id: AC-3
+    description: "Choosing a preset chip saves the new limit and recalculates the meter inline"
+    ui_route: /parent/screen-time
+    endpoint: PUT /api/parent/students/:id/screen-time
+    expected: "200 — tapping st-preset-30 / st-preset-60 / st-preset-90 sends {limitMin: 30|60|90}, moves is-on / aria-pressed to that chip, shows 'সীমা আপডেট হয়েছে', and updates st-limit-value plus the remaining caption without reloading"
+  - id: AC-4
+    description: "Dragging the slider to a ১৫-minute step saves that exact limit"
+    ui_route: /parent/screen-time
+    endpoint: PUT /api/parent/students/:id/screen-time
+    expected: "Releasing the thumb on ৭৫ sets st-limit-value '৭৫ মিনিট' and sends limitMin=75; the hero note becomes 'আজ সীমা ৭৫ মিনিট · আরও ৫১ মিনিট বাকি' while the used value stays ২৪ মিনিট"
+  - id: AC-5
+    description: "The last seven days render as a labelled usage chart ending with today"
+    ui_route: /parent/screen-time
+    endpoint: GET /api/parent/students/:id/screen-time
+    expected: "st-usage-label 'গত ৭ দিন'; bars ৩২ রবি, ৪৮ সোম, ৫৬ মঙ্গল, ৩৮ বুধ, ৬০ বৃহঃ, ৪৮ শুক্র, ২৪ আজ with st-week-value / st-week-day / st-week-bar per column and role=img aria-label 'গত ৭ দিনের স্ক্রিন টাইম'"
+  - id: AC-6
+    description: "The block-status card explains when the server will lock the child out"
+    ui_route: /parent/screen-time
+    endpoint: none
+    expected: "st-blocked-label 'ব্লকের অবস্থা' and st-blocked-note 'আজ সীমা ৬০ মিনিট — এখন ২৪ মিনিট হয়েছে, তাই ব্লক করা নেই। সীমা পূর্ণ হলে সার্ভার থেকেই বন্ধ হয়ে যায় এবং দেখায় — সন্তান এখন ব্লক করা আছে।'"
+
+boundary_cases:
+  - case: "Limit set to ০ ('কোনো সীমা নেই') — the hero badge becomes 'সীমা নেই', st-limit-value '০ মিনিট', the remaining caption is replaced by 'আজ কোনো সীমা নেই', and PUT still sends limitMin=0 rather than omitting the field"
+  - case: "Limit lowered below today's usage (১৫ while ২৪ is used) — the save still succeeds, the hero switches to st-now-status 'সীমা শেষ' with the block note, and the child is blocked on the next heartbeat"
+  - case: "Slider driven to its ends — ২৪০ is the maximum tappable value and ০ the minimum; keyboard arrows move in ১৫-minute steps and never land on ৯ or ২৪১"
+  - case: "One-time extension already used today — st-ext-cta '১৫ মিনিট বাড়াও' is disabled with st-ext-body '১৫ মিনিট · একবারই দেওয়া যাবে'; the page does not fire an extension write outside its declared screen-time contract"
+
+error_scenarios:
+  - scenario: "PUT /api/parent/students/:id/screen-time returns 400 — inline '০ থেকে ২৪০ মিনিটের মধ্যে দিন', the slider snaps back to the last saved limit, and the hero meter is not recalculated"
+  - scenario: "500 on the limit save — 'সীমা সেভ হয়নি। আবার চেষ্টা করো।' with a retry action; the previous limit remains active so the child is never left unlimited by a failed write"
+  - scenario: "Not the guardian (403) — 'পরিবর্তন করতে পারবেন না।' and the slider plus presets become read-only, while the usage chart stays visible"
+  - scenario: "Offline while saving — 'ইন্টারনেট সংযোগ নেই।' toast, the chip returns to its previous pressed state, and the save is queued for retry rather than silently discarded"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton bars (72% / 100% / 54%) replace the usage hero, slider and chart; slider and presets are not tappable"
+  - state: empty
+    expected: "No ledger for the child yet — hero shows '০ মিনিট' and 'আজ কোনো ব্যবহার নেই', the chart draws flat ০ bars, and the limit control still shows ৬০ মিনিট"
+  - state: error
+    expected: "st-error 'সীমা সেভ হয়নি। আবার চেষ্টা করো।' with a refresh-cw retry button above the block-status card"
+  - state: blocked
+    expected: "Used minutes at or above the limit — st-now-status 'সীমা শেষ', the hero bar clamps at 100%, and st-blocked-note appends 'সন্তান এখন ব্লক করা আছে।'"
+
+fixture_refs:
+  - screen_time
+  - identity.children
+  - identity.parent

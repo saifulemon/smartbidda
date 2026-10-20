@@ -1,0 +1,63 @@
+id: US-03-SIGNUP
+role: all
+feature: "Parent signup — email, name, password plus separate ToS/Privacy/Child-Data consent checkboxes gating the create-account CTA"
+page: 03-signup.html
+goal: |
+  As a parent on the signup page I register with my email, name and password and accept the three
+  required consents so that my family account is created and I am taken to child setup.
+scenarios_total: 16
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Signup form renders with all fields, labels and consent group"
+    ui_route: /auth/signup
+    endpoint: none
+    expected: "Title 'নতুন অ্যাকাউন্ট' (data-testid signup-title) and subtitle 'অভিভাবক হিসেবে নিবন্ধন করুন' (signup-subtitle) render; form signup-form shows email/name/password fields (signup-email-input, signup-name-input, signup-password-input) and the consents group 'সম্মতি' (signup-consents-group)"
+  - id: AC-2
+    description: "Password help text and field constraints are visible"
+    ui_route: /auth/signup
+    endpoint: none
+    expected: "Under the password field, help text 'কমপক্ষে ৮ অক্ষর, অন্তত একটি সংখ্যা' (data-testid signup-password-help) renders; email input uses autocomplete=email, password uses new-password"
+  - id: AC-3
+    description: "Submit CTA is disabled until every required consent is checked"
+    ui_route: /auth/signup
+    endpoint: none
+    expected: "'অ্যাকাউন্ট বানাও' (data-testid signup-submit) renders with aria-disabled=true and disabled styling (sg-off) while any of terms/privacy/childdata is unchecked; marketing checkbox is optional and marked 'ঐচ্ছিক' (signup-marketing-opt)"
+  - id: AC-4
+    description: "Complete valid signup creates the account and continues to onboarding"
+    ui_route: /auth/signup
+    endpoint: POST /api/auth/signup
+    expected: "With email, name, password and the three required consents filled, POST /api/auth/signup fires with email, password and terms/privacy/childData consent flags; 200 — session cookie set and the CTA routes to /onboarding (child setup)"
+  - id: AC-5
+    description: "Terms and privacy links open without losing form state"
+    ui_route: /auth/signup
+    endpoint: none
+    expected: "Tapping 'ব্যবহারের শর্তাবলী' (signup-terms-link) or 'গোপনীয়তা নীতি' (signup-privacy-link) opens the policy page; returning to /auth/signup keeps the typed email/name/password and checkbox states intact"
+  - id: AC-6
+    description: "Existing users can jump to login"
+    ui_route: /auth/signup
+    endpoint: none
+    expected: "'লগ ইন' link (data-testid signup-login-link) next to hint 'ইতিমধ্যে অ্যাকাউন্ট আছে?' navigates to /auth/login with no API call"
+
+boundary_cases:
+  - case: "Email longer than 254 characters — input rejects the excess and shows the max-length edge 'সর্বোচ্চ ২৫৪ অক্ষর'; submission is blocked"
+  - case: "Password under 8 characters or without a digit — inline validation fires with the help copy 'কমপক্ষে ৮ অক্ষর, অন্তত একটি সংখ্যা' and the CTA stays disabled"
+  - case: "Unchecking any required consent after it was enabled re-disables the CTA and surfaces consent error 'শর্তাবলী মেনে নিতে হবে · গোপনীয়তা নীতি মেনে নিতে হবে · শিশুর তথ্যের অনুমতি চাই' (data-testid signup-consent-error)"
+
+error_scenarios:
+  - scenario: "Duplicate email — server responds that the account exists; copy 'এই ইমেইল দিয়ে অ্যাকাউন্ট আছে। লগ ইন করো।' (state sheet kind 'দ্বিতীয়বার') appears and links to /auth/login"
+  - scenario: "Server failure on POST /api/auth/signup — 'অ্যাকাউন্ট বানানো যায়নি। আবার চেষ্টা করো।' (state sheet kind 'সার্ভার ত্রুটি') shown, form values preserved for retry"
+  - scenario: "Offline — 'ইন্টারনেট সংযোগ নেই।' (state sheet edge) shown, submit blocked until connectivity returns"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack (16px lines at 72%/100%/54%) while the auth shell hydrates; fields disabled until ready"
+  - state: empty
+    expected: "Pristine form: all inputs empty, no consent error shown yet, and 'অ্যাকাউন্ট বানাও' (signup-submit) stays aria-disabled=true with disabled styling"
+  - state: error
+    expected: "'অ্যাকাউন্ট বানানো যায়নি। আবার চেষ্টা করো।' (state sheet kind 'সার্ভার ত্রুটি') under the form; entered values retained"
+  - state: offline
+    expected: "Edge 'ইন্টারনেট সংযোগ নেই।' (data-testid st-edge) replaces the submit action"
+
+fixture_refs:
+  - auth_signup

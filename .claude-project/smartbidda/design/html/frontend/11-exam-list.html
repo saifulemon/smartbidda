@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পরীক্ষা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+  .ex-thumb { flex: 0 0 56px; width: 56px; aspect-ratio: var(--aspect-square); }
+  .ex-meta { flex-wrap: wrap; }
+
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-exam-list {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentLayout">
+
+  <header class="ksr-appbar" data-shell="topbar">
+    <span class="ksr-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="ksr-round" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+      </button>
+      <button class="ksr-round" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="ksr-main sf-exam-list" data-shell="content">
+
+    <section class="ksr-section" aria-labelledby="exams-heading">
+      <h1 class="t-display-lg" id="exams-heading" data-testid="exams-heading">পরীক্ষা</h1>
+      <p class="t-body-sm t-muted" data-testid="exams-sub">চতুর্থ শ্রেণি · ২০২৬ সাল</p>
+    </section>
+
+    <section class="ksr-section" aria-label="চলমান ও আসন্ন পরীক্ষা">
+
+      <!-- ১ম সাময়িক — completed -->
+      <article class="ksr-panel" data-component="card" data-testid="exams-item">
+        <div class="row">
+          <span class="media ex-thumb"><img class="pimg" src="https://picsum.photos/seed/sb-exam-somoyik/240/240" alt="১ম সাময়িক পরীক্ষার প্রতীকচিত্র" loading="lazy"></span>
+          <span class="ksr-col ksr-grow">
+            <span class="t-title-md" data-testid="exams-item-title">১ম সাময়িক পরীক্ষা</span>
+            <span class="t-caption" data-testid="exams-item-sub">গণিত · বাংলা · ইংরেজি</span>
+          </span>
+          <span class="ksr-badge is-ok" data-testid="exams-item-status">উত্তীর্ণ</span>
+        </div>
+        <div class="row ex-meta">
+          <span class="ksr-chip" data-testid="exams-item-date"><i data-lucide="calendar" class="icon-sm" aria-hidden="true"></i> ১০–১৬ অক্টোবর ২০২৬</span>
+          <span class="ksr-chip" data-testid="exams-item-pass">উত্তীর্ণ ৬০%</span>
+          <span class="ksr-chip" data-testid="exams-item-time">১ ঘণ্টা</span>
+        </div>
+        <div class="row">
+          <i data-lucide="check-circle-2" class="icon-sm ksr-ok" aria-hidden="true"></i>
+          <span class="t-body-sm ksr-grow" data-testid="exams-item-window">ফলাফল প্রকাশিত হয়েছে</span>
+          <span class="t-caption t-muted" data-testid="exams-item-score">· সর্বশেষ ফলাফল ৬৯%</span>
+        </div>
+        <div class="progress is-sm" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"
+             aria-label="পরীক্ষার অগ্রগতি">
+          <div class="progress-fill is-success" style="width:100%" data-testid="exams-item-progress"></div>
+        </div>
+        <p class="t-caption" data-testid="exams-item-progress-label">৩ / ৩ বিষয় দেওয়া হয়েছে</p>
+        <a class="ksr-btn is-block" href="13-exam-result.html" data-testid="exams-item-cta">
+          <i data-lucide="bar-chart-3" class="icon-sm" aria-hidden="true"></i>
+          ফলাফল দেখুন
+        </a>
+      </article>
+
+      <!-- অর্ধবার্ষিক — upcoming, start locked -->
+      <article class="ksr-panel" data-component="card" data-testid="exams-item">
+        <div class="row">
+          <span class="media ex-thumb"><img class="pimg" src="https://picsum.photos/seed/sb-exam-ordho/240/240" alt="অর্ধবার্ষিক পরীক্ষার প্রতীকচিত্র" loading="lazy"></span>
+          <span class="ksr-col ksr-grow">
+            <span class="t-title-md" data-testid="exams-item-title">অর্ধবার্ষিক পরীক্ষা</span>
+            <span class="t-caption" data-testid="exams-item-sub">সকল বিষয়</span>
+          </span>
+          <span class="ksr-badge is-quiet" data-testid="exams-item-status">আসন্ন</span>
+        </div>
+        <div class="row ex-meta">
+          <span class="ksr-chip" data-testid="exams-item-date"><i data-lucide="calendar" class="icon-sm" aria-hidden="true"></i> ১২–২০ ডিসেম্বর ২০২৬</span>
+          <span class="ksr-chip" data-testid="exams-item-pass">উত্তীর্ণ ৬০%</span>
+          <span class="ksr-chip" data-testid="exams-item-time">২ ঘণ্টা</span>
+        </div>
+        <div class="row">
+          <i data-lucide="calendar-clock" class="icon-sm ksr-mute" aria-hidden="true"></i>
+          <span class="t-body-sm ksr-grow" data-testid="exams-item-window">৫৬ দিন পরে শুরু</span>
+        </div>
+        <p class="t-caption" data-testid="exams-item-locked">শুরুর আগে প্রস্তুতির পাঠ দেখা যাবে</p>
+        <button class="ksr-btn is-quiet is-block" type="button" aria-disabled="true" style="opacity:.5;cursor:not-allowed" data-testid="exams-item-start">শুরু করো</button>
+      </article>
+
+      <!-- বার্ষিক — upcoming, start locked -->
+      <article class="ksr-panel" data-component="card" data-testid="exams-item">
+        <div class="row">
+          <span class="media ex-thumb"><img class="pimg" src="https://picsum.photos/seed/sb-exam-barshik/240/240" alt="বার্ষিক পরীক্ষার প্রতীকচিত্র" loading="lazy"></span>
+          <span class="ksr-col ksr-grow">
+            <span class="t-title-md" data-testid="exams-item-title">বার্ষিক পরীক্ষা</span>
+            <span class="t-caption" data-testid="exams-item-sub">সকল বিষয়</span>
+          </span>
+          <span class="ksr-badge is-quiet" data-testid="exams-item-status">আসন্ন</span>
+        </div>
+        <div class="row ex-meta">
+          <span class="ksr-chip" data-testid="exams-item-date"><i data-lucide="calendar" class="icon-sm" aria-hidden="true"></i> ০৫–১৫ মে ২০২৭</span>
+          <span class="ksr-chip" data-testid="exams-item-pass">উত্তীর্ণ ৬০%</span>
+          <span class="ksr-chip" data-testid="exams-item-time">২ ঘণ্টা</span>
+        </div>
+        <div class="row">
+          <i data-lucide="calendar-clock" class="icon-sm ksr-mute" aria-hidden="true"></i>
+          <span class="t-body-sm ksr-grow" data-testid="exams-item-window">২০০ দিন পরে শুরু</span>
+        </div>
+        <!-- PRD L1813: Start button is greyed when the exam is upcoming -->
+        <button class="ksr-btn is-quiet is-block" type="button" aria-disabled="true" style="opacity:.5;cursor:not-allowed" data-testid="exams-item-start">শুরু করো</button>
+      </article>
+
+    </section>
+
+  </main>
+
+  <nav class="ksr-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="ksr-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="ksr-tab-ico" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="ksr-tab" href="05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="ksr-tab-ico" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="ksr-tab" href="11-exam-list.html" data-testid="nav-exams" aria-current="page">
+      <i data-lucide="clipboard-check" class="ksr-tab-ico" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="ksr-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="ksr-tab-ico" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="ksr-tab" href="15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="ksr-tab-ico" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

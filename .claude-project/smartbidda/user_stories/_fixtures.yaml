@@ -1,0 +1,528 @@
+# _fixtures.yaml — hand-authored test fixtures for smartbidda D2-design
+# Consumed by the pipeline's test-browser and story-sweep phases.
+# All values are the single implied "now" = 2026-10-17 (Saturday) anchors
+# recorded in DESIGN_STATUS.md. Bangla digits + Bangla names throughout.
+# Keys are route names; values are records that must render without errors
+# and produce expected 2xx API responses (or stub-equivalents).
+
+---
+version: 2026-10-19
+
+# Login identities for the smoke/sweep harness. The backend seed creates these
+# accounts; passwords match backend/src/database/seed.ts. Student auth is the
+# PRD's PIN flow (childId + 4-digit PIN), not email+password.
+users:
+  admin:
+    email: admin@smartbidda.test
+    password: Admin1234
+    role: admin
+  teacher:
+    email: teacher@smartbidda.test
+    password: Teacher1234
+    role: teacher
+  parent:
+    email: abida.begum@example.com
+    password: Parent1234
+    role: parent
+    pin: '123456'
+  student:
+    childId: রাফিদ হাসান  # stable name ref — resolveStudent() falls back to name lookup, so this survives re-seeding (raw UUIDs regenerate every seed)
+    pin: '1234'
+    role: student
+    login_endpoint: /auth/student-login
+generatedBy: D2-design handoff (post BRAND_SPEC.md D1-1-brand)
+
+# ---------------------------------------------------------------------------
+# Shared identity anchors (used across several routes)
+# ---------------------------------------------------------------------------
+identity:
+  familyId: SB-FAM-20260902-1041
+  subscriptionId: SB-SUB-20260901-1041
+  paymentId: SB-PAY-20260925-4181
+  examAttemptId: SB-EXM-20261016-0487
+  parent:
+    name: আবিদা বেগম
+    shortName: আ
+    email: abida.begum@example.com
+    phone: '০১৭১২৩৪৫৬৭৮'
+  children:
+    - name: রাফিদ হাসান
+      shortName: র
+      class: ৪
+    - name: মাহিন হাসান
+      shortName: ম
+      class: ২
+
+# ---------------------------------------------------------------------------
+# 01-home — student home (StudentLayout)
+# ---------------------------------------------------------------------------
+student_home:
+  route: '/'
+  page: 01-home
+  displayName: রাফিদ
+  className: ৪ম শ্রেণি
+  streakDays: ৫ দিন
+  points: ১,২৪০
+  screenTime:
+    usedMin: ২৪ মিনিট
+    limitMin: ৬০ মিনিট
+    caption: ২৪/৬০ মিনিট · আরও ৩৬ মিনিট বাকি
+  subjects:
+    - name: গণিত
+      progress: ৬০%
+    - name: বাংলা
+      progress: ৪৫%
+    - name: বিজ্ঞান
+      progress: ৩০%
+    - name: ইংরেজি
+      progress: ৫৫%
+  pendingTasks:
+    - type: retake
+      title: ভগ্নাংশ চিহ্নিতকরণ
+    - type: exam
+      title: ১ম সাময়িক পরীক্ষা
+    - type: lesson
+      title: গাণিতিক ভগ্নাংশ
+
+# ---------------------------------------------------------------------------
+# 02-login / 03-signup — auth (AuthLayout)
+# ---------------------------------------------------------------------------
+auth_login:
+  route: '/auth/login'
+  page: 02-login
+  phoneHint: '০১৭xxxxxxxx'
+  pinLength: 4
+
+auth_signup:
+  route: '/auth/signup'
+  page: 03-signup
+  className: ৪ম শ্রেণি
+  pinLength: 4
+
+# ---------------------------------------------------------------------------
+# 04-onboarding — StudentSubLayout
+# ---------------------------------------------------------------------------
+onboarding:
+  route: '/onboarding'
+  page: 04-onboarding
+  stepsTotal: 4
+  displayName: রাফিদ
+  className: ৪ম শ্রেণি
+
+# ---------------------------------------------------------------------------
+# 05-subject-list — /learn (StudentLayout)
+# ---------------------------------------------------------------------------
+subject_list:
+  route: '/learn'
+  page: 05-subject-list
+  className: ৪ম শ্রেণি
+  subjects:
+    - name: গণিত
+      chapters: ১৮
+      done: ১১
+    - name: বাংলা
+      chapters: ১৬
+      done: ৭
+    - name: বিজ্ঞান
+      chapters: ১৪
+      done: ৪
+    - name: ইংরেজি
+      chapters: ১৫
+      done: ৮
+
+# ---------------------------------------------------------------------------
+# 06-chapter-list — /learn/:classNo/:subjectSlug (StudentSubLayout)
+# ---------------------------------------------------------------------------
+chapter_list:
+  route: '/learn/৪/ganit'
+  page: 06-chapter-list
+  subject: গণিত
+  className: ৪ম শ্রেণি
+  chaptersTotal: ১৮
+  chaptersDone: ১১
+  chapters:
+    - title: সংখ্যা বোধ
+      status: done
+    - title: গুণ ও ভাগ
+      status: done
+    - title: ভগ্নাংশ চিহ্নিতকরণ
+      status: current
+    - title: দশমিক সংখ্যা
+      status: locked
+    - title: জ্যামিতিক আকৃতি
+      status: locked
+
+# ---------------------------------------------------------------------------
+# 07-lesson — chapter page (StudentSubLayout)
+# ---------------------------------------------------------------------------
+lesson:
+  route: '/learn/৪/ganit/bhagnansho'
+  page: 07-lesson
+  subject: গণিত
+  chapter: ভগ্নাংশ চিহ্নিতকরণ
+  sectionIndex: ৩
+  sectionsTotal: ৫
+
+# ---------------------------------------------------------------------------
+# 08-quiz — /quiz/:sessionId (StudentSubLayout)
+# ---------------------------------------------------------------------------
+quiz_session:
+  route: '/quiz/quiz-20261018-001'
+  page: 08-quiz
+  sessionId: quiz-20261018-001
+  className: ৪ম শ্রেণি
+  subject: গণিত
+  chapter: ভগ্নাংশ চিহ্নিতকরণ
+  questionIndex: ৩
+  totalQuestions: ১০
+  timerSeconds: ৪৮
+  options:
+    - text: ১/৪
+    - text: ২/৪
+    - text: ৩/৪
+    - text: ৪/৪
+  correctOptionIndex: 2
+  voiceEnabled: true
+
+# ---------------------------------------------------------------------------
+# 09-quiz-result — /quiz/:sessionId/result (StudentSubLayout)
+# ---------------------------------------------------------------------------
+quiz_result:
+  route: '/quiz/quiz-20261018-001/result'
+  page: 09-quiz-result
+  score: ৭/১০
+  pointsEarned: ৭০
+  passThreshold: ৬০%
+  verdict: পাশ
+  weakTopics:
+    - ভগ্নাংশ চিহ্নিতকরণ
+
+# ---------------------------------------------------------------------------
+# 10-retake-class — /retake/:retakeId (StudentSubLayout)
+# ---------------------------------------------------------------------------
+retake_class:
+  route: '/retake/bhagnansho'
+  page: 10-retake-class
+  chapter: ভগ্নাংশ চিহ্নিতকরণ
+  subject: গণিত
+  reason: দুর্বল টপিক
+
+# ---------------------------------------------------------------------------
+# 11-exam-list — /exams (StudentLayout)
+# ---------------------------------------------------------------------------
+exam_list:
+  route: '/exams'
+  page: 11-exam-list
+  upcoming:
+    - title: ১ম সাময়িক পরীক্ষা
+      date: ২৪ অক্টোবর ২০২৬
+      subject: গণিত
+  lastAttempt:
+    attemptId: SB-EXM-20261016-0487
+    title: অনুশীলন পরীক্ষা
+    score: ৬৫%
+
+# ---------------------------------------------------------------------------
+# 12-exam — /exams/:examId (StudentSubLayout)
+# ---------------------------------------------------------------------------
+exam_paper:
+  route: '/exams/sb-exm-20261024-001'
+  page: 12-exam
+  title: ১ম সাময়িক পরীক্ষা
+  subject: গণিত
+  questionsTotal: ২৫
+  durationMin: ৪০
+
+# ---------------------------------------------------------------------------
+# 13-exam-result — /exams/:examId/result (StudentSubLayout)
+# ---------------------------------------------------------------------------
+exam_result:
+  route: '/exams/sb-exm-20261016-0487/result'
+  page: 13-exam-result
+  attemptId: SB-EXM-20261016-0487
+  score: ৬৫%
+  passThreshold: ৬০%
+  verdict: পাশ
+  weakTopics:
+    - দশমিক সংখ্যা
+
+# ---------------------------------------------------------------------------
+# 14-leaderboard — /leaderboard (StudentLayout)
+# ---------------------------------------------------------------------------
+leaderboard_snapshot:
+  route: '/leaderboard'
+  page: 14-leaderboard
+  scope: all-time
+  myRank: '#৪'
+  myPoints: ১,২৪০
+  displayName: রাফিদ
+  className: ৪ম শ্রেণি
+  top3:
+    - rank: '#১'
+      displayName: তানজিলা
+      className: ৫ম শ্রেণি
+      points: ৫,০০০
+    - rank: '#২'
+      displayName: সাদিয়া
+      className: ৪ম শ্রেণি
+      points: ৩,৮০০
+    - rank: '#৩'
+      displayName: ইমরান
+      className: ৪ম শ্রেণি
+      points: ২,৫০০
+  classNameFilter: ৪ম শ্রেণি
+
+# ---------------------------------------------------------------------------
+# 15-rewards — /rewards (StudentLayout)
+# ---------------------------------------------------------------------------
+rewards_earned:
+  route: '/rewards'
+  page: 15-rewards
+  points: ১,২৪০
+  badges:
+    - name: স্ট্রিক মাস্টার
+      earned: ৫ দিন
+      earnedAt: 2026-10-14
+      image: badge-streak-5
+    - name: প্রথম পরীক্ষা
+      earned: পাশ
+      earnedAt: 2026-10-16
+      image: badge-first-exam
+  locked:
+    - name: মাস শেষকারী
+      image: badge-month-full
+
+# ---------------------------------------------------------------------------
+# 16-settings — /settings (StudentSubLayout)
+# ---------------------------------------------------------------------------
+settings:
+  route: '/settings'
+  page: 16-settings
+  voiceEnabled: true
+  notificationsEnabled: true
+
+# ---------------------------------------------------------------------------
+# 17-parent-login — /parent/login (PinLayout)
+# ---------------------------------------------------------------------------
+parent_login:
+  route: '/parent/login'
+  page: 17-parent-login
+  pinLength: 4
+
+# ---------------------------------------------------------------------------
+# 18-parent-dashboard — /parent (ParentLayout)
+# ---------------------------------------------------------------------------
+parent_dashboard:
+  route: '/parent'
+  page: 18-parent-dashboard
+  activeChild: রাফিদ
+  children:
+    - name: রাফিদ
+      shortName: র
+      className: ৪ম শ্রেণি
+      streakDays: ৫ দিন
+      screenTime:
+        usedMin: ২৪ মিনিট
+        limitMin: ৬০ মিনিট
+      subjectScores:
+        - subject: গণিত
+          score: ৯/১২
+        - subject: বাংলা
+          score: ৬/৯
+        - subject: বিজ্ঞান
+          score: ৫/১৪
+        - subject: ইংরেজি
+          score: ৭/১৫
+    - name: মাহিন
+      shortName: ম
+      className: ২য় শ্রেণি
+      streakDays: ৩ দিন
+      screenTime:
+        usedMin: ১৫ মিনিট
+        limitMin: ৪৫ মিনিট
+      subjectScores:
+        - subject: গণিত
+          score: ৪/১০
+        - subject: বাংলা
+          score: ৫/৮
+  forecastBand: মাঝারি
+  unreadAlerts: ৩
+
+# ---------------------------------------------------------------------------
+# 19-parent-progress — /parent/progress (ParentLayout)
+# ---------------------------------------------------------------------------
+parent_progress:
+  route: '/parent/progress'
+  page: 19-parent-progress
+  activeChild: রাফিদ
+  subjectScores:
+    - subject: গণিত
+      score: ৯/১২
+    - subject: বাংলা
+      score: ৬/৯
+    - subject: বিজ্ঞান
+      score: ৫/১৪
+    - subject: ইংরেজি
+      score: ৭/১৫
+
+# ---------------------------------------------------------------------------
+# 20-parent-analytics — /parent/analytics (ParentLayout)
+# ---------------------------------------------------------------------------
+parent_analytics:
+  route: '/parent/analytics'
+  page: 20-parent-analytics
+  activeChild: রাফিদ
+  forecastBand: মাঝারি
+  alerts:
+    - type: weakness
+      title: দুর্বল টপিক
+      message: দশমিক সংখ্যায় রাফিদের দুর্বলতা দেখা যাচ্ছে
+    - type: nudge
+      title: মায়ের বার্তা
+      message: আজ ৩০ মিনিট বেশি স্ক্রিন টাইম হয়েছে
+
+# ---------------------------------------------------------------------------
+# 21-screen-time — /parent/screen-time (ParentLayout)
+# ---------------------------------------------------------------------------
+screen_time:
+  route: '/parent/screen-time'
+  page: 21-screen-time
+  activeChild: রাফিদ
+  usedMin: ২৪ মিনিট
+  limitMin: ৬০ মিনিট
+  caption: ২৪/৬০ মিনিট · আরও ৩৬ মিনিট বাকি
+
+# ---------------------------------------------------------------------------
+# 22-alerts — /parent/alerts (ParentLayout)
+# ---------------------------------------------------------------------------
+alerts:
+  route: '/parent/alerts'
+  page: 22-alerts
+  activeChild: রাফিদ
+  unread: ৩
+  items:
+    - type: weakness
+      title: দুর্বল টপিক
+      message: দশমিক সংখ্যায় রাফিদের দুর্বলতা দেখা যাচ্ছে
+    - type: nudge
+      title: মায়ের বার্তা
+      message: আজ ৩০ মিনিট বেশি স্ক্রিন টাইম হয়েছে
+
+# ---------------------------------------------------------------------------
+# 23-subscription — /parent/subscription (ParentLayout)
+# ---------------------------------------------------------------------------
+subscription:
+  route: '/parent/subscription'
+  page: 23-subscription
+  subscriptionId: SB-SUB-20260901-1041
+  paymentId: SB-PAY-20260925-4181
+  plan: ফ্যামিলি প্যাক
+  status: সক্রিয়
+  pricePlaceholder: ৳৪৯৯/মাস
+
+# ---------------------------------------------------------------------------
+# 24-parent-settings — /parent/settings (ParentLayout)
+# ---------------------------------------------------------------------------
+parent_settings:
+  route: '/parent/settings'
+  page: 24-parent-settings
+  activeChild: রাফিদ
+  voiceEnabled: false
+  notificationsEnabled: true
+  screenTimeEnforced: true
+
+# ---------------------------------------------------------------------------
+# Admin fixtures — 12 pages (AdminLayout), Bangla-first
+# ---------------------------------------------------------------------------
+admin_dashboard:
+  route: '/admin'
+  page: 01-dashboard
+  totalStudents: ১২৪
+  activeSubscriptions: ৯৮
+  pendingReviews: ৫
+
+admin_students_list:
+  route: '/admin/students'
+  page: 02-students
+  totalStudents: ১২৪
+  activeStudents: ১০৮
+  recentSignups: ৫
+  rows:
+    - familyId: SB-FAM-20260902-1041
+      name: রাফিদ হাসান
+      className: ৪ম শ্রেণি
+      parent: আবিদা বেগম
+      status: সক্রিয়
+      points: ১,২৪০
+    - familyId: SB-FAM-20260901-0392
+      name: মিমি রহমান
+      className: ৫ম শ্রেণি
+      parent: রশ্মি আহমেদ
+      status: স্থগিত
+      points: ৮৯০
+
+admin_parents_list:
+  route: '/admin/parents'
+  page: 03-parents
+  totalParents: ১২৪
+  rows:
+    - familyId: SB-FAM-20260902-1041
+      name: আবিদা বেগম
+      email: abida.begum@example.com
+      phone: '০১৭১২৩৪৫৬৭৮'
+      children: ২
+      status: সক্রিয়
+
+admin_teachers_list:
+  route: '/admin/teachers'
+  page: 04-teachers
+  totalTeachers: ২৪
+  rows:
+    - name: নাসরিন সুলতানা
+      role: শিক্ষক
+      subjects: গণিত, বিজ্ঞান
+      status: সক্রিয়
+
+admin_curriculum:
+  route: '/admin/curriculum'
+  page: 05-curriculum
+  className: ৪ম শ্রেণি
+  subjects: ৪
+  chapters: ৬৩
+
+admin_content:
+  route: '/admin/content'
+  page: 06-content
+  totalContent: ২৪০
+
+admin_questions:
+  route: '/admin/questions'
+  page: 07-questions
+  totalQuestions: ১,২৪০
+
+admin_exams:
+  route: '/admin/exams'
+  page: 08-exams
+  totalExams: ১২
+
+admin_remedial:
+  route: '/admin/remedial'
+  page: 09-remedial
+  totalAssignments: ১৮
+
+admin_subscriptions:
+  route: '/admin/subscriptions'
+  page: 10-subscriptions
+  subscriptionId: SB-SUB-20260901-1041
+  paymentId: SB-PAY-20260925-4181
+  totalActive: ৯৮
+
+admin_notifications:
+  route: '/admin/notifications'
+  page: 11-notifications
+  totalTemplates: ২৪
+
+admin_audit:
+  route: '/admin/audit'
+  page: 12-audit
+  totalEntries: ১,০৪২

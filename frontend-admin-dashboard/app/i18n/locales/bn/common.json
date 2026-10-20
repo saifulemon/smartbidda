@@ -1,0 +1,62 @@
+{
+  "actions": {
+    "loading": "loading",
+    "actions": "actions",
+    "selectedCount": "selectedCount",
+    "clear": "clear",
+    "editEntity": "editEntity",
+    "createEntity": "createEntity",
+    "cancel": "cancel",
+    "save": "save",
+    "create": "create",
+    "view": "view",
+    "edit": "edit",
+    "delete": "delete",
+    "rowMenu": "rowMenu"
+  },
+  "empty": {
+    "title": "title"
+  },
+  "pagination": {
+    "page": "page",
+    "prev": "prev",
+    "next": "next"
+  },
+  "brand": {
+    "name": "name"
+  },
+  "nav": {
+    "menu": "menu"
+  },
+  "errors": {
+    "unexpected": "unexpected"
+  },
+  "auth": {
+    "forgot_password": {
+      "title": "title",
+      "success": "success",
+      "email_label": "email_label",
+      "submit": "submit",
+      "back_to_login": "back_to_login"
+    },
+    "login": {
+      "title": "title",
+      "email_label": "email_label",
+      "password_label": "password_label",
+      "submit": "submit",
+      "signup_cta": "signup_cta",
+      "forgot_cta": "forgot_cta"
+    },
+    "signup": {
+      "title": "title",
+      "password_label": "password_label",
+      "submit": "submit",
+      "login_cta": "login_cta"
+    }
+  },
+  "notFound": {
+    "title": "title",
+    "description": "We couldn",
+    "backToHome": "Back to home"
+  }
+}

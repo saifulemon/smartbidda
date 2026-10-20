@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>অডিট লগ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+
+  .audit-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+</style>
+</head>
+<body data-app="frontend-admin-dashboard" data-layout="AdminLayout">
+  <div class="ksr-console">
+
+    <aside class="ksr-side" data-shell="sidebar" data-component="nav" aria-label="প্রধান নেভিগেশন">
+      <span class="ksr-wordmark" data-testid="admin-brand">স্মার্টবিদ্যা</span>
+      <a class="ksr-side-item" href="01-dashboard.html" data-testid="side-dashboard"><i data-lucide="layout-dashboard" class="icon-sm" aria-hidden="true"></i>ড্যাশবোর্ড</a>
+      <a class="ksr-side-item" href="02-students.html" data-testid="side-students"><i data-lucide="users" class="icon-sm" aria-hidden="true"></i>শিক্ষার্থী</a>
+      <a class="ksr-side-item" href="03-parents.html" data-testid="side-parents"><i data-lucide="users" class="icon-sm" aria-hidden="true"></i>অভিভাবক</a>
+      <a class="ksr-side-item" href="04-teachers.html" data-testid="side-teachers"><i data-lucide="graduation-cap" class="icon-sm" aria-hidden="true"></i>শিক্ষক</a>
+      <a class="ksr-side-item" href="05-curriculum.html" data-testid="side-curriculum"><i data-lucide="book-open" class="icon-sm" aria-hidden="true"></i>পাঠ্যক্রম</a>
+      <a class="ksr-side-item" href="06-content.html" data-testid="side-content"><i data-lucide="play" class="icon-sm" aria-hidden="true"></i>কনটেন্ট</a>
+      <a class="ksr-side-item" href="07-questions.html" data-testid="side-questions"><i data-lucide="circle-help" class="icon-sm" aria-hidden="true"></i>প্রশ্নব্যাংক</a>
+      <a class="ksr-side-item" href="08-exams.html" data-testid="side-exams"><i data-lucide="clipboard-check" class="icon-sm" aria-hidden="true"></i>পরীক্ষা</a>
+      <a class="ksr-side-item" href="09-remedial.html" data-testid="side-remedial"><i data-lucide="rotate-ccw" class="icon-sm" aria-hidden="true"></i>রিমিডিয়াল</a>
+      <a class="ksr-side-item" href="10-subscriptions.html" data-testid="side-subscriptions"><i data-lucide="wallet" class="icon-sm" aria-hidden="true"></i>সাবস্ক্রিপশন</a>
+      <a class="ksr-side-item" href="11-notifications.html" data-testid="side-notifications"><i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>নোটিফিকেশন</a>
+      <a class="ksr-side-item" href="12-audit.html" data-testid="side-audit" aria-current="page"><i data-lucide="scroll-text" class="icon-sm" aria-hidden="true"></i>অডিট লগ</a>
+    </aside>
+
+    <div class="app-main">
+
+    <div class="app-main">
+            <header class="ksr-appbar" data-shell="topbar">
+        <button class="ksr-navtoggle" type="button" data-testid="admin-nav-toggle" aria-label="মেনু" aria-expanded="false"
+          onclick="const s=this.closest('.ksr-console').querySelector('.ksr-side');const o=s.classList.toggle('is-open');this.setAttribute('aria-expanded',o)">
+          <i data-lucide="menu" class="icon-sm" aria-hidden="true"></i>
+        </button>
+        <h1 class="ksr-appbar-title" data-slot="title" data-testid="admin-title">অডিট লগ</h1>
+        <div class="row" style="margin-left:auto">
+          <button class="ksr-round" type="button" data-testid="admin-user-menu" aria-label="ব্যবহারকারী মেনু">
+            <span class="avatar" aria-hidden="true">প</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="ksr-main" data-shell="content">
+        <div class="card audit-safe" data-component="card" style="padding:0;overflow:hidden">
+          <div class="card-header listing-head" style="padding:var(--space-lg);margin:0">
+            <div>
+              <h2 class="ksr-hd" data-testid="audit-heading">অডিট লগ</h2>
+              <p class="t-caption" data-testid="audit-count">মোট ১৮,৪০২ টি ঘটনা</p>
+            </div>
+            <div class="listing-filters">
+              <button class="ksr-btn is-quiet" type="button" data-testid="audit-export">
+                <i data-lucide="download" class="icon-sm"></i>
+                রপ্তানি
+              </button>
+            </div>
+          </div>
+
+          <div class="listing-body">
+            <div class="search" data-component="search-bar">
+              <i data-lucide="search" class="icon-sm"></i>
+              <input class="input" type="search" placeholder="অ্যাক্টর বা এন্টিটি দিয়ে খুঁজুন" aria-label="অডিট লগ খুঁজুন" data-testid="audit-search">
+            </div>
+
+            <div class="listing-filters" style="margin-top:var(--space-md)">
+              <span class="t-caption" data-testid="audit-note">পড়ার অনুমতি মাত্র · কোনো সম্পাদনা সম্ভব নয় · পাসওয়ার্ড ও পিনের মান মুছে ফেলা হয়</span>
+            </div>
+          </div>
+
+
+          <div class="table-scroll">
+            <table class="table" data-listing="readonly" data-component="data-table" data-testid="audit-table">
+              <thead>
+                <tr>
+                  <th class="sortable" data-sort="createdAt" aria-sort="ascending">সময় <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="actorId">অ্যাক্টর <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="action">কাজ <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="entityType">এন্টিটি <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th>পরিবর্তন</th>
+                  <th>আইপি</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-testid="audit-row" data-id="au-1">
+                  <td>2026-10-16 21:03 <span class="t-caption">· গতকাল</span></td>
+                  <td><span class="t-code">system</span> · সিস্টেম</td>
+                  <td>update</td>
+                  <td><span class="t-code">subscription</span> <span class="t-caption">· SB-SUB-20260801-0177</span></td>
+                  <td>স্থিতি: সক্রিয় → মেয়াদোত্তীর্ণ</td>
+                  <td><span class="t-code">103.21.58.14</span></td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="audit-row-actions">
+                      <button class="row-actions-trigger" aria-label="পেমেন্ট ব্যর্থ SB-FAM-20260810-0177-এর কার্যক্রম" data-testid="audit-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="audit-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="audit-menu-copy">কপি করুন</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-testid="audit-row" data-id="au-2">
+                  <td>2026-10-17 11:05 <span class="t-caption">· আজ</span></td>
+                  <td>রুবেল মিয়া · শিক্ষক</td>
+                  <td>publish</td>
+                  <td><span class="t-code">learningContent</span> <span class="t-caption">· ভগ্নাংশ চিহ্নিতকরণ</span></td>
+                  <td>স্থিতি: খসড়া → প্রকাশিত</td>
+                  <td><span class="t-code">103.21.58.7</span></td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="audit-row-actions">
+                      <button class="row-actions-trigger" aria-label="কনটেন্ট প্রকাশ-এর কার্যক্রম" data-testid="audit-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="audit-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="audit-menu-copy">কপি করুন</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-testid="audit-row" data-id="au-3">
+                  <td>2026-10-16 20:41 <span class="t-caption">· গতকাল</span></td>
+                  <td>ফারহানা রহমান · অভিভাবক</td>
+                  <td>update</td>
+                  <td><span class="t-code">student</span> <span class="t-caption">· রাফিদ হাসান</span></td>
+                  <td>লিডারবোর্ডে প্রদর্শন: লুকানো → দেখানো</td>
+                  <td><span class="t-code">119.30.40.5</span></td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="audit-row-actions">
+                      <button class="row-actions-trigger" aria-label="লিডারবোর্ড প্রদর্শন বদল-এর কার্যক্রম" data-testid="audit-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="audit-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="audit-menu-copy">কপি করুন</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-testid="audit-row" data-id="au-4">
+                  <td>2026-10-15 09:12 <span class="t-caption">· ২ দিন আগে</span></td>
+                  <td>অ্যাডমিন ১ · অ্যাডমিন</td>
+                  <td>reset</td>
+                  <td><span class="t-code">user</span> <span class="t-caption">· SB-FAM-20260810-0177</span></td>
+                  <td><span class="t-code">parentPinHash</span>: •••••••• → ••••••••</td>
+                  <td><span class="t-code">103.21.58.2</span></td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="audit-row-actions">
+                      <button class="row-actions-trigger" aria-label="প্যারেন্ট পিন রিসেট-এর কার্যক্রম" data-testid="audit-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="audit-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="audit-menu-copy">কপি করুন</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="padding:var(--space-lg)">
+            <div class="pagination" data-testid="audit-pagination">
+              <button class="ksr-btn is-quiet" type="button" data-testid="audit-page-prev" disabled>
+                <i data-lucide="chevron-left" class="icon-sm"></i>
+                আগের
+              </button>
+              <span class="t-caption" data-testid="audit-page-info">পৃষ্ঠা ১ / ৭৩৭</span>
+              <button class="ksr-btn is-quiet" type="button" data-testid="audit-page-next">
+                পরের
+                <i data-lucide="chevron-right" class="icon-sm"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

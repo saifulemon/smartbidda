@@ -1,0 +1,174 @@
+project: smartbidda
+goal: "A Bangla-first, gamified, AI-assisted Learning Management System for Bangladeshi primary-school students (Class 1-5) and their parents, following the NCTB syllabus. Every completed module triggers a mandatory quiz; passing unlocks the next lesson, failing summons an AI-curated remedial Retake Class. Parents enter a separate PIN-gated Proxy Mode to watch real-time progress, cap screen time, and receive Bangla alerts. Core value: close the loop — detect gap, assign remedy, prove recovery, tell parent — with no teacher in the middle."
+tech_stack:
+  backend: nestjs
+  frontend: react
+  db: postgres
+  orm: typeorm
+  queue_cache: redis
+  testing: [vitest + rtl, jest, playwright]
+integrations:
+  - sslcommerz
+  - openai
+  - web-push
+  - transactional-email
+  - s3-compatible-object-storage
+environment:
+  platform: web
+  ui_language: bn
+  secondary_locale: en
+  datastore: postgres-only
+  mobile: later-phase
+features:
+  - name: auth
+    description: "Parent registration with email + password and ToS/Privacy/Child-Data consent checkboxes; child (student) profiles created by parents, max 3; two login paths — parent email/password and student 4-digit PIN + avatar (no password, no email); Parent Mode re-authentication with a 6-digit PIN even on a live session; account status enforcement (Pending/Active/Suspended/Withdrawn) and lockout after repeated failed PIN attempts."
+    entities: [users, families, students]
+    endpoints: [POST /api/auth/signup, POST /api/auth/student-login, GET /api/auth/children, POST /api/students, POST /api/parent/verify-pin]
+    screens: [/auth/login, /auth/signup, /onboarding, /]
+    workflow: auth
+    roles:
+      parent: [signup, link-children, verify-pin, manage-children]
+      student: [pin-login]
+  - name: localization-voice
+    description: "Bangla-default UI with an English toggle persisted per user and applied on next render; Bangla strings for every toast, validation message, empty state and confirm dialog per the §3.2 Locale rule; pre-authored Bangla voice-over assets keyed to navigation and state events, auto-played for students; Bengali webfonts (Hind Siliguri for UI, Kalpurush as PDF fallback); voice respects the student's mute setting and prefers-reduced-motion / prefers-reduced-data hints."
+    entities: [vo_assets]
+    endpoints: [GET /api/i18n/catalog, GET /api/i18n/voice]
+    screens: [/, /learn, /quiz, /onboarding]
+    workflow: localization
+    roles:
+      student: [toggle-locale, play-voice]
+      parent: [toggle-locale]
+  - name: curriculum
+    description: "NCTB curriculum tree (Class 1-5 → Subject → Chapter) maintained by teachers; chapter detail with topic tags, attached lessons and attached questions; Bangla video streaming with captions and in-browser PDF rendering (no download in MVP); search and filters by class and subject with debounced, URL-backed state; content visibility driven by status = PUBLISHED and the Family entitlement."
+    entities: [subjects, chapters, topic_tags, learning_content]
+    endpoints: [GET /api/curriculum/subjects, GET /api/curriculum/chapters, GET /api/curriculum/chapters/:slug, POST /api/lessons/:slug/start]
+    screens: [/learn, /learn/:classNo/:subjectSlug, /learn/:classNo/:subjectSlug/:chapterSlug]
+    workflow: curriculum
+    roles:
+      student: [browse-lessons, watch-lesson]
+      teacher: [author-content]
+  - name: quiz
+    description: "Mandatory auto-triggered quiz that fires the instant a lesson completes and is not dismissible; 10 questions per quiz, no timer for Class 1-2 and 60s per question for Class 3-5; 3 adaptive tiers (up after 2 consecutive correct, down after 2 consecutive wrong, window = last 10); per-topic answer capture that feeds weakness detection; pass unlocks the next lesson, fail keeps the lesson locked and opens the remedial path."
+    entities: [quiz_sessions, quiz_answers, questions]
+    endpoints: [POST /api/quizzes/sessions, POST /api/quizzes/sessions/:id/answers, POST /api/quizzes/sessions/:id/complete, GET /api/quizzes/sessions/:id]
+    screens: [/quiz/:sessionId, /quiz/:sessionId/result]
+    workflow: quiz
+    roles:
+      student: [take-quiz]
+  - name: exams
+    description: "Three standardized term exams per class (First Term, Half-Yearly, Annual) with a per-exam pass threshold defaulting to 60%; below threshold progression is blocked with status RETAKE_REQUIRED; weakness detection maps wrong answers to topic tags; mandatory Retake Classes are auto-assigned and their completion unlocks RETAKE_COMPLETED and the Re-exam; max 2 retakes per chapter, then escalation to the teacher; before/after recovery chart shown on re-exam completion."
+    entities: [term_exams, exam_attempts, exam_answers, remedial_assignments]
+    endpoints: [GET /api/exams, POST /api/exams/:id/attempts, POST /api/exams/:id/attempts/:aid/submit, GET /api/exams/:id/attempts/:aid, POST /api/remedial/:id/complete]
+    screens: [/exams, /exams/:examId, /exams/:examId/result, /retake/:retakeId]
+    workflow: exams
+    roles:
+      student: [take-exam, do-retake]
+      teacher: [review-escalations]
+  - name: gamification
+    description: "Points economy: lesson 10, quiz pass 25, perfect quiz +10, exam pass 100, retake pass 50; per-classNo national leaderboard top 100 with the viewing student's own row pinned below if outside the list; leaderboardOptOut defaults true so an opted-out child still earns points and sees their own rank but is absent from the public list; badges and virtual rewards on /rewards; rank recomputed on the points write and pushed over WebSocket."
+    entities: [points_ledger, badges, student_badges]
+    endpoints: [GET /api/leaderboard, GET /api/rewards]
+    screens: [/leaderboard, /rewards, /]
+    workflow: gamification
+    roles:
+      student: [earn-points, view-leaderboard]
+  - name: parent-proxy
+    description: "Parent's separate, calmer proxy surface: 6-digit PIN re-entry gate even on a live session; per-child daily screen-time limit with server-side heartbeat accounting and a hard block at the limit; one-time extension grant by the parent; progress view with topic-level mastery and the before/after remedial chart; predictive term-exam forecast with chapter-level revision hints; one-way nudge to the child's device, hard-capped at 5 per day."
+    entities: [screen_time_ledger, nudges, usage_heartbeat, students]
+    endpoints: [GET /api/parent/dashboard, GET /api/parent/students/:id/screen-time, PUT /api/parent/students/:id/screen-time, POST /api/parent/students/:id/screen-time/extend, POST /api/parent/nudge, POST /api/usage/heartbeat]
+    screens: [/parent, /parent/screen-time, /]
+    workflow: screen-time
+    roles:
+      parent: [enter-proxy-mode, set-screen-time, grant-extension, send-nudge]
+  - name: notifications
+    description: "Bangla (or English per parent locale) alert inbox for exam results, weakness detection, remedial completion and nudges; channels are in-app + email + web push, SMS absent; per-category toggles (exam results, weakness alerts, nudges, promotions); quiet hours 22:00-06:00 Asia/Dhaka exempting nothing; rate limits of parent alerts 20/day and nudges 5/day; unread count badge and mark-read on /parent/alerts."
+    entities: [notifications, notification_templates]
+    endpoints: ["GET /api/notifications", "POST /api/notifications/:id/read", "POST /api/notifications/read-all"]
+    screens: [/parent/alerts, /parent]
+    workflow: notifications
+    roles:
+      parent: [read-notification]
+  - name: payments
+    description: "Freemium billing at the Family unit: per-family monthly or annual subscription covering all subjects and every linked child, plus separately-priced time-boxed Crash Packs; MFS checkout via SSLCommerz aggregating bKash, Nagad and Upay, plus cards; all money stored as BIGINT poisha in BDT; entitlement resolved server-side on every premium content fetch, never a client flag; webhook-confirmed payment state where a page-return alone never grants entitlement; refunds produce a Refunded payment and revoke the entitlement."
+    entities: [subscriptions, payments, families]
+    endpoints: [POST /api/payments/intents, GET /api/payments/:id, POST /api/payments/webhook, GET /api/parent/subscription]
+    screens: [/parent/subscription, /learn, /exams]
+    workflow: billing
+    roles:
+      parent: [subscribe, pay]
+  - name: admin-content
+    description: "Teacher/admin authoring surface: curriculum tree editor (class → subject → chapter → topic tags); video (≤500MB) and PDF (≤25MB) upload with a mandatory rights attestation; content kind LESSON | REMEDIAL with topic tags, which is what the weakness detector selects from as remedial content; question bank with topic tags and 3 difficulty tiers; exam configuration (date window, question set, pass threshold); escalated retake review queue for 3rd failures."
+    entities: [learning_content, questions, term_exams, topic_tags, chapters, subjects]
+    endpoints: [POST /api/content, PATCH /api/content/:id]
+    screens: [/admin/content, /admin/curriculum, /admin/question-bank, /admin/term-exams]
+    workflow: content-authoring
+    roles:
+      teacher: [upload, publish, build-question-bank, configure-exams]
+      admin: [upload, publish, build-question-bank, configure-exams]
+  - name: ai-analytics
+    description: "Two AI surfaces that read the same per-topic answer history so they cannot disagree: weakness detection aggregates per-topic accuracy across quizzes and exams, flagging a topic as weak below threshold over a minimum sample of 5, and maps weak topics to tagged REMEDIAL content ordered by error weight; the parent-facing predictive forecast estimates the likely term-exam band and names chapters needing revision, with every forecast carrying its inputs. OpenAI is the primary path; a rule-based topic-scoring fallback is always built so an outage degrades rather than breaks the loop."
+    entities: [quiz_answers, exam_answers, remedial_assignments, learning_content]
+    endpoints: [GET /api/parent/students/:id/forecast]
+    screens: [/parent/analytics]
+    workflow: ai-analytics
+    roles:
+      parent: [view-forecast]
+  - name: settings
+    description: "Student settings: locale (bn/en) toggle and voice mute, persisted per user and applied on next render. Parent settings: linked-child management (create/edit/delete up to 3 children) and alert category toggles."
+    entities: [users, students]
+    endpoints: [PATCH /api/student/settings, PATCH /api/parent/settings]
+    screens: [/settings, /parent/settings]
+    workflow: settings
+    roles:
+      student: [update-settings]
+      parent: [update-settings]
+  - name: administration
+    description: "Dense utilitarian admin CMS shell (full browser width, tables scroll below 1024px, card view below 768px): student, parent and teacher/user management with soft delete and status changes; curriculum, content library, question bank and term exam oversight; remedial assignment queue; subscriptions and payments ledger; notification template CRUD; audit log. Every list page applies search, filters, column sorting, checkbox plus select-all, bulk actions, pagination 10/25/50/100, loading/empty/error states, action column, detail drawer, edit form, delete confirmation, CSV export and date-range selection."
+    entities: [users, families, students, subscriptions, payments, notification_templates, audit_logs, learning_content]
+    endpoints: [GET /api/admin/students, GET /api/admin/parents, GET /api/admin/subscriptions, GET /api/admin/payments, GET /api/admin/audit-logs]
+    screens: [/admin, /admin/students, /admin/parents, /admin/teachers, /admin/curriculum, /admin/content, /admin/question-bank, /admin/term-exams, /admin/remedial, /admin/subscriptions, /admin/notifications, /admin/audit]
+    workflow: administration
+    roles:
+      admin: [manage-users, manage-subscriptions, manage-payments, manage-templates, view-audit]
+      teacher: [author-content, review-remedial]
+derived_values:
+  - name: Screen-time remaining
+    formula: "limitMin − sum(screen_time_ledger.minutes WHERE date = today)"
+    endpoint: GET /api/parent/students/:id/screen-time
+    screens: [/, /parent, /parent/screen-time, /admin/students]
+  - name: Chapter unlock state
+    formula: "chapter.status derived from the preceding chapter's quiz_attempt.passed chain"
+    endpoint: GET /api/curriculum/chapters
+    screens: [/learn/:classNo/:subjectSlug, /, /parent/progress]
+  - name: Topic mastery / accuracy
+    formula: "count(correct WHERE topicTag = t) / count(answered WHERE topicTag = t) over the window"
+    endpoint: GET /api/parent/students/:id/progress
+    screens: [/parent/progress, /parent/analytics, /admin/remedial, /exams/:examId/result]
+  - name: Student points total
+    formula: "sum(points_ledger.points)"
+    endpoint: GET /api/leaderboard
+    screens: [/leaderboard, /rewards, /, /admin/students]
+  - name: National rank
+    formula: "rank() OVER (PARTITION BY classNo ORDER BY points DESC) over leaderboardOptOut = false"
+    endpoint: GET /api/leaderboard
+    screens: [/leaderboard, /, /rewards]
+  - name: Family entitlement state
+    formula: "subscription.status = ACTIVE AND entitlementUntil > now()"
+    endpoint: GET /api/parent/subscription
+    screens: [/parent/subscription, /learn, /exams, /admin/subscriptions]
+  - name: Unread notification count
+    formula: "count(notification WHERE read = false AND recipient = parent)"
+    endpoint: GET /api/notifications
+    screens: [/parent/alerts, /parent]
+  - name: Before/after recovery delta
+    formula: "reexam_attempt.score − first_failed_attempt.score"
+    endpoint: GET /api/exams/:id/attempts/:aid
+    screens: [/exams/:examId/result, /parent/progress, /parent/alerts]
+  - name: Weak-topic count
+    formula: "count(DISTINCT topicTag WHERE accuracy < threshold AND sample >= 5)"
+    endpoint: GET /api/parent/dashboard
+    screens: [/parent, /parent/analytics, /admin/remedial, /quiz/:sessionId/result]
+  - name: Lesson completion %
+    formula: "count(lesson_progress WHERE watchedPct >= 95) / count(lesson_progress)"
+    endpoint: GET /api/curriculum/subjects
+    screens: [/learn, /, /parent/progress, /admin/students]

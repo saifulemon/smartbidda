@@ -1,0 +1,417 @@
+schema_version: 1
+
+entities:
+  - name: users
+    table: users
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: family_code, type: string, display_id: true, nullable: true }
+      - { name: email, type: string, nullable: false }
+      - { name: password_hash, type: string, nullable: true }
+      - { name: role, type: string, nullable: false }
+      - { name: status, type: enum, enum: account_status, nullable: false }
+      - { name: email_verified, type: boolean, nullable: false, default: false }
+      - { name: failed_pin_attempts, type: integer, nullable: false, default: 0 }
+      - { name: lockout_until, type: timestamp, nullable: true }
+      - { name: created_at, type: timestamp, nullable: false }
+      - { name: updated_at, type: timestamp, nullable: false }
+    relations: []
+
+  - name: families
+    table: families
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: parent_user_id, type: uuid, fk: users.id, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: users, fk: parent_user_id, on_delete: cascade }
+
+  - name: students
+    table: students
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: family_id, type: uuid, fk: families.id, nullable: false }
+      - { name: name, type: string, nullable: false }
+      - { name: name_bn, type: string, nullable: true }
+      - { name: avatar, type: string, nullable: true }
+      - { name: pin_hash, type: string, nullable: false }
+      - { name: class_no, type: integer, nullable: false }
+      - { name: status, type: enum, enum: account_status, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: families, fk: family_id, on_delete: cascade }
+
+  - name: vo_assets
+    table: vo_assets
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: asset_key, type: string, nullable: false }
+      - { name: audio_url, type: string, nullable: false }
+      - { name: locale, type: string, nullable: false, default: bn }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations: []
+
+  - name: subjects
+    table: subjects
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: class_no, type: integer, nullable: false }
+      - { name: name, type: string, nullable: false }
+      - { name: name_bn, type: string, nullable: false }
+      - { name: slug, type: string, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations: []
+
+  - name: chapters
+    table: chapters
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: subject_id, type: uuid, fk: subjects.id, nullable: false }
+      - { name: class_no, type: integer, nullable: false }
+      - { name: name, type: string, nullable: false }
+      - { name: name_bn, type: string, nullable: false }
+      - { name: slug, type: string, nullable: false }
+      - { name: status, type: enum, enum: content_status, nullable: false }
+      - { name: sort_order, type: integer, nullable: false, default: 0 }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: subjects, fk: subject_id, on_delete: cascade }
+
+  - name: topic_tags
+    table: topic_tags
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: name, type: string, nullable: false }
+      - { name: name_bn, type: string, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations: []
+
+  - name: learning_content
+    table: learning_content
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: chapter_id, type: uuid, fk: chapters.id, nullable: false }
+      - { name: kind, type: enum, enum: content_kind, nullable: false }
+      - { name: title, type: string, nullable: false }
+      - { name: title_bn, type: string, nullable: false }
+      - { name: video_url, type: string, nullable: true }
+      - { name: pdf_url, type: string, nullable: true }
+      - { name: topic_tag_ids, type: json, nullable: true }
+      - { name: status, type: enum, enum: content_status, nullable: false }
+      - { name: rights_attestation, type: boolean, nullable: false, default: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: chapters, fk: chapter_id, on_delete: cascade }
+
+  - name: quiz_sessions
+    table: quiz_sessions
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: lesson_id, type: uuid, fk: learning_content.id, nullable: true }
+      - { name: status, type: enum, enum: quiz_status, nullable: false }
+      - { name: score, type: integer, nullable: true }
+      - { name: started_at, type: timestamp, nullable: false }
+      - { name: completed_at, type: timestamp, nullable: true }
+    relations:
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+      - { kind: belongs_to, target: learning_content, fk: lesson_id, on_delete: set_null }
+
+  - name: quiz_answers
+    table: quiz_answers
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: quiz_session_id, type: uuid, fk: quiz_sessions.id, nullable: false }
+      - { name: question_id, type: uuid, fk: questions.id, nullable: false }
+      - { name: topic_tag_id, type: uuid, fk: topic_tags.id, nullable: true }
+      - { name: is_correct, type: boolean, nullable: false }
+      - { name: answered_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: quiz_sessions, fk: quiz_session_id, on_delete: cascade }
+      - { kind: belongs_to, target: questions, fk: question_id, on_delete: cascade }
+      - { kind: belongs_to, target: topic_tags, fk: topic_tag_id, on_delete: set_null }
+
+  - name: questions
+    table: questions
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: chapter_id, type: uuid, fk: chapters.id, nullable: true }
+      - { name: topic_tag_id, type: uuid, fk: topic_tags.id, nullable: true }
+      - { name: text, type: text, nullable: false }
+      - { name: text_bn, type: text, nullable: false }
+      - { name: options, type: json, nullable: false }
+      - { name: correct_option, type: integer, nullable: false }
+      - { name: difficulty, type: enum, enum: difficulty, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: chapters, fk: chapter_id, on_delete: set_null }
+      - { kind: belongs_to, target: topic_tags, fk: topic_tag_id, on_delete: set_null }
+
+  - name: term_exams
+    table: term_exams
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: class_no, type: integer, nullable: false }
+      - { name: name, type: string, nullable: false }
+      - { name: name_bn, type: string, nullable: false }
+      - { name: pass_threshold, type: integer, nullable: false, default: 60 }
+      - { name: start_date, type: timestamp, nullable: false }
+      - { name: end_date, type: timestamp, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations: []
+
+  - name: exam_attempts
+    table: exam_attempts
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: attempt_no, type: string, display_id: true, nullable: true }
+      - { name: term_exam_id, type: uuid, fk: term_exams.id, nullable: false }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: status, type: enum, enum: attempt_status, nullable: false }
+      - { name: score, type: integer, nullable: true }
+      - { name: started_at, type: timestamp, nullable: false }
+      - { name: submitted_at, type: timestamp, nullable: true }
+    relations:
+      - { kind: belongs_to, target: term_exams, fk: term_exam_id, on_delete: cascade }
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+
+  - name: exam_answers
+    table: exam_answers
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: exam_attempt_id, type: uuid, fk: exam_attempts.id, nullable: false }
+      - { name: question_id, type: uuid, fk: questions.id, nullable: false }
+      - { name: is_correct, type: boolean, nullable: false }
+      - { name: answered_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: exam_attempts, fk: exam_attempt_id, on_delete: cascade }
+      - { kind: belongs_to, target: questions, fk: question_id, on_delete: cascade }
+
+  - name: remedial_assignments
+    table: remedial_assignments
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: case_no, type: string, display_id: true, nullable: true }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: chapter_id, type: uuid, fk: chapters.id, nullable: true }
+      - { name: status, type: enum, enum: remedial_status, nullable: false }
+      - { name: assigned_at, type: timestamp, nullable: false }
+      - { name: completed_at, type: timestamp, nullable: true }
+    relations:
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+      - { kind: belongs_to, target: chapters, fk: chapter_id, on_delete: set_null }
+
+  - name: points_ledger
+    table: points_ledger
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: points, type: integer, nullable: false }
+      - { name: reason, type: string, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+
+  - name: badges
+    table: badges
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: name, type: string, nullable: false }
+      - { name: name_bn, type: string, nullable: false }
+      - { name: criteria, type: text, nullable: true }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations: []
+
+  - name: student_badges
+    table: student_badges
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: badge_id, type: uuid, fk: badges.id, nullable: false }
+      - { name: earned_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+      - { kind: belongs_to, target: badges, fk: badge_id, on_delete: cascade }
+
+  - name: screen_time_ledger
+    table: screen_time_ledger
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: date, type: date, nullable: false }
+      - { name: minutes, type: integer, nullable: false, default: 0 }
+      - { name: limit_minutes, type: integer, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+
+  - name: nudges
+    table: nudges
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: message, type: text, nullable: false }
+      - { name: message_bn, type: text, nullable: false }
+      - { name: sent_at, type: timestamp, nullable: false }
+      - { name: read, type: boolean, nullable: false, default: false }
+    relations:
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+
+  - name: usage_heartbeat
+    table: usage_heartbeat
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: timestamp, type: timestamp, nullable: false }
+      - { name: minutes, type: integer, nullable: false, default: 0 }
+    relations:
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+
+  - name: notifications
+    table: notifications
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: recipient_user_id, type: uuid, fk: users.id, nullable: false }
+      - { name: category, type: enum, enum: notification_category, nullable: false }
+      - { name: title, type: string, nullable: false }
+      - { name: title_bn, type: string, nullable: false }
+      - { name: body, type: text, nullable: true }
+      - { name: body_bn, type: text, nullable: true }
+      - { name: read, type: boolean, nullable: false, default: false }
+      - { name: read_at, type: timestamp, nullable: true }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: users, fk: recipient_user_id, on_delete: cascade }
+
+  - name: notification_templates
+    table: notification_templates
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: category, type: enum, enum: notification_category, nullable: false }
+      - { name: template, type: text, nullable: false }
+      - { name: locale, type: string, nullable: false, default: bn }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations: []
+
+  - name: subscriptions
+    table: subscriptions
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: subscription_no, type: string, display_id: true, nullable: false }
+      - { name: family_id, type: uuid, fk: families.id, nullable: false }
+      - { name: plan, type: enum, enum: subscription_plan, nullable: false }
+      - { name: status, type: enum, enum: subscription_status, nullable: false }
+      - { name: entitlement_until, type: timestamp, nullable: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: families, fk: family_id, on_delete: cascade }
+
+  - name: payments
+    table: payments
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: payment_no, type: string, display_id: true, nullable: false }
+      - { name: subscription_id, type: uuid, fk: subscriptions.id, nullable: true }
+      - { name: intent_id, type: string, nullable: true }
+      - { name: amount_poisha, type: bigint, nullable: false }
+      - { name: currency, type: string, nullable: false, default: BDT }
+      - { name: status, type: enum, enum: payment_status, nullable: false }
+      - { name: webhook_confirmed, type: boolean, nullable: false, default: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: subscriptions, fk: subscription_id, on_delete: set_null }
+
+  - name: audit_logs
+    table: audit_logs
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: user_id, type: uuid, fk: users.id, nullable: true }
+      - { name: action, type: string, nullable: false }
+      - { name: entity_type, type: string, nullable: false }
+      - { name: entity_id, type: uuid, nullable: true }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: users, fk: user_id, on_delete: set_null }
+
+  - name: lesson_progress
+    table: lesson_progress
+    columns:
+      - { name: id, type: uuid, pk: true, nullable: false }
+      - { name: student_id, type: uuid, fk: students.id, nullable: false }
+      - { name: content_id, type: uuid, fk: learning_content.id, nullable: false }
+      - { name: watched_pct, type: integer, nullable: false, default: 0 }
+      - { name: completed, type: boolean, nullable: false, default: false }
+      - { name: created_at, type: timestamp, nullable: false }
+    relations:
+      - { kind: belongs_to, target: students, fk: student_id, on_delete: cascade }
+      - { kind: belongs_to, target: learning_content, fk: content_id, on_delete: cascade }
+
+enums:
+  - name: account_status
+    values:
+      - { dbVal: PENDING, name: PENDING, label: আপেক্ষিত }
+      - { dbVal: ACTIVE, name: ACTIVE, label: সক্রিয় }
+      - { dbVal: SUSPENDED, name: SUSPENDED, label: স্থগিত }
+      - { dbVal: WITHDRAWN, name: WITHDRAWN, label: প্রত্যাহৃত }
+  - name: content_status
+    values:
+      - { dbVal: DRAFT, name: DRAFT, label: খসড়া }
+      - { dbVal: PUBLISHED, name: PUBLISHED, label: প্রকাশিত }
+  - name: content_kind
+    values:
+      - { dbVal: LESSON, name: LESSON, label: পাঠ }
+      - { dbVal: REMEDIAL, name: REMEDIAL, label: পূরক }
+  - name: difficulty
+    values:
+      - { dbVal: EASY, name: EASY, label: সহজ }
+      - { dbVal: MEDIUM, name: MEDIUM, label: মধ্যম }
+      - { dbVal: HARD, name: HARD, label: কঠিন }
+  - name: quiz_status
+    values:
+      - { dbVal: IN_PROGRESS, name: IN_PROGRESS, label: চলমান }
+      - { dbVal: COMPLETED, name: COMPLETED, label: সম্পন্ন }
+  - name: attempt_status
+    values:
+      - { dbVal: IN_PROGRESS, name: IN_PROGRESS, label: চলমান }
+      - { dbVal: COMPLETED, name: COMPLETED, label: সম্পন্ন }
+      - { dbVal: PASSED, name: PASSED, label: उत्तীর্ণ }
+      - { dbVal: FAILED, name: FAILED, label: ব্যর্থ }
+  - name: remedial_status
+    values:
+      - { dbVal: ASSIGNED, name: ASSIGNED, label: নিযুক্ত }
+      - { dbVal: COMPLETED, name: COMPLETED, label: সম্পন্ন }
+      - { dbVal: ESCALATED, name: ESCALATED, label: উন্নীত }
+  - name: payment_status
+    values:
+      - { dbVal: PENDING, name: PENDING, label: আপেক্ষিত }
+      - { dbVal: COMPLETED, name: COMPLETED, label: সম্পন্ন }
+      - { dbVal: FAILED, name: FAILED, label: ব্যর্থ }
+      - { dbVal: REFUNDED, name: REFUNDED, label: ফেরত দেওয়া হয়েছে }
+  - name: subscription_status
+    values:
+      - { dbVal: ACTIVE, name: ACTIVE, label: সক্রিয় }
+      - { dbVal: EXPIRED, name: EXPIRED, label: মেয়াদোত্তীর্ণ }
+      - { dbVal: CANCELLED, name: CANCELLED, label: বাতিল }
+      - { dbVal: PAST_DUE, name: PAST_DUE, label: বকেয়া }
+  - name: subscription_plan
+    values:
+      - { dbVal: MONTHLY, name: MONTHLY, label: মাসিক }
+      - { dbVal: ANNUAL, name: ANNUAL, label: বার্ষিক }
+  - name: notification_category
+    values:
+      - { dbVal: EXAM_RESULT, name: EXAM_RESULT, label: পরীক্ষার ফলাফল }
+      - { dbVal: WEAKNESS_ALERT, name: WEAKNESS_ALERT, label: দুর্বলতা সতর্ক্তা }
+      - { dbVal: REMEDIAL_COMPLETED, name: REMEDIAL_COMPLETED, label: পূরক সম্পন্ন }
+      - { dbVal: NUDGE, name: NUDGE, label: নাজেরা }
+      - { dbVal: PROMOTION, name: PROMOTION, label: প্রচার }
+
+display_ids:
+  # PRD §3.6 — one row per entity a person can QUOTE on a support call, with the PRD's
+  # exact SB- prefix and date shape. The first generation dropped the prefix and omitted
+  # three of the five (family, exam attempt, remedial case), which is the difference
+  # between a parent reading "SB-PAY-20260925-4181" and a UUID.
+  - { entity: users, column: family_code, format: "SB-FAM-YYYYMMDD-NNNN" }
+  - { entity: subscriptions, column: subscription_no, format: "SB-SUB-YYYYMMNN-NNNN" }
+  - { entity: payments, column: payment_no, format: "SB-PAY-YYYYMMDD-NNNN" }
+  - { entity: exam_attempts, column: attempt_no, format: "SB-EXM-YYYYMMDD-NNNN" }
+  - { entity: remedial_assignments, column: case_no, format: "SB-CASE-YYYYMMNN-NNNN" }

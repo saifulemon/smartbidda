@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>স্ক্রিন টাইম — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .st-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .st-switch { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  .st-now { display: flex; flex-direction: column; gap: var(--space-md); }
+  .st-now-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); }
+  .st-limit { display: flex; flex-direction: column; gap: var(--space-md); }
+  .st-limit-values { display: flex; justify-content: space-between; }
+  .st-presets { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  .st-actions { display: flex; flex-direction: column; gap: var(--space-md); }
+    .st-blocked { display: flex; gap: var(--space-sm); align-items: flex-start; }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-md"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="st-wrap">
+
+        <div class="st-switch" role="group" aria-label="সন্তান নির্বাচন">
+          <button class="chip" aria-pressed="true" data-testid="st-switch-rafid">রাফিদ</button>
+          <button class="chip" aria-pressed="false" data-testid="st-switch-mahin">মাহিন</button>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="st-now-label">
+          <div class="st-now">
+            <div class="st-now-head">
+              <p class="t-body t-semibold" id="st-now-label" data-testid="st-now-label">আজ ব্যবহার হয়েছে</p>
+              <span class="badge badge-success" data-testid="st-now-status">সীমার মধ্যে</span>
+            </div>
+            <p class="t-display-lg" data-testid="st-now-value">২৪ মিনিট</p>
+            <div class="progress" role="progressbar" aria-valuenow="24" aria-valuemin="0" aria-valuemax="60"
+                 aria-label="আজকের ব্যবহার">
+              <div class="progress-fill" style="width:40%" data-testid="st-now-bar"></div>
+            </div>
+            <p class="t-caption" data-testid="st-now-note">দৈনিক সীমা ৬০ মিনিট · আরও ৩৬ মিনিট বাকি</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-limit-label">
+          <div class="st-limit">
+            <div class="row" style="justify-content:space-between">
+              <p class="t-body t-semibold" id="st-limit-label" data-testid="st-limit-label">দৈনিক সীমা</p>
+              <span class="t-body-sm t-bold" data-testid="st-limit-value">৬০ মিনিট</span>
+            </div>
+            <input class="input" type="range" min="0" max="240" step="15" value="60"
+                   aria-label="দৈনিক স্ক্রিন টাইম সীমা" data-testid="st-limit-slider">
+            <div class="st-limit-values">
+              <span class="t-caption" data-testid="st-limit-min">০ মিনিট</span>
+              <span class="t-caption" data-testid="st-limit-max">২৪০ মিনিট</span>
+            </div>
+            <div class="st-presets" role="group" aria-label="দ্রুত সীমা">
+              <button class="chip" data-testid="st-preset-30">৩০ মিনিট</button>
+              <button class="chip" aria-pressed="true" data-testid="st-preset-60">৬০ মিনিট</button>
+              <button class="chip" data-testid="st-preset-90">৯০ মিনিট</button>
+              <button class="chip" data-testid="st-preset-none">কোনো সীমা নেই</button>
+            </div>
+            <p class="t-caption" data-testid="st-limit-help">
+              সীমা শেষ হলে অ্যাপ বন্ধ হয়ে যাবে — শিক্ষার কনটেন্ট ছাড়া কিছুই দেখা যাবে না।
+            </p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-usage-label">
+          <p class="t-body t-semibold" id="st-usage-label" style="margin-bottom:var(--space-md)" data-testid="st-usage-label">গত ৭ দিন</p>
+          <div class="chart" data-component="chart" role="img"
+               aria-label="গত ৭ দিনের স্ক্রিন টাইম">
+            <div class="chart-col"><span class="t-caption" data-testid="st-week-value">৩২</span><span class="bar" style="height:45px" data-testid="st-week-bar"></span><span class="t-caption bar-label" data-testid="st-week-day">রবি</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="st-week-value">৪৮</span><span class="bar" style="height:67px" data-testid="st-week-bar"></span><span class="t-caption bar-label" data-testid="st-week-day">সোম</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="st-week-value">৫৬</span><span class="bar" style="height:78px" data-testid="st-week-bar"></span><span class="t-caption bar-label" data-testid="st-week-day">মঙ্গল</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="st-week-value">৩৮</span><span class="bar" style="height:53px" data-testid="st-week-bar"></span><span class="t-caption bar-label" data-testid="st-week-day">বুধ</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="st-week-value">৬০</span><span class="bar" style="height:84px" data-testid="st-week-bar"></span><span class="t-caption bar-label" data-testid="st-week-day">বৃহঃ</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="st-week-value">৪৮</span><span class="bar" style="height:67px" data-testid="st-week-bar"></span><span class="t-caption bar-label" data-testid="st-week-day">শুক্র</span></div>
+            <div class="chart-col"><span class="t-caption" data-testid="st-week-value">২৪</span><span class="bar" style="height:34px" data-testid="st-week-bar"></span><span class="t-caption bar-label" data-testid="st-week-day">আজ</span></div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-ext-label">
+          <div class="row">
+            <i data-lucide="clock-4" class="icon-md" aria-hidden="true"></i>
+            <div>
+              <p class="t-body t-semibold" id="st-ext-label" data-testid="st-ext-label">অতিরিক্ত সময় দিন</p>
+              <p class="t-caption" data-testid="st-ext-body">১৫ মিনিট · একবারই দেওয়া যাবে</p>
+            </div>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;margin-top:var(--space-md)" data-testid="st-ext-cta">
+            ১৫ মিনিট বাড়াও
+          </button>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-blocked-label">
+          <div class="st-blocked">
+            <i data-lucide="shield-check" class="icon-md" aria-hidden="true"></i>
+            <div>
+              <p class="t-body t-semibold" id="st-blocked-label" data-testid="st-blocked-label">ব্লকের অবস্থা</p>
+              <p class="t-caption" data-testid="st-blocked-note">
+                আজ সীমা ৬০ মিনিট — এখন ২৪ মিনিট হয়েছে, তাই ব্লক করা নেই। সীমা পূর্ণ হলে
+                সার্ভার থেকেই বন্ধ হয়ে যায় এবং দেখায় — সন্তান এখন ব্লক করা আছে।
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+  </main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="18-parent-dashboard.html" data-testid="nav-dashboard">
+      <i data-lucide="layout-dashboard" class="icon-md"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="tabbar-item" href="19-parent-progress.html" data-testid="nav-progress">
+      <i data-lucide="trending-up" class="icon-md"></i>
+      অগ্রগতি
+    </a>
+    <a class="tabbar-item" href="21-screen-time.html" data-testid="nav-screentime" aria-current="page">
+      <i data-lucide="timer" class="icon-md"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="tabbar-item" href="22-alerts.html" data-testid="nav-alerts">
+      <i data-lucide="bell" class="icon-md"></i>
+      অ্যালার্ট
+    </a>
+    <a class="tabbar-item" href="24-parent-settings.html" data-testid="nav-settings">
+      <i data-lucide="settings" class="icon-md"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

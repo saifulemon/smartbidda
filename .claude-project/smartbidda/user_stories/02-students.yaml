@@ -1,0 +1,76 @@
+id: US-02-STUDENTS
+role: admin
+feature: "Student registry — searchable/sortable student table with status badges, suspend action, bulk-select bar, pagination and the create-student modal"
+page: 02-students.html
+goal: |
+  As an admin on the students page I can search, filter, sort and page through every student, suspend a
+  misbehaving account from its row menu, bulk-select rows and open the create-student modal, so that I can
+  govern the whole student body from one table without leaving the console.
+scenarios_total: 21
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The student table loads the full ledger with parent, status, points, screen time and last-active columns"
+    ui_route: /admin/students
+    endpoint: GET /api/admin/students
+    expected: "200 — 'শিক্ষার্থী' heading (students-heading) with 'মোট ১,২৪৮ জন' (students-count); rows (students-row) render, e.g. রাফিদ হাসান · চতুর্থ · farhana@example.com · badge 'সক্রিয়' (students-status) · ১,২৪০ · '২৪ / ৬০ মিনিট' · '৫ মিনিট আগে'"
+  - id: AC-2
+    description: "Search by name or email narrows the table and updates the result count"
+    ui_route: /admin/students
+    endpoint: GET /api/admin/students
+    expected: "200 — typing in the search input (students-search, placeholder 'নাম বা ইমেইল দিয়ে খুঁজুন') filters rows and updates students-result-count to '১২৪ জন পাওয়া গেছে'; the active class chip 'চতুর্থ শ্রেণি' (students-filter-class) stays applied"
+  - id: AC-3
+    description: "Sortable headers toggle asc/desc and re-request the list with the sort parameter"
+    ui_route: /admin/students
+    endpoint: GET /api/admin/students
+    expected: "200 — tapping 'নাম' (students-sort-displayName) keeps aria-sort=ascending on first load and flips to descending on the second tap; শ্রেণি, অবস্থা, পয়েন্ট and সর্বশেষ সক্রিয়তা headers (students-sort-classNo / -status / -points / -lastActive) behave the same"
+  - id: AC-4
+    description: "The row-menu 'স্থগিত করুন' action suspends the student's account"
+    ui_route: /admin/students
+    endpoint: PATCH /api/admin/students/:id/status
+    expected: "200 — students-menu-suspend sends { status: SUSPENDED }; the row badge (students-status) flips from 'সক্রিয়' to 'স্থগিত' and the ledger count 'মোট ১,২৪৮ জন' is unchanged (soft suspension, not deletion)"
+  - id: AC-5
+    description: "Pagination shows the Bangla range and page indicator, with the previous button disabled on page 1"
+    ui_route: /admin/students
+    endpoint: GET /api/admin/students
+    expected: "200 — '১–৩ / ১২৪' (students-range), 'পৃষ্ঠা ১ / ৫' (students-page-info), students-page-prev disabled; tapping 'পরের' (students-page-next) loads rows 4–6 and updates both indicators"
+  - id: AC-6
+    description: "Create a student from the shared modal — fields validated client-side, save writes the row"
+    ui_route: /admin/students
+    endpoint: POST /api/admin/students
+    expected: "Tapping 'নতুন শিক্ষার্থী' (students-create) opens the shared modal (students-modal) titled 'নতুন শিক্ষার্থী' with 'অভিভাবকের ইমেইল' (help 'এই ইমেইলে অ্যাকাউন্ট খুঁজে পাওয়া যেতে হবে।'), 'নাম', 'শ্রেণি' (প্রথম…পঞ্চম), 'অ্যাভাটার' (অ্যাভাটার ১–৩) and '৪ সংখ্যার পিন' (maxlength 4, inputmode numeric); 'সংরক্ষণ' (students-modal-save) posts the form — 200 appends the row and shows 'শিক্ষার্থী তৈরি হয়েছে', while 'বাতিল' (students-modal-cancel) closes with no call"
+  - id: AC-7
+    description: "Row checkboxes raise the bulk bar with the selected count and confirm prompt"
+    ui_route: /admin/students
+    endpoint: none
+    expected: "Selecting 3 rows via students-row-select (or students-select-all) reveals the hidden bulk bar (students-bulk-bar) showing '৩ জন নির্বাচিত' (students-bulk-count) with 'সামূহিক কাজ' (students-bulk-action) and 'মুছুন' (students-bulk-delete); a destructive bulk action first confirms '৫০০ জনের অবস্থা বদলাবেন?' — no bulk status endpoint exists in the spine, so no write is issued"
+
+boundary_cases:
+  - case: "Whitespace-only search (' ' then spaces) — the query is trimmed to empty, the full ১,২৪৮-student list is restored and students-result-count disappears; no request with an all-space q is sent"
+  - case: "Search term with zero matches — table body renders the filter-empty edge 'ফিল্টারে মিল পাওয়া যায়নি' (st-edge) with '০ জন পাওয়া গেছে'; pagination collapses to 'পৃষ্ঠা ১ / ১' instead of showing stale totals"
+  - case: "PIN field abuse — non-digit characters are rejected by inputmode=numeric and more than 4 digits is clipped by maxlength=4; 'সংরক্ষণ' (students-modal-save) stays blocked while the help 'পিন কখনোই স্ক্রিনে দেখানো হয় না — অভিভাবকই শিক্ষার্থীকে বলবেন।' remains visible"
+  - case: "Concurrent edit — saving an edit after another admin changed the row surfaces the edge 'অন্য অ্যাডমিন এটি পরিবর্তন করেছেন। রিফ্রেশ করুন।' (st-edge) and the row keeps its server-side status badge"
+
+error_scenarios:
+  - scenario: "401 — expired admin session on GET /api/admin/students redirects to /auth/login with the intended /admin/students route preserved for post-login return"
+  - scenario: "403 — a teacher or student session that reaches /admin/students is bounced by the auth:admin guard; the students table and sidebar never render"
+  - scenario: "PATCH /api/admin/students/:id/status returns 409 (row changed by another admin) — the row menu shows 'অন্য অ্যাডমিন এটি পরিবর্তন করেছেন। রিফ্রেশ করুন।' and the badge is NOT flipped optimistically"
+  - scenario: "500 — GET /api/admin/students fails — the table body shows inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করুন' retry button; the header count falls back to a dash rather than a wrong number"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton lines at 72% / 100% / 54% replace the table body (st-label 'লোড হচ্ছে'); sort headers and pagination stay disabled until the first response"
+  - state: empty
+    expected: "No students at all — body shows 'কোনো শিক্ষার্থী নেই' (st-edge) and the 'নতুন শিক্ষার্থী' CTA (students-create) remains the primary action"
+  - state: error
+    expected: "Failed read shows the inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করুন' retry button; sort headers and row checkboxes stay inert until the retry succeeds"
+  - state: filtered-empty
+    expected: "Filter/search mismatch shows 'ফিল্টারে মিল পাওয়া যায়নি' (st-edge, st-label 'ফিল্টার') with the removable chip 'চতুর্থ শ্রেণি' still offering 'ফিল্টার সরান' (students-filter-class-remove)"
+  - state: bulk-confirm
+    expected: "Bulk bar (students-bulk-bar) with '৩ জন নির্বাচিত' → destructive tap prompts '৫০০ জনের অবস্থা বদলাবেন?' (st-edge, st-label 'বাল্ক অপারেশন') before any action"
+  - state: linked-record
+    expected: "Withdrawing a student who still has linked children blocks with 'আগে সংযুক্ত সন্তানগুলো সরান' (st-edge, st-label 'সংযুক্ত রেকর্ড'); the row badge stays unchanged"
+
+fixture_refs:
+  - admin_students_list
+  - identity.parent

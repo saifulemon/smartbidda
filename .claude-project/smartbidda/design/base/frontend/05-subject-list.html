@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পড়াশোনা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .subject-chips { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  .subject-toolbar { display: flex; gap: var(--space-sm); align-items: stretch; margin-top: var(--space-md); }
+  .subject-stack {
+    display: flex; flex-direction: column; gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — scoped to this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+  }
+  .subject-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); margin-bottom: var(--space-md); }
+  .subject-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+  @media (max-width: 600px) { .subject-grid { grid-template-columns: 1fr; } }
+  .subject-card-head { display: flex; align-items: center; gap: var(--space-sm); }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-md"></i>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+    <div class="subject-stack">
+
+      <div>
+        <h1 class="t-title-lg" data-testid="subject-title">পড়াশোনা</h1>
+        <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="subject-subtitle">রাফিদ · চতুর্থ শ্রেণি</p>
+      </div>
+
+      <!-- PRD /learn components: Class switcher (chips ১-৫) · Search input
+           (debounced 300ms) · Filter dropdown (Class / Subject) -->
+      <div class="subject-chips" role="group" aria-label="শ্রেণি" data-testid="subject-class-chips">
+        <button class="chip" type="button" aria-pressed="false" data-testid="subject-class-1">১</button>
+        <button class="chip" type="button" aria-pressed="false" data-testid="subject-class-2">২</button>
+        <button class="chip" type="button" aria-pressed="false" data-testid="subject-class-3">৩</button>
+        <button class="chip" type="button" aria-pressed="true" data-testid="subject-class-4">৪</button>
+        <button class="chip" type="button" aria-pressed="false" data-testid="subject-class-5">৫</button>
+      </div>
+
+      <div class="subject-toolbar">
+        <div class="search" data-component="search-bar" style="flex:1;min-width:0">
+          <i data-lucide="search" class="icon-sm" aria-hidden="true"></i>
+          <input class="input" type="search" placeholder="বিষয় খুঁজুন" aria-label="বিষয় খুঁজুন"
+            data-testid="subject-search" minlength="2" maxlength="60">
+        </div>
+        <select class="select" style="max-width:150px" aria-label="ক্লাস বা বিষয় দিয়ে ছাঁকুন" data-testid="subject-filter">
+          <option selected>ক্লাস / বিষয়</option>
+          <optgroup label="শ্রেণি">
+            <option>প্রথম শ্রেণি</option>
+            <option>দ্বিতীয় শ্রেণি</option>
+            <option>তৃতীয় শ্রেণি</option>
+            <option>চতুর্থ শ্রেণি</option>
+            <option>পঞ্চম শ্রেণি</option>
+          </optgroup>
+          <optgroup label="বিষয়">
+            <option>গণিত</option>
+            <option>বাংলা</option>
+            <option>ইংরেজি</option>
+            <option>বিজ্ঞান</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <section aria-labelledby="subject-class-heading">
+        <div class="subject-head">
+          <h2 class="t-title-md" id="subject-class-heading" data-testid="subject-class-heading">চতুর্থ শ্রেণি</h2>
+          <span class="t-caption" data-testid="subject-curriculum">এনসিটিবি পাঠ্যক্রম · ১০টি বিষয়</span>
+        </div>
+
+        <div class="subject-grid" data-component="list">
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-ganit">
+            <span class="subject-card-head">
+              <i data-lucide="calculator" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-ganit-name">গণিত</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-ganit-chapters">৩ / ১৮ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="67" aria-valuemin="0" aria-valuemax="100" aria-label="গণিতের অগ্রগতি">
+              <div class="progress-fill" style="width:17%" data-testid="subject-card-ganit-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-bangla">
+            <span class="subject-card-head">
+              <i data-lucide="book-open" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-bangla-name">বাংলা</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-bangla-chapters">৯ / ১৬ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="56" aria-valuemin="0" aria-valuemax="100" aria-label="বাংলার অগ্রগতি">
+              <div class="progress-fill" style="width:56%" data-testid="subject-card-bangla-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-english">
+            <span class="subject-card-head">
+              <i data-lucide="languages" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-english-name">ইংরেজি</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-english-chapters">৭ / ১৫ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="47" aria-valuemin="0" aria-valuemax="100" aria-label="ইংরেজির অগ্রগতি">
+              <div class="progress-fill" style="width:47%" data-testid="subject-card-english-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-science">
+            <span class="subject-card-head">
+              <i data-lucide="flask-conical" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-science-name">বিজ্ঞান</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-science-chapters">৫ / ১৪ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="36" aria-valuemin="0" aria-valuemax="100" aria-label="বিজ্ঞানের অগ্রগতি">
+              <div class="progress-fill" style="width:36%" data-testid="subject-card-science-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-social">
+            <span class="subject-card-head">
+              <i data-lucide="landmark" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-social-name">সমাজ ও নাগরিকতা</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-social-chapters">৪ / ১২ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" aria-label="সমাজ ও নাগরিকতার অগ্রগতি">
+              <div class="progress-fill" style="width:33%" data-testid="subject-card-social-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-religion">
+            <span class="subject-card-head">
+              <i data-lucide="heart-handshake" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-religion-name">ধর্ম ও নৈতিক শিক্ষা</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-religion-chapters">৩ / ১০ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" aria-label="ধর্ম ও নৈতিক শিক্ষার অগ্রগতি">
+              <div class="progress-fill" style="width:30%" data-testid="subject-card-religion-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-art">
+            <span class="subject-card-head">
+              <i data-lucide="palette" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-art-name">চারু ও কারুকলা</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-art-chapters">২ / ৮ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" aria-label="চারু ও কারুকলার অগ্রগতি">
+              <div class="progress-fill" style="width:25%" data-testid="subject-card-art-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-pe">
+            <span class="subject-card-head">
+              <i data-lucide="dumbbell" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-pe-name">শারীরিক শিক্ষা</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-pe-chapters">৬ / ৯ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="67" aria-valuemin="0" aria-valuemax="100" aria-label="শারীরিক শিক্ষার অগ্রগতি">
+              <div class="progress-fill" style="width:67%" data-testid="subject-card-pe-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-health">
+            <span class="subject-card-head">
+              <i data-lucide="shield-check" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-health-name">স্বাস্থ্য ও সুরক্ষা</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-health-chapters">৩ / ১১ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="27" aria-valuemin="0" aria-valuemax="100" aria-label="স্বাস্থ্য ও সুরক্ষার অগ্রগতি">
+              <div class="progress-fill" style="width:27%" data-testid="subject-card-health-progress"></div>
+            </div>
+          </a>
+
+          <a class="card card-interactive" href="06-chapter-list.html" data-testid="subject-card-ict">
+            <span class="subject-card-head">
+              <i data-lucide="monitor-smartphone" class="icon-lg"></i>
+              <span class="t-body t-semibold" data-testid="subject-card-ict-name">তথ্য ও যোগাযোগ প্রযুক্তি</span>
+            </span>
+            <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="subject-card-ict-chapters">১ / ৯ শেষ</p>
+            <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+                 aria-valuenow="11" aria-valuemin="0" aria-valuemax="100" aria-label="তথ্য ও যোগাযোগ প্রযুক্তির অগ্রগতি">
+              <div class="progress-fill" style="width:11%" data-testid="subject-card-ict-progress"></div>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md"></i>
+      হোম
+    </a>
+    <a class="tabbar-item" href="05-subject-list.html" data-testid="nav-learn" aria-current="page">
+      <i data-lucide="book-open" class="icon-md"></i>
+      পড়াশোনা
+    </a>
+    <a class="tabbar-item" href="11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md"></i>
+      পরীক্ষা
+    </a>
+    <a class="tabbar-item" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="icon-md"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="tabbar-item" href="15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

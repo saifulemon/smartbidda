@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ফলাফল — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .quizres-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .quizres-hero { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-md); }
+  .quizres-burst {
+    display: grid; place-items: center;
+    width: 120px; height: 120px;
+    background: var(--c-primary-soft);
+    border-radius: var(--radius-pill);
+  }
+  .quizres-score { display: flex; align-items: baseline; justify-content: center; gap: var(--space-sm); }
+  .quizres-breakdown { display: flex; flex-direction: column; gap: var(--space-md); }
+  .quizres-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .quizres-actions { display: flex; flex-direction: column; gap: var(--space-md); }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <a class="back" href="01-home.html" aria-label="ফিরে যান" data-testid="quizres-back-appbar">
+      <i data-lucide="arrow-left" class="icon-md"></i>
+    </a>
+    <span class="appbar-title" data-slot="title" data-testid="quizres-title">ফলাফল</span>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="quizres-wrap">
+
+        <div class="quizres-hero">
+          <div class="quizres-burst" data-component="media">
+            <i data-lucide="party-popper" class="icon-lg" aria-hidden="true"></i>
+          </div>
+          <p class="t-body-sm t-bold" data-testid="quizres-burst-points">+২৫ পয়েন্ট</p>
+          <span class="badge badge-success" data-testid="quizres-status">উত্তীর্ণ</span>
+          <p class="t-display-lg" data-testid="quizres-heading">দারুণ করেছ!</p>
+          <p class="t-body-sm t-muted" data-testid="quizres-sub">ভগ্নাংশ চিহ্নিতকরণ · কুইজ</p>
+        </div>
+
+        <section class="card" data-component="kpi" aria-labelledby="quizres-score-label">
+          <div class="quizres-score">
+            <span class="t-display-xl" data-testid="quizres-score">৮০%</span>
+            <span class="t-body-sm t-muted" data-testid="quizres-score-raw">৮ / ১০</span>
+          </div>
+          <p class="t-caption" id="quizres-score-label" style="margin-top:var(--space-xs)" data-testid="quizres-pass-note">
+            উত্তীর্ণ হওয়ার জন্য প্রয়োজন ৬০%
+          </p>
+          <div class="progress" style="margin-top:var(--space-md)" role="progressbar"
+               aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="প্রাপ্ত নম্বর">
+            <div class="progress-fill" style="width:80%" data-testid="quizres-bar"></div>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="quizres-breakdown-label">
+          <p class="t-body t-semibold" id="quizres-breakdown-label" data-testid="quizres-breakdown-label">বিশ্লেষণ</p>
+          <div class="quizres-breakdown" style="margin-top:var(--space-md)">
+            <div class="quizres-row">
+              <span class="t-body-sm" data-testid="quizres-correct">সঠিক উত্তর</span>
+              <span class="t-body-sm t-bold" data-testid="quizres-correct-v">৮</span>
+            </div>
+            <div class="quizres-row">
+              <span class="t-body-sm" data-testid="quizres-wrong">ভুল উত্তর</span>
+              <span class="t-body-sm t-bold" data-testid="quizres-wrong-v">২</span>
+            </div>
+            <div class="quizres-row">
+              <span class="t-body-sm" data-testid="quizres-time">সময় লেগেছে</span>
+              <span class="t-body-sm t-bold" data-testid="quizres-time-v">৬ মিনিট ২০ সেকেন্ড</span>
+            </div>
+            <div class="quizres-row">
+              <span class="t-body-sm" data-testid="quizres-points">পাওয়া পয়েন্ট</span>
+              <span class="t-body-sm t-bold" data-testid="quizres-points-v">+২৫</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="card" data-component="card" data-testid="quizres-weakness">
+          <div class="row">
+            <i data-lucide="target" class="icon-md" aria-hidden="true"></i>
+            <div>
+              <p class="t-body t-semibold" data-testid="quizres-weakness-title">দুর্বলতা শনাক্ত</p>
+              <p class="t-caption" data-testid="quizres-weakness-body">ভগ্নাংশের তুলনা — ২ টি প্রশ্ন ভুল</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-component="card" data-testid="quizres-voice">
+          <div class="row">
+            <i data-lucide="volume-2" class="icon-md" aria-hidden="true"></i>
+            <span class="t-body-sm" data-testid="quizres-voice-label">ফলাফলের কণ্ঠস্বর</span>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto" data-testid="quizres-voice-play">
+              <i data-lucide="play" class="icon-sm"></i>
+              শুনুন
+            </button>
+          </div>
+        </div>
+
+        <div class="quizres-actions">
+          <a class="btn btn-primary" href="05-subject-list.html" style="width:100%" data-testid="quizres-next-lesson">
+            পরের পড়ায় যাও
+            <i data-lucide="arrow-right"></i>
+          </a>
+          <a class="btn btn-ghost" href="01-home.html" style="width:100%" data-testid="quizres-home">হোমে ফিরে যান</a>
+        </div>
+
+      </div>
+  </main>
+
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "앱",
+    "tagline": "환영합니다"
+  },
+  "actions": {
+    "submit": "제출",
+    "cancel": "취소",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "수정",
+    "back": "뒤로",
+    "next": "다음",
+    "confirm": "확인",
+    "close": "닫기",
+    "search": "검색",
+    "filter": "필터",
+    "loading": "로딩 중...",
+    "actions": "actions",
+    "selectedCount": "selectedCount",
+    "clear": "clear",
+    "editEntity": "editEntity",
+    "createEntity": "createEntity",
+    "create": "create",
+    "view": "view",
+    "rowMenu": "rowMenu"
+  },
+  "notFound": {
+    "title": "페이지를 찾을 수 없습니다",
+    "description": "찾으시는 페이지가 존재하지 않거나 이동되었을 수 있습니다.",
+    "backToHome": "홈으로 돌아가기"
+  },
+  "empty": {
+    "title": "아직 데이터가 없습니다",
+    "description": "표시할 항목이 없습니다."
+  },
+  "language": {
+    "en": "English",
+    "ko": "한국어"
+  },
+  "pagination": {
+    "page": "page",
+    "prev": "prev",
+    "next": "next"
+  },
+  "brand": {
+    "name": "name"
+  },
+  "nav": {
+    "menu": "menu"
+  },
+  "errors": {
+    "unexpected": "unexpected"
+  },
+  "auth": {
+    "forgot_password": {
+      "title": "title",
+      "success": "success",
+      "email_label": "email_label",
+      "submit": "submit",
+      "back_to_login": "back_to_login"
+    },
+    "login": {
+      "title": "title",
+      "email_label": "email_label",
+      "password_label": "password_label",
+      "submit": "submit",
+      "signup_cta": "signup_cta",
+      "forgot_cta": "forgot_cta"
+    },
+    "signup": {
+      "title": "title",
+      "password_label": "password_label",
+      "submit": "submit",
+      "login_cta": "login_cta"
+    }
+  }
+}

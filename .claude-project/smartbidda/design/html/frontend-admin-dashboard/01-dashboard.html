@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ড্যাশবোর্ড — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+
+  .dsh-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); }
+  @media (max-width: 900px) { .dsh-kpis { grid-template-columns: repeat(2, 1fr); } }
+  .dsh-kpi { display: flex; flex-direction: column; gap: var(--space-xs); }
+  .dsh-cols { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-md); margin-top: var(--space-md); }
+  @media (max-width: 900px) { .dsh-cols { grid-template-columns: 1fr; } }
+  .dsh-activity { display: flex; gap: var(--space-sm); align-items: flex-start; padding: var(--space-md) 0; }
+  .dsh-activity + .dsh-activity { border-top: var(--border-w) solid var(--c-hairline); }
+  .dsh-activity-text { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; }
+  .dsh-split { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-top: var(--space-md); }
+  @media (max-width: 900px) { .dsh-split { grid-template-columns: 1fr; } }
+  .dsh-split-item { display: flex; flex-direction: column; gap: var(--space-xs); }
+  /* notch / home-indicator clearance — this page's own layout class */
+  .dsh-pane { padding-bottom: env(safe-area-inset-bottom, var(--space-xxl)); }
+</style>
+</head>
+<body data-app="frontend-admin-dashboard" data-layout="AdminLayout">
+  <div class="ksr-console">
+
+    <aside class="ksr-side" data-shell="sidebar" data-component="nav" aria-label="প্রধান নেভিগেশন">
+      <span class="ksr-wordmark" data-testid="admin-brand">স্মার্টবিদ্যা</span>
+      <a class="ksr-side-item" href="01-dashboard.html" data-testid="side-dashboard" aria-current="page"><i data-lucide="layout-dashboard" class="icon-sm" aria-hidden="true"></i>ড্যাশবোর্ড</a>
+      <a class="ksr-side-item" href="02-students.html" data-testid="side-students"><i data-lucide="users" class="icon-sm" aria-hidden="true"></i>শিক্ষার্থী</a>
+      <a class="ksr-side-item" href="03-parents.html" data-testid="side-parents"><i data-lucide="users" class="icon-sm" aria-hidden="true"></i>অভিভাবক</a>
+      <a class="ksr-side-item" href="04-teachers.html" data-testid="side-teachers"><i data-lucide="graduation-cap" class="icon-sm" aria-hidden="true"></i>শিক্ষক</a>
+      <a class="ksr-side-item" href="05-curriculum.html" data-testid="side-curriculum"><i data-lucide="book-open" class="icon-sm" aria-hidden="true"></i>পাঠ্যক্রম</a>
+      <a class="ksr-side-item" href="06-content.html" data-testid="side-content"><i data-lucide="play" class="icon-sm" aria-hidden="true"></i>কনটেন্ট</a>
+      <a class="ksr-side-item" href="07-questions.html" data-testid="side-questions"><i data-lucide="circle-help" class="icon-sm" aria-hidden="true"></i>প্রশ্নব্যাংক</a>
+      <a class="ksr-side-item" href="08-exams.html" data-testid="side-exams"><i data-lucide="clipboard-check" class="icon-sm" aria-hidden="true"></i>পরীক্ষা</a>
+      <a class="ksr-side-item" href="09-remedial.html" data-testid="side-remedial"><i data-lucide="rotate-ccw" class="icon-sm" aria-hidden="true"></i>রিমিডিয়াল</a>
+      <a class="ksr-side-item" href="10-subscriptions.html" data-testid="side-subscriptions"><i data-lucide="wallet" class="icon-sm" aria-hidden="true"></i>সাবস্ক্রিপশন</a>
+      <a class="ksr-side-item" href="11-notifications.html" data-testid="side-notifications"><i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>নোটিফিকেশন</a>
+      <a class="ksr-side-item" href="12-audit.html" data-testid="side-audit"><i data-lucide="scroll-text" class="icon-sm" aria-hidden="true"></i>অডিট লগ</a>
+    </aside>
+
+    <div class="app-main">
+
+    <div class="app-main">
+            <header class="ksr-appbar" data-shell="topbar">
+        <button class="ksr-navtoggle" type="button" data-testid="admin-nav-toggle" aria-label="মেনু" aria-expanded="false"
+          onclick="const s=this.closest('.ksr-console').querySelector('.ksr-side');const o=s.classList.toggle('is-open');this.setAttribute('aria-expanded',o)">
+          <i data-lucide="menu" class="icon-sm" aria-hidden="true"></i>
+        </button>
+        <h1 class="ksr-appbar-title" data-slot="title" data-testid="admin-title">ড্যাশবোর্ড</h1>
+        <div class="row" style="margin-left:auto">
+          <button class="ksr-round" type="button" data-testid="admin-user-menu" aria-label="ব্যবহারকারী মেনু">
+            <span class="avatar" aria-hidden="true">প</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="ksr-main" data-shell="content">
+
+        <div class="dsh-pane">
+        <div class="dsh-kpis">
+          <div class="card dsh-kpi" data-component="kpi">
+            <p class="t-caption" data-testid="dash-kpi-students-label">শিক্ষার্থী</p>
+            <p class="t-display-md" data-testid="dash-kpi-students">১,২৪৮</p>
+            <span class="ksr-badge is-ok" data-testid="dash-kpi-students-delta">+৪২ এ মাসে</span>
+          </div>
+          <div class="card dsh-kpi" data-component="kpi">
+            <p class="t-caption" data-testid="dash-kpi-active-label">দৈনিক সক্রিয়</p>
+            <p class="t-display-md" data-testid="dash-kpi-active">৩৮৬</p>
+            <span class="ksr-badge is-ok" data-testid="dash-kpi-active-delta">+১৮ গতকালের চেয়ে</span>
+          </div>
+          <div class="card dsh-kpi" data-component="kpi">
+            <p class="t-caption" data-testid="dash-kpi-pass-label">গড় উত্তীর্ণ</p>
+            <p class="t-display-md" data-testid="dash-kpi-pass">৬৮%</p>
+            <span class="ksr-badge is-warn" data-testid="dash-kpi-pass-delta">−২ পয়েন্ট</span>
+          </div>
+          <div class="card dsh-kpi" data-component="kpi">
+            <p class="t-caption" data-testid="dash-kpi-sub-label">সক্রিয় সাবস্ক্রিপশন</p>
+            <p class="t-display-md" data-testid="dash-kpi-sub">২৮৩</p>
+            <span class="ksr-badge is-ok" data-testid="dash-kpi-sub-delta">+৯ এ মাসে</span>
+          </div>
+        </div>
+
+        <div class="dsh-cols">
+          <section class="card" data-component="chart" aria-labelledby="dash-chart-label">
+            <div class="listing-head">
+              <p class="t-body t-semibold" id="dash-chart-label" data-testid="dash-chart-label">সাপ্তাহিক সক্রিয় ব্যবহারকারী</p>
+              <span class="t-caption" data-testid="dash-chart-unit">গত ৭ দিন</span>
+            </div>
+            <div class="chart" style="margin-top:var(--space-md)" role="img" aria-label="গত ৭ দিনের সক্রিয় ব্যবহারকারীর চার্ট">
+              <div class="chart-col"><div class="bar" style="height:58%" data-testid="dash-bar"></div><span class="bar-label" data-testid="dash-bar-label">রবি</span></div>
+              <div class="chart-col"><div class="bar" style="height:82%" data-testid="dash-bar"></div><span class="bar-label" data-testid="dash-bar-label">সোম</span></div>
+              <div class="chart-col"><div class="bar" style="height:64%" data-testid="dash-bar"></div><span class="bar-label" data-testid="dash-bar-label">মঙ্গল</span></div>
+              <div class="chart-col"><div class="bar" style="height:91%" data-testid="dash-bar"></div><span class="bar-label" data-testid="dash-bar-label">বুধ</span></div>
+              <div class="chart-col"><div class="bar" style="height:76%" data-testid="dash-bar"></div><span class="bar-label" data-testid="dash-bar-label">বৃহঃ</span></div>
+              <div class="chart-col"><div class="bar" style="height:100%" data-testid="dash-bar"></div><span class="bar-label" data-testid="dash-bar-label">শুক্র</span></div>
+              <div class="chart-col"><div class="bar" style="height:70%" data-testid="dash-bar"></div><span class="bar-label" data-testid="dash-bar-label">আজ</span></div>
+            </div>
+          </section>
+
+          <section class="card" data-component="list" aria-labelledby="dash-activity-label">
+            <p class="t-body t-semibold" id="dash-activity-label" data-testid="dash-activity-label">সাম্প্রতিক কার্যক্রম</p>
+            <div class="dsh-activity">
+              <i data-lucide="play-square" class="icon-md"></i>
+              <div class="dsh-activity-text">
+                <span class="t-body-sm" data-testid="dash-activity-text">নতুন ভিডিও যুক্ত হয়েছে — গণিত অধ্যায় ৪</span>
+                <span class="t-caption" data-testid="dash-activity-meta">২ ঘণ্টা আগে · শিক্ষক</span>
+              </div>
+            </div>
+            <div class="dsh-activity">
+              <i data-lucide="users" class="icon-md"></i>
+              <div class="dsh-activity-text">
+                <span class="t-body-sm" data-testid="dash-activity-text">৬ জন নতুন শিক্ষার্থী যুক্ত হয়েছে</span>
+                <span class="t-caption" data-testid="dash-activity-meta">৪ ঘণ্টা আগে · স্বয়ংক্রিয়</span>
+              </div>
+            </div>
+            <div class="dsh-activity">
+              <i data-lucide="refresh-cw" class="icon-md"></i>
+              <div class="dsh-activity-text">
+                <span class="t-body-sm" data-testid="dash-activity-text">১৮ জন শিক্ষার্থীর রিমিডিয়াল তালিকাভুক্ত</span>
+                <span class="t-caption" data-testid="dash-activity-meta">আজ সকাল · স্বয়ংক্রিয়</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="card" data-component="list" aria-labelledby="dash-split-label" style="margin-top:var(--space-md)">
+          <p class="t-body t-semibold" id="dash-split-label" data-testid="dash-split-label">এ মাসের সারাংশ</p>
+          <div class="dsh-split">
+            <div class="dsh-split-item">
+              <span class="t-caption" data-testid="dash-split-label-x">প্রকাশিত কনটেন্ট</span>
+              <span class="t-title-md" data-testid="dash-split-value">৩৯৪</span>
+              <span class="t-caption" data-testid="dash-split-meta">১৮ টি খসড়া</span>
+            </div>
+            <div class="dsh-split-item">
+              <span class="t-caption" data-testid="dash-split-label-x">তৈরি পরীক্ষা</span>
+              <span class="t-title-md" data-testid="dash-split-value">৩৪</span>
+              <span class="t-caption" data-testid="dash-split-meta">৯ টি চলছে</span>
+            </div>
+            <div class="dsh-split-item">
+              <span class="t-caption" data-testid="dash-split-label-x">পেমেন্ট সমস্যা</span>
+              <span class="t-title-md" data-testid="dash-split-value">৩</span>
+              <span class="t-caption" data-testid="dash-split-meta">২ টি মুলতবি</span>
+            </div>
+          </div>
+        </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

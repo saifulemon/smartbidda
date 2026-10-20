@@ -1,0 +1,53 @@
+/* concepts/linear-console/theme.css — token overrides (contrast-gated).
+   DNA: Linear — graphite canvas, 1px hairlines instead of shadows, compact
+   13-15px type, indigo accent, icon+label density. Plain hex only. */
+:root {
+  /* colour */
+  --c-primary: #5E6AD2;
+  --c-primary-active: #4A55B8;
+  --c-primary-soft: #232640;
+  --c-on-primary: #FFFFFF;
+  --c-canvas: #08090A;
+  --c-surface: #121316;
+  --c-surface-soft: #191A1E;
+  --c-ink: #F7F8F8;
+  --c-body: #D6D8DC;
+  --c-muted: #8A8F98;
+  --c-link: #8A95E8;
+  --c-hairline: #26282D;
+  --c-hairline-strong: #3A3D44;
+  --c-success: #4CC38A;
+  --c-warning: #E2B33C;
+  --c-error: #F26A6A;
+  --c-focus-ring: #5E6AD2;
+  --hero-bg: linear-gradient(180deg, #0D0E10, #15161A);
+  --overlay-scrim: rgba(0, 0, 0, 0.66);
+  --klc-hair: #1E2024;        /* inner rule inside a card */
+
+  /* type — neutral, compact, tabular numerals */
+  --font-display: 'Noto Sans Bengali', system-ui, sans-serif;
+  --font-body: 'Noto Sans Bengali', system-ui, sans-serif;
+  --font-mono: 'Noto Sans Bengali', ui-monospace, monospace;
+  --t-display-xl-size: 36px;  --t-display-xl-weight: 700; --t-display-xl-ls: -0.01em;
+  --t-display-lg-size: 28px;  --t-display-lg-weight: 700; --t-display-lg-ls: -0.01em;
+  --t-display-md-size: 22px;  --t-display-md-weight: 700;
+  --t-title-lg-size: 18px;    --t-title-lg-weight: 600;
+  --t-title-md-size: 16px;    --t-title-md-weight: 600;
+  --t-body-lg-size: 15px;
+  --t-body-md-size: 14.5px;
+  --t-body-sm-size: 13.5px;
+  --t-caption-size: 12.5px;   --t-caption-weight: 500;    --t-caption-ls: 0.02em;
+  --t-button-size: 14.5px;    --t-button-weight: 600;
+  --t-weight-bold: 700; --t-weight-semibold: 600; --t-weight-medium: 500; --t-weight-regular: 400;
+
+  /* shape — crisp */
+  --radius-xs: 3px; --radius-sm: 5px; --radius-md: 7px;
+  --radius-lg: 10px; --radius-xl: 14px; --radius-pill: 999px;
+
+  /* elevation — borders, not blur */
+  --shadow-0: none;
+  --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-3: 0 10px 30px rgba(0, 0, 0, 0.55);
+  --shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.5);
+}

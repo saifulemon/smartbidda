@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>কুইজ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-linear-console.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local selectors for 08-quiz only */
+  .kq-back { display: inline-flex; align-items: center; gap: var(--space-xs); align-self: flex-start;
+    font-size: var(--t-caption-size); font-weight: var(--t-weight-medium);
+    color: var(--c-muted); text-decoration: none; }
+  .kq-back:hover { color: var(--c-ink); }
+  .kq-timer { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .kq-timer-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); }
+  .kq-timer-num { font-size: var(--t-body-sm-size); font-weight: var(--t-weight-semibold); color: var(--c-ink); }
+  .kq-timer-track { height: 3px; }
+  .kq-w62 { width: 62%; }
+  .kq-progress { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .kq-segs { display: flex; gap: 2px; }
+  .kq-seg { flex: 1 1 auto; height: 3px; background: var(--c-surface-soft); border-radius: var(--radius-xs); }
+  .kq-seg.is-done { background: var(--c-primary-soft); }
+  .kq-seg.is-current { background: var(--c-primary); }
+  .kq-question { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .kq-options { display: flex; flex-direction: column; }
+  .kq-option { width: 100%; background: transparent; border: 0;
+    border-bottom: 1px solid var(--klc-hair); color: var(--c-body);
+    font: inherit; text-align: left; cursor: pointer; }
+  .kq-option:hover { background: var(--klc-hov); }
+  .kq-option.is-on { color: var(--c-ink); }
+  .kq-key { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 24px;
+    width: 24px; height: 24px; border: 1px solid var(--c-hairline-strong);
+    border-radius: var(--radius-sm); font-size: var(--t-caption-size); color: var(--c-muted); }
+  .kq-option.is-on .kq-key { border-color: var(--c-primary); color: var(--c-ink); }
+  .kq-answer { font-size: var(--t-body-md-size); font-weight: var(--t-weight-semibold); }
+  .kq-mark { margin-left: auto; color: var(--c-muted); }
+  .kq-option.is-on .kq-mark { color: var(--c-primary); }
+</style>
+</head>
+<body class="klc-page" data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="klc-appbar" data-shell="topbar">
+    <span class="klc-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="klc-appbar-spacer"></span>
+    <button class="klc-iconbtn" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+      <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+    </button>
+    <button class="klc-iconbtn" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+      <span class="avatar klc-avatar-sm" aria-hidden="true">র</span>
+    </button>
+  </header>
+
+  <main class="klc-main" data-shell="content">
+
+    <a class="kq-back" href="../../base/frontend/07-lesson.html" data-testid="quiz-back-appbar">
+      <i data-lucide="arrow-left" class="icon-sm" aria-hidden="true"></i>
+      পাঠে ফিরে যান
+    </a>
+
+    <!-- টাইমার -->
+    <section class="kq-timer" aria-label="সময়">
+      <div class="kq-timer-top">
+        <span class="klc-eyebrow">সময় শেষ হওয়ার আগে</span>
+        <span class="kq-timer-num klc-num" role="timer" data-testid="quiz-timer">৪৮ সেকেন্ড বাকি</span>
+      </div>
+      <span class="klc-track kq-timer-track" aria-hidden="true"><span class="kq-w62"></span></span>
+    </section>
+
+    <!-- অগ্রগতি -->
+    <div class="kq-progress">
+      <span class="t-caption klc-num" data-testid="quiz-counter">প্রশ্ন ৪ / ২০</span>
+      <span class="kq-segs" role="progressbar" aria-valuenow="4" aria-valuemin="1" aria-valuemax="20"
+        aria-label="কুইজের অগ্রগতি — প্রশ্ন ৪ / ২০" data-testid="quiz-dots">
+        <span class="kq-seg is-done"></span>
+        <span class="kq-seg is-done"></span>
+        <span class="kq-seg is-done"></span>
+        <span class="kq-seg is-current"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+        <span class="kq-seg"></span>
+      </span>
+    </div>
+
+    <!-- প্রশ্ন -->
+    <section class="klc-panel" aria-labelledby="quiz-question">
+      <div class="klc-panel-hd">
+        <span class="klc-eyebrow" data-testid="quiz-subject">গণিত · অধ্যায় ৪</span>
+        <button class="klc-btn is-quiet is-sm" type="button" data-testid="quiz-voice-play">
+          <i data-lucide="volume-2" class="icon-sm" aria-hidden="true"></i>
+          শুনুন
+        </button>
+      </div>
+      <div class="klc-panel-body kq-question">
+        <h1 class="t-title-lg" id="quiz-question" data-testid="quiz-question">নিচের কোন অংশটি অর্ধেকের চেয়ে বড়?</h1>
+        <span class="row">
+          <i data-lucide="image" class="icon-sm" aria-hidden="true"></i>
+          <span class="t-caption" data-testid="quiz-stimulus">ছবি: ভগ্নাংশের চিত্র</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- উত্তরের বিকল্প -->
+    <div class="klc-panel kq-options" role="group" aria-label="উত্তরের বিকল্প">
+      <button class="klc-row kq-option" type="button" aria-pressed="false" data-testid="quiz-option">
+        <span class="kq-key" aria-hidden="true">ক</span>
+        <span class="kq-answer">১ / ৪</span>
+        <i data-lucide="circle" class="icon-sm kq-mark" aria-hidden="true"></i>
+      </button>
+      <button class="klc-row kq-option is-on" type="button" aria-pressed="true" data-id="q4-b" data-testid="quiz-option">
+        <span class="kq-key" aria-hidden="true">খ</span>
+        <span class="kq-answer">৩ / ৪</span>
+        <i data-lucide="check-circle-2" class="icon-sm kq-mark" aria-hidden="true"></i>
+      </button>
+      <button class="klc-row kq-option" type="button" aria-pressed="false" data-testid="quiz-option">
+        <span class="kq-key" aria-hidden="true">গ</span>
+        <span class="kq-answer">১ / ৫</span>
+        <i data-lucide="circle" class="icon-sm kq-mark" aria-hidden="true"></i>
+      </button>
+      <button class="klc-row kq-option" type="button" aria-pressed="false" data-testid="quiz-option">
+        <span class="kq-key" aria-hidden="true">ঘ</span>
+        <span class="kq-answer">২ / ৩</span>
+        <i data-lucide="circle" class="icon-sm kq-mark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- কণ্ঠস্বর + স্বয়ংক্রিয় অগ্রগতি -->
+    <div class="klc-note" data-testid="quiz-voice-panel">
+      <i data-lucide="volume-2" class="icon-sm" aria-hidden="true"></i>
+      <span data-testid="quiz-auto-note">
+        প্রশ্নটি শুনে নিন। উত্তর দিলেই ০.৪ সেকেন্ড পরে পরের প্রশ্ন আসবে। শেষ প্রশ্নের উত্তর দেওয়া মাত্রই
+        নিজে থেকেই জমা হয়ে যাবে — আলাদা করে জমা দিতে হবে না।
+      </span>
+    </div>
+
+  </main>
+
+  <nav class="klc-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="klc-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">হোম</span>
+    </a>
+    <a class="klc-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">পড়াশোনা</span>
+    </a>
+    <a class="klc-tab is-on" href="08-quiz.html" data-testid="nav-quiz" aria-current="page">
+      <i data-lucide="clipboard-check" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">কুইজ</span>
+    </a>
+    <a class="klc-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">লিডারবোর্ড</span>
+    </a>
+    <a class="klc-tab" href="18-parent-dashboard.html" data-testid="nav-parent">
+      <i data-lucide="users" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">অভিভাবক</span>
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

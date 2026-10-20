@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>সাবস্ক্রিপশন — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / size / radius / shadow is a token */
+
+  /* plan / pack price line */
+  .sb-price-dlv { display: flex; align-items: baseline; gap: var(--space-sm); }
+
+  /* invoice amount column */
+  .sb-amount { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-xxs); }
+
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-subscription {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="ksr-appbar" data-shell="topbar">
+    <span class="ksr-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="ksr-round" type="button" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="ksr-round" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="ksr-main sf-subscription" data-shell="content">
+
+    <!-- current plan — the glow hero -->
+    <section class="ksr-hero" data-component="card" aria-labelledby="sb-current-label">
+      <div class="row">
+        <span class="ksr-badge is-ok" data-testid="sb-status">সক্রিয়</span>
+        <span class="t-caption ksr-grow" style="text-align:end" data-testid="sb-plan-expiry">২৫ অক্টোবর পর্যন্ত</span>
+      </div>
+      <p class="t-title-lg" id="sb-current-label" style="margin-top:var(--space-sm)" data-testid="sb-plan-name">পরিবার প্ল্যান</p>
+      <div class="sb-price-dlv" style="margin-top:var(--space-xs)">
+        <span class="t-display-md" data-testid="sb-price">৳৩৯৯</span>
+        <span class="t-body-sm t-muted" data-testid="sb-price-cycle">/ মাস</span>
+      </div>
+      <div class="progress" style="margin-top:var(--space-md)" role="progressbar" aria-valuenow="22" aria-valuemin="0" aria-valuemax="30"
+           aria-label="চলতি মাসের বাকি দিন">
+        <div class="progress-fill" style="width:73%" data-testid="sb-cycle-bar"></div>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="sb-cycle-note">৩০ দিনের মধ্যে ২২ দিন শেষ · স্বয়ংক্রিয় নবায়ন</p>
+      <p class="t-caption t-muted" data-testid="sb-sub-no">সাবস্ক্রিপশন নং <span class="t-code">SB-SUB-20260901-1041</span></p>
+    </section>
+
+    <!-- what's included -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="sb-included-label">
+      <p class="t-body-sm t-semibold" id="sb-included-label" data-testid="sb-included-label">যা যা থাকছে</p>
+      <ul class="ksr-list" style="margin-top:var(--space-sm)">
+        <li class="ksr-item">
+          <i data-lucide="check-circle-2" class="icon-sm ksr-ok" aria-hidden="true"></i>
+          <span class="t-body-sm ksr-grow" data-testid="sb-feature">সর্বোচ্চ ৩ জন সন্তান</span>
+        </li>
+        <li class="ksr-item">
+          <i data-lucide="check-circle-2" class="icon-sm ksr-ok" aria-hidden="true"></i>
+          <span class="t-body-sm ksr-grow" data-testid="sb-feature">সব বিষয় ও পরীক্ষা</span>
+        </li>
+        <li class="ksr-item">
+          <i data-lucide="check-circle-2" class="icon-sm ksr-ok" aria-hidden="true"></i>
+          <span class="t-body-sm ksr-grow" data-testid="sb-feature">বিশ্লেষণ ও রিমিডিয়াল পাঠ</span>
+        </li>
+        <li class="ksr-item">
+          <i data-lucide="check-circle-2" class="icon-sm ksr-ok" aria-hidden="true"></i>
+          <span class="t-body-sm ksr-grow" data-testid="sb-feature">বাংলা ভয়েস সহ পাঠ</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- plans -->
+    <section class="ksr-section" aria-labelledby="sb-plans-label">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-hd" id="sb-plans-label" data-testid="sb-plans-label">প্ল্যান বেছে নিন</h2>
+      </div>
+      <div class="ksr-rail" role="list">
+        <article class="ksr-tile" role="listitem" style="padding:var(--space-md);background:var(--c-surface-soft);border-radius:var(--radius-md)" data-component="card" data-testid="sb-plan">
+          <span class="ksr-badge" data-testid="sb-plan-tag">নির্বাচিত</span>
+          <p class="t-body-sm t-semibold" style="margin-top:var(--space-sm)" data-testid="sb-plan-name">মাসিক</p>
+          <p class="t-title-lg" style="margin-top:var(--space-xs)" data-testid="sb-plan-price">৳৩৯৯</p>
+          <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="sb-plan-body">প্রতি মাসে · যেকোনো সময় বাতিল করা যায়</p>
+        </article>
+        <article class="ksr-tile" role="listitem" style="padding:var(--space-md);background:var(--c-surface-soft);border-radius:var(--radius-md)" data-component="card" data-testid="sb-plan">
+          <span class="ksr-badge is-warn" data-testid="sb-plan-tag">২৭% সাশ্রয়</span>
+          <p class="t-body-sm t-semibold" style="margin-top:var(--space-sm)" data-testid="sb-plan-name">বার্ষিক</p>
+          <p class="t-title-lg" style="margin-top:var(--space-xs)" data-testid="sb-plan-price">৳৩,৪৯৯</p>
+          <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="sb-plan-body">১২ মাস · ৳১,২৮৯ কম দিতে হবে</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- crash packs -->
+    <section class="ksr-section" aria-labelledby="sb-packs-label">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-hd" id="sb-packs-label" data-testid="sb-packs-label">ক্র্যাশ প্যাক</h2>
+      </div>
+      <div class="ksr-rail" role="list">
+        <article class="ksr-tile" role="listitem" style="padding:var(--space-md);background:var(--c-surface-soft);border-radius:var(--radius-md)" data-component="card" data-testid="sb-pack">
+          <div class="media media-photo" style="margin-bottom:var(--space-sm)"><img class="pimg" src="https://picsum.photos/seed/sb-crash-1st/640/480" alt="১ম সাময়িক প্যাকের প্রচ্ছদ" loading="lazy"></div>
+          <span class="ksr-badge" data-testid="sb-pack-tag">পরীক্ষার আগে</span>
+          <p class="t-body-sm t-semibold" style="margin-top:var(--space-sm)" data-testid="sb-pack-name">১ম সাময়িক প্যাক</p>
+          <p class="t-title-lg" style="margin-top:var(--space-xs)" data-testid="sb-pack-price">৳১৪৯</p>
+          <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="sb-pack-body">১৫ দিন · প্রতি বিষয়ে ২ টি বিশেষ পাঠ</p>
+          <button class="ksr-btn is-block" style="margin-top:var(--space-md)" data-testid="sb-pack-cta">কিনুন</button>
+        </article>
+        <article class="ksr-tile" role="listitem" style="padding:var(--space-md);background:var(--c-surface-soft);border-radius:var(--radius-md)" data-component="card" data-testid="sb-pack">
+          <div class="media media-photo" style="margin-bottom:var(--space-sm)"><img class="pimg" src="https://picsum.photos/seed/sb-crash-yearly/640/480" alt="বার্ষিক ক্র্যাশ প্যাকের প্রচ্ছদ" loading="lazy"></div>
+          <span class="ksr-badge is-quiet" data-testid="sb-pack-tag">বার্ষিক</span>
+          <p class="t-body-sm t-semibold" style="margin-top:var(--space-sm)" data-testid="sb-pack-name">বার্ষিক ক্র্যাশ প্যাক</p>
+          <p class="t-title-lg" style="margin-top:var(--space-xs)" data-testid="sb-pack-price">৳২৯৯</p>
+          <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="sb-pack-body">৩০ দিন · সব বিষয়ের পুনরাবৃত্তি</p>
+          <button class="ksr-btn is-quiet is-block" style="margin-top:var(--space-md)" data-testid="sb-pack-cta">কিনুন</button>
+        </article>
+      </div>
+    </section>
+
+    <!-- payment methods -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="sb-methods-label">
+      <p class="t-body-sm t-semibold" id="sb-methods-label" data-testid="sb-methods-label">পেমেন্ট মাধ্যম</p>
+      <ul class="ksr-list" style="margin-top:var(--space-sm)">
+        <li class="ksr-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="smartphone" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="sb-method-name">বিকাশ</span>
+            <span class="t-caption" data-testid="sb-method-help">নম্বর দিয়ে পেমেন্ট</span>
+          </span>
+          <button class="ksr-chip is-on" type="button" aria-pressed="true" data-testid="sb-method-cta">নির্বাচিত</button>
+        </li>
+        <li class="ksr-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="smartphone" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="sb-method-name">নগদ</span>
+            <span class="t-caption" data-testid="sb-method-help">নম্বর দিয়ে পেমেন্ট</span>
+          </span>
+          <button class="ksr-chip" type="button" data-testid="sb-method-cta">বেছে নিন</button>
+        </li>
+        <li class="ksr-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="smartphone" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="sb-method-name">আপায়</span>
+            <span class="t-caption" data-testid="sb-method-help">মোবাইল ব্যাংকিং</span>
+          </span>
+          <button class="ksr-chip" type="button" data-testid="sb-method-cta">বেছে নিন</button>
+        </li>
+        <li class="ksr-item">
+          <span class="ksr-play is-quiet" aria-hidden="true"><i data-lucide="credit-card" class="icon-sm"></i></span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="sb-method-name">কার্ড</span>
+            <span class="t-caption" data-testid="sb-method-help">ভিসা / মাস্টারকার্ড</span>
+          </span>
+          <button class="ksr-chip" type="button" data-testid="sb-method-cta">বেছে নিন</button>
+        </li>
+      </ul>
+      <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="sb-method-note">
+        সব লেনদেন SSLCommerz দিয়ে হয় — বিকাশ, নগদ, আপায় ও কার্ড গ্রহণযোগ্য।
+      </p>
+    </section>
+
+    <!-- PRD L2734 Pay button: পেমেন্ট করুন (৳{n}); price comes from .plans[] (L2768) -->
+    <button class="ksr-btn is-block" type="button" data-testid="sb-pay">
+      পেমেন্ট করুন (৳৩৯৯)
+      <i data-lucide="arrow-right" class="icon-sm" aria-hidden="true"></i>
+    </button>
+
+    <!-- payment history -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="sb-invoices-label">
+      <p class="t-body-sm t-semibold" id="sb-invoices-label" data-testid="sb-invoices-label">পেমেন্ট ইতিহাস</p>
+      <div class="ksr-item" data-testid="sb-invoice">
+        <span class="ksr-col ksr-grow">
+          <span class="ksr-item-t" data-testid="sb-invoice-title">পরিবার প্ল্যান · ১ মাস</span>
+          <span class="t-caption" data-testid="sb-invoice-meta">২৫ সেপ্টেম্বর ২০২৬ · বিকাশ</span>
+          <span class="t-caption t-muted" data-testid="sb-invoice-no">পেমেন্ট নং <span class="t-code">SB-PAY-20260925-4181</span></span>
+        </span>
+        <span class="sb-amount">
+          <span class="t-body-sm t-bold" data-testid="sb-invoice-amount">৳৩৯৯</span>
+          <span class="ksr-badge is-ok" data-testid="sb-invoice-status">সফল</span>
+        </span>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="ksr-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="ksr-tab" href="18-parent-dashboard.html" data-testid="nav-dashboard" aria-current="page">
+      <i data-lucide="layout-dashboard" class="ksr-tab-ico" aria-hidden="true"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="ksr-tab" href="19-parent-progress.html" data-testid="nav-progress">
+      <i data-lucide="trending-up" class="ksr-tab-ico" aria-hidden="true"></i>
+      অগ্রগতি
+    </a>
+    <a class="ksr-tab" href="21-screen-time.html" data-testid="nav-screentime">
+      <i data-lucide="timer" class="ksr-tab-ico" aria-hidden="true"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="ksr-tab" href="22-alerts.html" data-testid="nav-alerts">
+      <i data-lucide="bell" class="ksr-tab-ico" aria-hidden="true"></i>
+      অ্যালার্ট
+    </a>
+    <a class="ksr-tab" href="24-parent-settings.html" data-testid="nav-settings">
+      <i data-lucide="settings" class="ksr-tab-ico" aria-hidden="true"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

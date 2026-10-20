@@ -1,0 +1,65 @@
+roles:
+  - { name: student, value: 0, description: "Learns, quizzes, takes exams, earns points. Cannot manage content or other users." }
+  - { name: parent, value: 1, description: "Owns and manages linked children, subscriptions, screen time. Cannot author content." }
+  - { name: teacher, value: 2, description: "Authors and tags content, builds the question bank, sets thresholds, reviews escalated retakes. Cannot manage billing or roles." }
+  - { name: admin, value: 3, description: "Full platform authority including users, roles, subscriptions, payments, templates, and audit." }
+permissions:
+  - { resource: curriculum, role: student, actions: [browse-own-class, search] }
+  - { resource: curriculum, role: teacher, actions: [browse, search, crud] }
+  - { resource: curriculum, role: admin, actions: [browse, search, crud] }
+  - { resource: learning_content, role: student, actions: [read-video-pdf, read-progress-own] }
+  - { resource: learning_content, role: teacher, actions: [read-video-pdf, create-upload, edit-publish-archive-own, sign-attestation] }
+  - { resource: learning_content, role: admin, actions: [read-video-pdf, create-upload, edit-publish-archive, delete, sign-attestation] }
+  - { resource: quiz, role: student, actions: [start-answer-submit-own, read-result-own] }
+  - { resource: quiz, role: parent, actions: [read-result-pm-own-children] }
+  - { resource: quiz, role: teacher, actions: [read-result-assigned-class] }
+  - { resource: quiz, role: admin, actions: [read-result] }
+  - { resource: remedial, role: student, actions: [consume-retake-own, view-assignment-own, mark-complete-own] }
+  - { resource: remedial, role: parent, actions: [view-assignment-pm-own-children] }
+  - { resource: remedial, role: teacher, actions: [view-assignment, assign-manually-assigned] }
+  - { resource: remedial, role: admin, actions: [consume-retake, view-assignment, assign-manually] }
+  - { resource: exam, role: student, actions: [start-answer-submit-own-in-window] }
+  - { resource: exam, role: teacher, actions: [grade-short-answer-assigned, crud] }
+  - { resource: exam, role: admin, actions: [start-answer-submit, grade-short-answer, crud] }
+  - { resource: leaderboard, role: student, actions: [read-class-opted-in] }
+  - { resource: leaderboard, role: parent, actions: [read-pm] }
+  - { resource: leaderboard, role: admin, actions: [read] }
+  - { resource: rewards, role: student, actions: [read-own] }
+  - { resource: rewards, role: parent, actions: [read-pm-own-children] }
+  - { resource: rewards, role: admin, actions: [read] }
+  - { resource: points, role: student, actions: [read-own] }
+  - { resource: points, role: parent, actions: [read-pm-own-children] }
+  - { resource: points, role: admin, actions: [read] }
+  - { resource: parent, role: parent, actions: [dashboard-pm-own-family, pin-verify-change-own, screen-time-change-pm-own-children, leaderboard-optout-toggle-pm-own-children] }
+  - { resource: parent, role: admin, actions: [dashboard, screen-time-change, leaderboard-optout-toggle] }
+  - { resource: children, role: parent, actions: [add-rename-remove-own-family, list-read-own-family] }
+  - { resource: children, role: admin, actions: [add-rename-remove, list-read] }
+  - { resource: users, role: admin, actions: [crud, roles-change] }
+  - { resource: subscriptions, role: parent, actions: [view-purchase-cancel-own-family] }
+  - { resource: subscriptions, role: admin, actions: [crud] }
+  - { resource: payments, role: parent, actions: [initiate-own-family] }
+  - { resource: payments, role: admin, actions: [crud] }
+  - { resource: notifications, role: student, actions: [read-mark-read-own] }
+  - { resource: notifications, role: parent, actions: [read-mark-read-own, prefs-opt-out-own] }
+  - { resource: notifications, role: teacher, actions: [read-mark-read-own] }
+  - { resource: notifications, role: admin, actions: [read-mark-read-own] }
+  - { resource: audit_logs, role: admin, actions: [read-export] }
+  - { resource: notification_templates, role: admin, actions: [crud] }
+  - { resource: analytics, role: parent, actions: [read-pm-summary] }
+  - { resource: analytics, role: teacher, actions: [read-own-classes] }
+  - { resource: analytics, role: admin, actions: [read] }
+  - { resource: questions, role: teacher, actions: [create-edit] }
+  - { resource: questions, role: admin, actions: [create-edit] }
+ownership:
+  - { resource: users, owner_field: id }
+  - { resource: students, owner_field: student_id }
+  - { resource: families, owner_field: id }
+  - { resource: subscriptions, owner_field: family_id }
+  - { resource: payments, owner_field: subscription_id }
+  - { resource: notifications, owner_field: recipient_user_id }
+  - { resource: screen_time_ledger, owner_field: student_id }
+  - { resource: points_ledger, owner_field: student_id }
+  - { resource: quiz_sessions, owner_field: student_id }
+  - { resource: remedial_assignments, owner_field: student_id }
+  - { resource: exam_attempts, owner_field: student_id }
+  - { resource: audit_logs, owner_field: user_id }

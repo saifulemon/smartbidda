@@ -1,0 +1,61 @@
+id: US-01-DASHBOARD
+role: teacher
+feature: "Admin dashboard — four KPI cards, weekly active-user chart, recent-activity feed and monthly summary composed from the students, subscriptions and audit-log ledgers"
+page: 01-dashboard.html
+goal: |
+  As an admin on the admin dashboard page I can scan the KPI cards, the 7-day active-user chart, the
+  recent-activity feed and the monthly summary the moment I sign in, so that I know platform health at
+  a glance without drilling into each of the 12 console sections.
+scenarios_total: 15
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The students KPI card renders the composed total and month delta from the students ledger"
+    ui_route: /admin
+    endpoint: GET /api/admin/dashboard
+    expected: "200 — KPI card (data-component=kpi) shows label 'শিক্ষার্থী' (dash-kpi-students-label), value '১,২৪৮' (dash-kpi-students) and badge '+৪২ এ মাসে' (dash-kpi-students-delta)"
+  - id: AC-2
+    description: "The active-subscriptions KPI card renders from the subscriptions ledger"
+    ui_route: /admin
+    endpoint: GET /api/admin/subscriptions
+    expected: "200 — 'সক্রিয় সাবস্ক্রিপশন' (dash-kpi-sub-label) shows '২৮৩' (dash-kpi-sub) with badge '+৯ এ মাসে' (dash-kpi-sub-delta); the pass-rate card shows 'গড় উত্তীর্ণ' '৬৮%' (dash-kpi-pass) with warn badge '−২ পয়েন্ট' (dash-kpi-pass-delta)"
+  - id: AC-3
+    description: "The recent-activity list composes the three latest entries from the audit log"
+    ui_route: /admin
+    endpoint: GET /api/admin/audit-logs
+    expected: "200 — 'সাম্প্রতিক কার্যক্রম' (dash-activity-label) lists 'নতুন ভিডিও যুক্ত হয়েছে — গণিত অধ্যায় ৪' / '২ ঘণ্টা আগে · শিক্ষক', '৬ জন নতুন শিক্ষার্থী যুক্ত হয়েছে' / '৪ ঘণ্টা আগে · স্বয়ংক্রিয়' and '১৮ জন শিক্ষার্থীর রিমিডিয়াল তালিকাভুক্ত' / 'আজ সকাল · স্বয়ংক্রিয়' (dash-activity-text / dash-activity-meta)"
+  - id: AC-4
+    description: "The weekly active-users chart renders seven Bangla-labelled bars"
+    ui_route: /admin
+    endpoint: none
+    expected: "Chart card shows 'সাপ্তাহিক সক্রিয় ব্যবহারকারী' (dash-chart-label) + 'গত ৭ দিন' (dash-chart-unit); 7 bars (dash-bar) with labels রবি, সোম, মঙ্গল, বুধ, বৃহঃ, শুক্র, আজ (dash-bar-label) and aria-label 'গত ৭ দিনের সক্রিয় ব্যবহারকারীর চার্ট'"
+  - id: AC-5
+    description: "The monthly-summary strip shows published content, exams and payment problems"
+    ui_route: /admin
+    endpoint: none
+    expected: "'এ মাসের সারাংশ' (dash-split-label) renders 'প্রকাশিত কনটেন্ট' ৩৯৪ / '১৮ টি খসড়া', 'তৈরি পরীক্ষা' ৩৪ / '৯ টি চলছে', 'পেমেন্ট সমস্যা' ৩ / '২ টি মুলতবি' (dash-split-label-x / dash-split-value / dash-split-meta)"
+
+boundary_cases:
+  - case: "Brand-new tenant with zero data — every KPI renders '০' with the empty edge copy '০; এখনো কিছু হয়নি' (st-edge) and the activity card hides its rows instead of showing 'undefined'; no NaN or blank digits"
+  - case: "Chart range with no activity in the last 7 days — the seven bars render at 0 height while day labels রবি…আজ (dash-bar-label) and the unit caption 'গত ৭ দিন' remain visible"
+  - case: "Students total crossing five digits — '১,২৪৮' grows to a Bangla-grouped value (e.g. ১০,২৪৮) inside the KPI card without overflowing the 4-up grid (dsh-kpi) or shifting the chart card"
+
+error_scenarios:
+  - scenario: "GET /api/admin/students returns 401 (expired admin session) — the console redirects to /auth/login; no KPI digits are rendered from a stale cache"
+  - scenario: "GET /api/admin/audit-logs returns 500 — the 'সাম্প্রতিক কার্যক্রম' card shows inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করুন' retry button while the already-loaded KPI cards keep their values"
+  - scenario: "A student or parent session navigates to /admin — the role guard bounces them out of the admin console; the 'স্মার্টবিদ্যা' sidebar (admin-brand) and KPI grid never mount"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton lines at 72% / 100% / 54% height 16px render in place of KPI numbers and the activity list (st-label 'লোড হচ্ছে'); no card shows a stale value"
+  - state: empty
+    expected: "Empty dataset — KPI cards all show '০' and the edge slot renders '০; এখনো কিছু হয়নি' (st-edge, st-label 'খালি তথ্য')"
+  - state: error
+    expected: "Failed composition shows the inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' error with retry (refresh-cw) per failed card; the rest of the dashboard stays interactive"
+  - state: filtered-zero
+    expected: "A filter/date range that matches nothing renders every counter as '০' (st-edge '০', st-label 'ফিল্টার') with neutral delta badges instead of green/warn ones"
+
+fixture_refs:
+  - admin_dashboard
+  - admin_subscriptions
+  - admin_audit
