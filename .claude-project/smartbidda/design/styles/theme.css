@@ -1,0 +1,172 @@
+/* theme.css — smartbidda brand theme (spotify-rails concept, promoted by D2-design).
+ * Neutral mannequin preserved at styles/theme.neutral.css.
+ * Full TOKEN_CONTRACT.md token set; brand overrides layered on top.
+ * DNA: near-black canvas, one functional green, content rails, pill controls.
+ * Text on green is near-black (#08090A ~ 7.7:1). Plain hex only. */
+@import url('https://fonts.googleapis.com/css2?family=Mina:wght@400;700&family=Hind+Siliguri:wght@400;600;700&display=swap');
+:root {
+  /* color */
+  --c-primary: #1DB954;
+  --c-primary-active: #159B46;
+  --c-primary-soft: #173322;
+  --c-on-primary: #08090A;
+  --c-ink: #FFFFFF;
+  --c-body: #E6E3E9;
+  --c-muted: #A6A2AD;
+  --c-canvas: #131214;
+  --c-surface: #1D1C20;
+  --c-surface-soft: #26252A;
+  --c-hairline: #2C2B30;
+  --c-hairline-strong: #3E3D44;
+  --c-link: #1DB954;
+  --c-success: #4ADE80;
+  --c-warning: #F5C451;
+  --c-error: #F2555A;
+  --c-focus-ring: #1DB954;   /* keyboard focus ring — single source for :focus-visible (WCAG 2.4.7) */
+  --c-lift: #2A2930;         /* raised dark control (quiet button, chip, round icon btn) */
+
+  /* type families */
+  --font-display: 'Mina', 'Hind Siliguri', system-ui, sans-serif;
+  --font-body: 'Hind Siliguri', system-ui, sans-serif;
+  --font-mono: 'Mina', ui-monospace, monospace;
+
+  /* type roles: family / size / weight / line-height / letter-spacing */
+  --t-display-xl-family: var(--font-display);
+  --t-display-xl-size: 40px;
+  --t-display-xl-weight: 700;
+  --t-display-xl-lh: 1.1;
+  --t-display-xl-ls: 0px;
+
+  --t-display-lg-family: var(--font-display);
+  --t-display-lg-size: 32px;
+  --t-display-lg-weight: 700;
+  --t-display-lg-lh: 1.15;
+  --t-display-lg-ls: 0px;
+
+  --t-display-md-family: var(--font-display);
+  --t-display-md-size: 24px;
+  --t-display-md-weight: 700;
+  --t-display-md-lh: 1.2;
+  --t-display-md-ls: -0.2px;
+
+  --t-title-lg-family: var(--font-display);
+  --t-title-lg-size: 20px;
+  --t-title-lg-weight: 700;
+  --t-title-lg-lh: 1.25;
+  --t-title-lg-ls: 0px;
+
+  --t-title-md-family: var(--font-display);
+  --t-title-md-size: 17.5px;
+  --t-title-md-weight: 700;
+  --t-title-md-lh: 1.3;
+  --t-title-md-ls: 0px;
+
+  --t-body-lg-family: var(--font-body);
+  --t-body-lg-size: 16.5px;
+  --t-body-lg-weight: 400;
+  --t-body-lg-lh: 1.55;
+  --t-body-lg-ls: 0px;
+
+  --t-body-md-family: var(--font-body);
+  --t-body-md-size: 15.5px;
+  --t-body-md-weight: 400;
+  --t-body-md-lh: 1.55;
+  --t-body-md-ls: 0px;
+
+  --t-body-sm-family: var(--font-body);
+  --t-body-sm-size: 14px;
+  --t-body-sm-weight: 400;
+  --t-body-sm-lh: 1.5;
+  --t-body-sm-ls: 0px;
+
+  --t-caption-family: var(--font-body);
+  --t-caption-size: 13px;
+  --t-caption-weight: 600;
+  --t-caption-lh: 1.4;
+  --t-caption-ls: 0.01em;
+
+  --t-button-family: var(--font-body);
+  --t-button-size: 16px;
+  --t-button-weight: 700;
+  --t-button-lh: 1;
+  --t-button-ls: 0px;
+
+  /* weight scale — emphasis utilities (.t-medium/.t-semibold/.t-bold) read
+   * these so re-weighting body text stays theme-owned, not a literal. */
+  --t-weight-regular: 400;
+  --t-weight-medium: 500;
+  --t-weight-semibold: 600;
+  --t-weight-bold: 700;
+
+  --t-code-family: var(--font-mono);
+  --t-code-size: 14px;
+  --t-code-weight: 400;
+  --t-code-lh: 1.5;
+  --t-code-ls: 0px;
+
+  /* shape */
+  --radius-xs: 4px;
+  --radius-sm: 7px;
+  --radius-md: 11px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* spacing */
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-section: 80px;
+
+  /* elevation & misc — 4-level scale:
+   * 0 hairline · 1 resting card · 2 dropdown/raised · 3 modal/overlay */
+  --shadow-0: none;
+  --shadow-1: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.55);
+  --shadow-3: 0 16px 44px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 8px 22px rgba(0, 0, 0, 0.5);  /* lift for interactive/clickable cards (.card-interactive:hover) */
+  --border-w: 1px;
+  --container-max: 1160px;
+  --control-h: 44px;   /* interactive control height — web 40–48, mobile 40–44; 44 sits in both */
+
+  /* imagery & media — real photos render in framed, aspect-locked slots
+   * (.media / .card-media / .hero-media / photo .avatar). No layout shift,
+   * graceful fallback, theme-owned rounding & overlay. */
+  --aspect-square: 1 / 1;
+  --aspect-photo: 4 / 3;
+  --aspect-video: 16 / 9;
+  --aspect-portrait: 3 / 4;
+  --img-radius: var(--radius-lg);                 /* corner rounding on framed images */
+  --card-media-h: 168px;                          /* default image band height for .card-media */
+  --media-fallback: linear-gradient(135deg, var(--c-surface-soft), var(--c-primary-soft));  /* shows behind an <img> while it loads or if it fails */
+  --overlay-scrim: rgba(0, 0, 0, 0.68);  /* darkens the bottom of an image so on-image text stays legible */
+
+  /* signature tokens — brand identity that plain colour slots can't carry. */
+  --hero-bg: linear-gradient(180deg, #0E0D0F, #221F26);
+  --sr-glow: radial-gradient(120% 90% at 20% 0%, rgba(29, 185, 84, 0.22), transparent 60%);
+  --btn-case: none;
+}
+
+/* Mobile down-scale — smaller type + controls on phones (≤600px). Overriding
+ * the token values in ONE place shrinks every heading, button, input, and tab
+ * at once (they all read these tokens), instead of hand-shrinking per element.
+ * --control-h holds the 40px mobile floor (AUTHORING_RULES "Control sizing").
+ * Brand themes inherit this block and may re-tune the values. */
+@media (max-width: 600px) {
+  :root {
+    --control-h: 40px;
+    --t-display-xl-size: 32px;
+    --t-display-lg-size: 26px;
+    --t-display-md-size: 22px;
+    --t-title-lg-size: 19px;
+    --t-title-md-size: 16px;
+    --t-body-lg-size: 16px;
+    --t-body-md-size: 15px;
+    --t-button-size: 14px;
+    --space-section: 48px;
+  }
+}

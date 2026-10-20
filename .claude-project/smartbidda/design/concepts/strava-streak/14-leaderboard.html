@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>লিডারবোর্ড — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-strava-streak.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local selectors only — every colour / size / radius / shadow is a token */
+  .lb-podium { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-md); align-items: end; }
+  .lb-pod { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs);
+    min-width: 0; text-align: center; }
+  .lb-pod-rank { display: grid; place-items: center; width: 100%;
+    padding: var(--space-md) var(--space-sm); background: var(--ks-ink-deep);
+    color: var(--ks-on-dark); border-radius: var(--radius-sm); }
+  .lb-pod-rank .kss-num { color: var(--ks-on-dark); }
+  .lb-pod.is-first .lb-pod-rank { box-shadow: inset 0 5px 0 var(--ks-fire); }
+  .lb-list { display: flex; flex-direction: column; min-width: 0;
+    border-top: 1px solid var(--c-hairline); }
+  .lb-row { display: flex; align-items: center; gap: var(--space-md); min-width: 0;
+    padding: var(--space-md) var(--space-sm); border-bottom: 1px solid var(--c-hairline); }
+  .lb-row.is-me { box-shadow: inset 3px 0 0 var(--ks-fire); padding-left: var(--space-md); }
+  .lb-rank { flex-shrink: 0; }
+  .lb-bar { display: block; width: 92px; height: 5px; background: var(--kss-bar-track);
+    border-radius: var(--radius-pill); overflow: hidden; }
+  .lb-bar > span { display: block; height: 100%; background: var(--ks-fire);
+    border-radius: var(--radius-pill); }
+  .lb-myrank { position: sticky; bottom: 0; z-index: 2; display: flex; align-items: center;
+    justify-content: space-between; gap: var(--space-md); min-width: 0;
+    padding: var(--space-md) var(--space-lg); border-radius: var(--radius-md);
+    background: var(--c-ink); color: var(--ks-on-dark); }
+  .lb-myrank .kss-num { color: var(--ks-on-dark); }
+  .lb-chips { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+</style>
+</head>
+<body class="kss-app" data-app="frontend" data-layout="StudentLayout">
+
+  <header class="kss-appbar" data-shell="topbar">
+    <a class="kss-wordmark" href="01-home.html" data-testid="appbar-brand">স্মার্টবিদ্যা</a>
+    <span class="kss-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="kss-iconbtn" type="button" aria-label="নোটিফিকেশন" data-testid="appbar-notifications">
+        <i data-lucide="bell" class="icon-md" aria-hidden="true"></i>
+      </button>
+      <button class="kss-iconbtn" type="button" aria-label="প্রোফাইল" data-testid="appbar-profile">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="kss-page" data-shell="content">
+
+    <!-- 1 · heading + scope line (label, not a filter) -->
+    <section class="kss-sec" aria-labelledby="lb-heading">
+      <h1 class="t-display-md" id="lb-heading" data-testid="lb-heading">লিডারবোর্ড</h1>
+      <p class="t-caption" data-testid="lb-sub">পয়েন্ট অনুযায়ী · সব সময়</p>
+      <div class="lb-chips" role="group" aria-label="শ্রেণি" data-testid="lb-classes">
+        <button class="kss-chipsq" type="button" aria-pressed="false" data-testid="lb-class-1">১</button>
+        <button class="kss-chipsq" type="button" aria-pressed="false" data-testid="lb-class-2">২</button>
+        <button class="kss-chipsq" type="button" aria-pressed="false" data-testid="lb-class-3">৩</button>
+        <button class="kss-chipsq is-on" type="button" aria-pressed="true" data-testid="lb-class-4">৪</button>
+        <button class="kss-chipsq" type="button" aria-pressed="false" data-testid="lb-class-5">৫</button>
+      </div>
+    </section>
+
+    <!-- 2 · podium -->
+    <section class="kss-sec" aria-labelledby="lb-podium-heading">
+      <div class="kss-hdrow">
+        <h2 class="kss-hd" id="lb-podium-heading" data-testid="lb-podium-heading">শীর্ষ তিন</h2>
+      </div>
+      <div class="lb-podium" data-component="list" data-testid="lb-podium">
+        <div class="lb-pod" data-testid="lb-pod">
+          <div class="lb-pod-rank"><span class="t-display-lg kss-num" data-testid="lb-podium-rank">২</span></div>
+          <span class="avatar avatar-lg" aria-hidden="true">স</span>
+          <span class="t-body-sm t-semibold" data-testid="lb-podium-name">সাদিয়া</span>
+          <span class="t-caption" data-testid="lb-podium-class">চতুর্থ শ্রেণি</span>
+        </div>
+        <div class="lb-pod is-first" data-testid="lb-pod">
+          <div class="lb-pod-rank"><span class="t-display-xl kss-num" data-testid="lb-podium-rank">১</span></div>
+          <span class="badge badge-primary" data-testid="lb-first-crown">
+            <i data-lucide="crown" class="icon-sm" aria-hidden="true"></i> ১ম
+          </span>
+          <span class="avatar avatar-xl" aria-hidden="true">ম</span>
+          <span class="t-body-sm t-semibold" data-testid="lb-podium-name">মাবুল</span>
+          <span class="t-caption" data-testid="lb-podium-class">চতুর্থ শ্রেণি</span>
+        </div>
+        <div class="lb-pod" data-testid="lb-pod">
+          <div class="lb-pod-rank"><span class="t-display-lg kss-num" data-testid="lb-podium-rank">৩</span></div>
+          <span class="avatar avatar-lg" aria-hidden="true">ত</span>
+          <span class="t-body-sm t-semibold" data-testid="lb-podium-name">তানজিলা</span>
+          <span class="t-caption" data-testid="lb-podium-class">চতুর্থ শ্রেণি</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · results table -->
+    <section class="kss-sec" aria-labelledby="lb-list-label">
+      <div class="kss-hdrow">
+        <h2 class="kss-hd" id="lb-list-label" data-testid="lb-list-label">৪ থেকে ১০০</h2>
+        <p class="t-caption" data-testid="lb-list-meta">পয়েন্ট</p>
+      </div>
+      <div class="lb-list" data-component="list">
+        <div class="lb-row is-me" data-testid="lb-row">
+          <span class="lb-rank t-display-lg kss-num" data-testid="lb-rank">৪</span>
+          <span class="avatar" aria-hidden="true">র</span>
+          <span class="kss-lrow-body">
+            <span class="t-body-sm t-semibold" data-testid="lb-name">রাফি</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="kss-lrow-end">
+            <span class="t-body-sm t-bold" data-testid="lb-points">১,২৪০</span>
+            <span class="lb-bar" aria-hidden="true"><span style="width:100%"></span></span>
+          </span>
+        </div>
+        <div class="lb-row" data-testid="lb-row">
+          <span class="lb-rank t-display-lg kss-num" data-testid="lb-rank">৫</span>
+          <span class="avatar" aria-hidden="true">আ</span>
+          <span class="kss-lrow-body">
+            <span class="t-body-sm t-semibold" data-testid="lb-name">আরিশা</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="kss-lrow-end">
+            <span class="t-body-sm t-bold" data-testid="lb-points">১,১৯০</span>
+            <span class="lb-bar" aria-hidden="true"><span style="width:96%"></span></span>
+          </span>
+        </div>
+        <div class="lb-row" data-testid="lb-row">
+          <span class="lb-rank t-display-lg kss-num" data-testid="lb-rank">৬</span>
+          <span class="avatar" aria-hidden="true">ন</span>
+          <span class="kss-lrow-body">
+            <span class="t-body-sm t-semibold" data-testid="lb-name">নাফিসা</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="kss-lrow-end">
+            <span class="t-body-sm t-bold" data-testid="lb-points">১,১০৫</span>
+            <span class="lb-bar" aria-hidden="true"><span style="width:89%"></span></span>
+          </span>
+        </div>
+      </div>
+      <a class="kss-btn is-quiet is-block" href="#lb-list-label" data-testid="lb-more">আরও দেখুন</a>
+    </section>
+
+    <!-- 4 · privacy -->
+    <section class="kss-block" data-component="card" aria-labelledby="lb-privacy-title" data-testid="lb-privacy">
+      <div class="row" style="align-items:flex-start">
+        <i data-lucide="shield-check" class="icon-md" aria-hidden="true"></i>
+        <div class="kss-lrow-body">
+          <p class="t-body-sm t-semibold" id="lb-privacy-title" data-testid="lb-privacy-title">নিরাপদ তালিকা</p>
+          <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="lb-privacy-body">
+            শুধু প্রদর্শন নাম ও শ্রেণি দেখা যায় — কোনো ছবি বা ব্যক্তিগত তথ্য নয়। অভিভাবক চাইলে নাম লুকানো যাবে।
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · my rank, sticky -->
+    <div class="lb-myrank" data-component="kpi" data-testid="lb-myrank">
+      <span class="t-body-sm" data-testid="lb-myrank-label">আমার অবস্থান</span>
+      <span class="t-display-md kss-num" data-testid="lb-myrank-text">#৪ · ১,২৪০</span>
+    </div>
+
+  </main>
+
+  <nav class="kss-tabbar" data-shell="bottomnav" aria-label="প্রধান নেভিগেশন">
+    <a class="kss-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="kss-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="icon-md" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="kss-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="kss-tab is-on" href="14-leaderboard.html" data-testid="nav-leaderboard" aria-current="page">
+      <i data-lucide="trophy" class="icon-md" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="kss-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

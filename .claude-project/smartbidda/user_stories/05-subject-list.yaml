@@ -1,0 +1,68 @@
+id: US-05-SUBJECT-LIST
+role: student
+feature: "Subject list — NCTB subjects for the chosen class with lesson-completion counts and progress bars, class chips ১-৫, debounced URL-backed search and class/subject filter"
+page: 05-subject-list.html
+goal: |
+  As a student on the পড়াশোনা page I see every subject of my class with how many chapters I have
+  finished, and I can search or switch class, so that I jump straight into a subject's chapters.
+scenarios_total: 19
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Subjects load for the selected class with heading and curriculum meta"
+    ui_route: /learn
+    endpoint: GET /api/curriculum/subjects
+    expected: "200 — page shows title 'পড়াশোনা' (data-testid subject-title), subtitle 'রাফিদ · চতুর্থ শ্রেণি' (subject-subtitle), section heading 'চতুর্থ শ্রেণি' (subject-class-heading) and 'এনসিটিবি পাঠ্যক্রম · ১০টি বিষয়' (subject-curriculum); class chip ৪ (subject-class-4) is aria-pressed=true"
+  - id: AC-2
+    description: "Each subject row shows completion count and progress bar"
+    ui_route: /learn
+    endpoint: GET /api/curriculum/subjects
+    expected: "200 — গণিত row (subject-card-ganit) renders name 'গণিত' (subject-card-ganit-name), caption '৩ / ১৮ শেষ' (subject-card-ganit-chapters) and progress-fill at 17% (subject-card-ganit-progress); বাংলা '৯ / ১৬ শেষ' 56%, ইংরেজি '৭ / ১৫ শেষ' 47%, বিজ্ঞান '৫ / ১৪ শেষ' 36% likewise"
+  - id: AC-3
+    description: "Tap a subject card to open its chapter list"
+    ui_route: /learn
+    endpoint: none
+    expected: "Tapping 'গণিত' (subject-card-ganit) navigates to the chapter list route /learn/:classNo/:subjectSlug for that subject (fixture /learn/৪/ganit) with no extra API call on this page"
+  - id: AC-4
+    description: "Class chips switch the class and refetch subjects"
+    ui_route: /learn
+    endpoint: GET /api/curriculum/subjects
+    expected: "Tapping chip '৫' (subject-class-5) sets aria-pressed=true, unsets chip ৪, refires GET /api/curriculum/subjects for classNo 5 and re-renders the list under heading 'পঞ্চম শ্রেণি'; the chosen class is reflected in the URL so a refresh keeps it"
+  - id: AC-5
+    description: "Search is debounced, min-length gated and URL-backed"
+    ui_route: /learn
+    endpoint: none
+    expected: "Typing 'গণ' in the search input (data-testid subject-search, placeholder 'বিষয় খুঁজুন', minlength 2) triggers filtering 300ms after the last keystroke (no request per keystroke), persists ?q= in the URL, and narrows the visible rows in place without a full reload"
+  - id: AC-6
+    description: "Class/subject filter select narrows the list and the learn tab stays current"
+    ui_route: /learn
+    endpoint: none
+    expected: "Choosing 'গণিত' in the filter select (data-testid subject-filter, optgroups 'শ্রেণি' and 'বিষয়') narrows the list to matching subjects and combines with the search term; bottom tab 'পড়াশোনা' (nav-learn) renders with aria-current=page"
+
+boundary_cases:
+  - case: "Search with no matches — term 'পদ্মা' kept in the search box shows filtered empty state '“পদ্মা” নামে কোনো বিষয় পাওয়া যায়নি। অন্য নামে খুঁজুন।' (data-testid st-empty-filtered)"
+  - case: "Search term below the 2-character minimum — no filtering and no request fired; the previous full list stays visible"
+  - case: "Subject with zero completed lessons — caption '০ / ৯ শেষ' with an empty progress bar (0% fill) still renders tappable"
+  - case: "Class switch mid-search — the search term is preserved in the URL while the list refetches for the new class; if that class has no subjects the empty state renders"
+
+error_scenarios:
+  - scenario: "GET /api/curriculum/subjects returns 500 — 'কিছু লোড হয়নি। আবার চেষ্টা করো।' (data-testid st-error) with an 'আবার চেষ্টা করো' retry button (refresh-cw icon)"
+  - scenario: "Unknown/invalid classNo — state sheet kind 'শ্রেণি পাওয়া যায়নি' copy 'এই শ্রেণির তথ্য পাওয়া যায়নি।' shown under the class chips"
+  - scenario: "Offline — 'ইন্টারনেট সংযোগ নেই।' (state sheet kind 'ইন্টারনেট সংযোগ') shown in place of the list"
+  - scenario: "Session expired — the student is redirected to /auth/login and the last subject route is restored after re-login"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack — one 16px line (52% width) plus three 64px row blocks; rows not tappable until loaded"
+  - state: empty
+    expected: "Empty state with book-open icon and 'এই শ্রেণিতে এখনো কোনো বিষয় যুক্ত হয়নি।' (data-testid st-empty)"
+  - state: search-empty
+    expected: "Filtered empty state '“পদ্মা” নামে কোনো বিষয় পাওয়া যায়নি। অন্য নামে খুঁজুন।' with the search term retained"
+  - state: error
+    expected: "'কিছু লোড হয়নি। আবার চেষ্টা করো।' with retry button re-firing GET /api/curriculum/subjects"
+  - state: offline
+    expected: "Edge 'ইন্টারনেট সংযোগ নেই।' (data-testid st-edge)"
+
+fixture_refs:
+  - subject_list
+  - student_home

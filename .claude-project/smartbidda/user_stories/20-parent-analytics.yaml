@@ -1,0 +1,66 @@
+id: US-20-PARENT-ANALYTICS
+role: parent
+feature: "Parent analytics — exam-readiness forecast with confidence, the inputs behind it, revision suggestions, a daily quiz-score chart and the AI disclaimer"
+page: 20-parent-analytics.html
+goal: |
+  As a parent on the বিশ্লেষণ page I can switch between রাফিদ and মাহিন and read each child's
+  predicted term-exam readiness band with the inputs behind it, the suggested retake lessons and the
+  daily quiz trend, so that I know what to revise before the exam instead of waiting for a teacher.
+scenarios_total: 16
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Analytics header and forecast hero render the active child's readiness band with confidence"
+    ui_route: /parent/analytics
+    endpoint: GET /api/parent/students/:id/forecast
+    expected: "200 — pa-heading 'বিশ্লেষণ', pa-sub 'গত ৩০ দিন · ১৭ সেপ্টেম্বর – ১৭ অক্টোবর ২০২৬'; hero pa-forecast-label 'পরীক্ষার প্রস্তুতি', pa-forecast-badge 'মাঝারি', pa-forecast-value '৬৮%', pa-forecast-note 'অনুমানিত ফলাফল', bar at 68% with aria-valuenow=68, pa-forecast-detail 'ইংরেজি ও বিজ্ঞানে নম্বর না বাড়লে বার্ষিকে কঠিন হবে', pa-forecast-confidence 'নির্ভরযোগ্যতা ৮৬%'"
+  - id: AC-2
+    description: "The সন্তান নির্বাচন rail marks রাফিদ active and re-reads the forecast when মাহিন is tapped"
+    ui_route: /parent/analytics
+    endpoint: GET /api/parent/students/:id/forecast
+    expected: "pa-switch-rafid is-on / aria-pressed=true on load; tapping pa-switch-mahin flips both pressed states and re-renders the band, percentage, detail, why-rows, suggestions and chart for মাহিন (দ্বিতীয় শ্রেণি) without a page reload"
+  - id: AC-3
+    description: "'কেন এই প্রাক্কলন' lists every input the forecast used"
+    ui_route: /parent/analytics
+    endpoint: GET /api/parent/students/:id/forecast
+    expected: "pa-why-label 'কেন এই প্রাক্কলন' with four rows: 'গত ১৪ দিনের কুইজ স্কোর' → '৪২ টি প্রশ্নের নামান্তর', 'সম্পন্ন অধ্যায়' → '৪৩ টি', 'সম্পন্ন পরীক্ষা' → '১ টি', 'চলমান রিটেক পাঠ' → '১ টি'"
+  - id: AC-4
+    description: "'সুপারিশ' panel shows the two revision items with priority and destination links"
+    ui_route: /parent/analytics
+    endpoint: GET /api/parent/students/:id/forecast
+    expected: "pa-suggest-label 'সুপারিশ'; first item pa-suggest-title 'ইংরেজি বাক্য গঠন', body 'শিক্ষকের লাইব্রেরি থেকে একটি পাঠ নির্বাচন করা হয়েছে · ৫ মিনিট', badge 'জরুরি', CTA 'পাঠ দেখুন' → /retake/:retakeId; second item 'বিজ্ঞান · উদ্ভিদের অংশ', body 'এই অধ্যায়ের কুইজ এখনো দেওয়া হয়নি', badge 'সাধারণ', CTA 'অধ্যায় দেখুন' → chapter list"
+  - id: AC-5
+    description: "The daily quiz chart defaults to ১৪ দিন and redraws on the ৭ / ৩০ day chips"
+    ui_route: /parent/analytics
+    endpoint: GET /api/parent/students/:id/forecast
+    expected: "pa-period-14 is-on / aria-pressed=true; ১৪ bars render with today labelled 'আজ' at ৬৯ and the earlier values ৫৪, ৬২, ৪৯, ৫৮, ৬৬, ৬১, ৭০, ৫৯, ৬৩, ৬৮, ৫৭, ৭২, ৬৫; tapping ৭ দিন or ৩০ দিন moves aria-pressed and changes the bar count without leaving the page"
+  - id: AC-6
+    description: "The estimate disclaimer is always visible under the chart"
+    ui_route: /parent/analytics
+    endpoint: none
+    expected: "pa-disclaimer 'এই অনুমান সন্তানের কুইজ ও পরীক্ষার হিসাবে তৈরি। শিক্ষকের মতামতের সাথে মিলিয়ে দেখুন।' with an info icon; it stays visible in loading, error and empty states and is never hidden behind the chart"
+
+boundary_cases:
+  - case: "Child with no quiz or exam history (মাহিন, class ২, first week) — no forecast band is returned: the hero is replaced by 'প্রাক্কলনের জন্য আরও কিছু ডেটা দরকার।' and no NaN, dash or undefined percentage leaks into pa-forecast-value"
+  - case: "Forecast inputs at their minimum — 'সম্পন্ন পরীক্ষা' and 'চলমান রিটেক পাঠ' show '০ টি' (not blank) and the why panel keeps all four rows; a confidence below the model floor is clamped at ০%"
+  - case: "Readiness at the ceiling — pa-forecast-value '১০০%' and the bar clamps at 100%; switching to '৭ দিন' when only three days have data draws three bars, not seven zero-height columns"
+
+error_scenarios:
+  - scenario: "Session expired (401) — ParentLayout redirects to /parent/login and the PIN pad (fixture parent_login) is shown; the forecast is not rendered from stale cache"
+  - scenario: "Not the child's guardian (403) — 'এই সন্তানের তথ্য দেখতে পারবেন না।' replaces the hero and suggestions while the child rail stays visible for the guardian's own children"
+  - scenario: "500 on GET /api/parent/students/:id/forecast — inline 'প্রাক্কলন তৈরি হয়নি।' plus 'প্রাক্কলন লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করো' button; the why and suggestion panels stay hidden until the retry succeeds"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton bars (72% / 100% / 54%) replace the hero, why panel and suggestions; period chips and suggestion CTAs are not tappable"
+  - state: empty
+    expected: "empty-state 'প্রাক্কলনের জন্য আরও কিছু ডেটা দরকার।' in place of the forecast hero; the disclaimer remains visible"
+  - state: error
+    expected: "st-error 'প্রাক্কলন লোড হয়নি। আবার চেষ্টা করো।' with a refresh-cw retry button"
+  - state: offline
+    expected: "Error row 'ইন্টারনেট সংযোগ নেই।'; period chips, child switching and suggestion links are disabled until connectivity returns"
+
+fixture_refs:
+  - parent_analytics
+  - identity.children
+  - identity.parent

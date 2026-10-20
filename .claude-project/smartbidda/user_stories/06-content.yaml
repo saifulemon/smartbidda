@@ -1,0 +1,75 @@
+id: US-06-CONTENT
+role: teacher
+feature: "Content library — filterable lesson/remedial table with rights-attested uploads, publish/archive/delete row actions and the shared create/edit modal"
+page: 06-content.html
+goal: |
+  As an admin on the content page I can filter the lesson and remedial library by class, subject, chapter and
+  kind, upload rights-attested video/PDF assets, publish drafts and soft-archive items, so that every lesson a
+  student unlocks is licensed, traceable and the right size for a Bangladeshi mobile connection.
+scenarios_total: 21
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The content library loads with kind, format, chapter, topic, size, rights-proof, status and uploader columns"
+    ui_route: /admin/content
+    endpoint: GET /api/content
+    expected: "200 — 'কনটেন্ট' heading (content-heading) with 'মোট ৪১২ টি · ১৮ টি খসড়া' (content-count); rows (content-row) render e.g. 'ভগ্নাংশ চিহ্নিতকরণ' · লেসন · ভিডিও · 'গণিত · অধ্যায় ৪' · '১২৪ MB' · 'হ্যাঁ · রুবেল মিয়া' · badge 'প্রকাশিত', the archived row badge 'সংরক্ষিত', and the draft with rights badge 'নেই' + status 'খসড়া'"
+  - id: AC-2
+    description: "Class/subject/chapter and kind (LESSON|REMEDIAL) filters plus the removable type chip narrow the library"
+    ui_route: /admin/content
+    endpoint: GET /api/content
+    expected: "200 — chip 'ভিডিও' (content-filter-type) active with result count '১৩২ টি পাওয়া গেছে' (content-result-count); kind filter toggles লেসন/রিটেক rows; 'ফিল্টার সরান' (content-filter-type-remove) clears the chip and re-lists"
+  - id: AC-3
+    description: "Search and pagination drive the library query"
+    ui_route: /admin/content
+    endpoint: GET /api/content
+    expected: "200 — content-search (placeholder 'শিরোনাম বা অধ্যায় দিয়ে খুঁজুন') filters server-side; 'পৃষ্ঠা ১ / ১৭' (content-page-info) with content-page-prev disabled and 'পরের' (content-page-next) advancing to page 2"
+  - id: AC-4
+    description: "Uploading new content with a checked rights attestation creates a DRAFT item"
+    ui_route: /admin/content
+    endpoint: POST /api/content
+    expected: "201 — saving 'নতুন কনটেন্ট' (content-modal-save) with file, শিরোনাম, ধরন লেসন, অধ্যায় 'গণিত · অধ্যায় ৪', topic tags and 'অধিকার ঘোষণা' (content-f-rights) checked appends a content-row with status badge 'খসড়া' and a rights cell 'হ্যাঁ · <admin>'; the header count grows by one"
+  - id: AC-5
+    description: "Row-menu প্রকাশ করুন publishes a draft item"
+    ui_route: /admin/content
+    endpoint: PATCH /api/content/:id
+    expected: "200 — content-menu-publish flips the row badge from 'খসড়া' to 'প্রকাশিত' and the item becomes visible to students in the published tree"
+  - id: AC-6
+    description: "Row-menu মুছুন soft-archives the item instead of hard-deleting it"
+    ui_route: /admin/content
+    endpoint: DELETE /api/content/:id
+    expected: "200 — content-menu-delete archives the row (soft delete): badge becomes 'সংরক্ষিত', the row stays listed under the archive view with uploader history intact, and 'মোট ৪১২ টি' decrements while the audit trail keeps the id"
+  - id: AC-7
+    description: "Editing an item in the shared modal persists title and topic-tag changes"
+    ui_route: /admin/content
+    endpoint: PATCH /api/content/:id
+    expected: "200 — content-menu-preview 'প্রিভিউ' shows the asset, then editing শিরোনাম / টপিক ট্যাগ in content-modal and 'সংরক্ষণ' updates the row in place without re-upload"
+
+boundary_cases:
+  - case: "Oversized upload — a 512MB video is rejected before upload with 'ভিডিও সর্বোচ্চ ৫০০MB' (st-edge) matching the field help 'ভিডিও সর্বোচ্চ ৫০০ MB, পিডিএফ সর্বোচ্চ ২৫ MB।'; a 30MB PDF is likewise refused"
+  - case: "Attestation false — saving with 'অধিকার ঘোষণা' unchecked is blocked client-side and, if forced, the API answers 422 RIGHTS_ATTESTATION_REQUIRED; the UI shows 'অনুমতি নিশ্চিত করতে হবে' (st-edge) and creates nothing"
+  - case: "REMEDIAL upload without topic tags — saving kind 'রিটেক' with empty টপিক ট্যাগ fails the guard 'রিটেক কনটেন্টের জন্য কমপক্ষে ১টি ট্যাগ বাধ্যতামূলক।'; LESSON kind still allows zero tags"
+  - case: "Published remedial lacking its audio — the row shows the voice edge 'ভয়েস ফাইল নেই + ভয়েস যোগ করুন' (st-edge) and the item cannot be served to the voice-first quiz flow until an asset is attached"
+
+error_scenarios:
+  - scenario: "401 — expired admin session on GET /api/content redirects to /auth/login with /admin/content preserved as the return route"
+  - scenario: "403 — a student or parent session reaching /admin/content is bounced by the auth:teacher route guard; the library and upload modal never mount"
+  - scenario: "422 — POST /api/content with rightsAttestation=false returns RIGHTS_ATTESTATION_REQUIRED; the modal keeps every entered value and pins 'অনুমতি নিশ্চিত করতে হবে' under the checkbox"
+  - scenario: "500 / network drop mid-upload — the save shows inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with retry; no phantom 'খসড়া' row appears in the table until the server confirms the create"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton lines at 72% / 100% / 54% replace the table body (st-label 'লোড হচ্ছে'); upload and bulk actions stay disabled"
+  - state: empty
+    expected: "Empty library — body shows 'প্রথম লেসন আপলোড করুন' (st-edge, st-label 'খালি তথ্য') with the 'নতুন কনটেন্ট' CTA (content-create) as the primary action"
+  - state: error
+    expected: "Failed read shows the inline retry 'কিছু লোড হয়নি। আবার চেষ্টা করো।'; the export button (content-export) is disabled until data loads"
+  - state: oversize-file
+    expected: "Rejecting a >500MB video (or >25MB PDF) renders 'ভিডিও সর্বোচ্চ ৫০০MB' (st-edge, st-label 'বড় ফাইল') in the modal; the file input clears"
+  - state: attestation-required
+    expected: "Publish blocked without rights proof renders 'অনুমতি নিশ্চিত করতে হবে' (st-edge, st-label 'ভিডিও সমর্থন নেই'); the save button re-disables until the checkbox is ticked"
+  - state: no-voice-asset
+    expected: "Item missing its voice file shows 'ভয়েস ফাইল নেই + ভয়েস যোগ করুন' (st-edge, st-label 'ভয়েস অ্যাসেট নেই') as a row-level flag with an add-voice affordance"
+
+fixture_refs:
+  - admin_content

@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>সেটিংস — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .pset-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .pset-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-md) 0; }
+  .pset-row + .pset-row { border-top: var(--border-w) solid var(--c-hairline); }
+  .pset-left { display: flex; align-items: center; gap: var(--space-md); min-width: 0; }
+  .pset-text { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; }
+  .pset-child { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) 0; }
+  .pset-child + .pset-child { border-top: var(--border-w) solid var(--c-hairline); }
+  .pset-child-text { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; flex: 1; }
+  .pset-add { display: flex; align-items: center; justify-content: center; gap: var(--space-sm); width: 100%; }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-md"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="pset-wrap">
+
+        <section class="card" data-component="card" aria-labelledby="pset-account-label">
+          <div class="pset-row">
+            <div class="pset-left">
+              <span class="avatar avatar-lg" aria-hidden="true">ফ</span>
+              <div class="pset-text">
+                <span class="t-body t-semibold" data-testid="pset-account-name">ফারহানা রহমান</span>
+                <span class="t-caption" data-testid="pset-account-email"><span class="t-code">SB-FAM-20260902-1041</span> · farhana@example.com</span>
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-sm" data-testid="pset-account-edit">সম্পাদনা</button>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pset-children-label">
+          <p class="t-body t-semibold" id="pset-children-label" style="margin-bottom:var(--space-sm)" data-testid="pset-children-label">যুক্ত সন্তান</p>
+
+          <div class="pset-child" data-testid="pset-child">
+            <span class="avatar" aria-hidden="true">র</span>
+            <div class="pset-child-text">
+              <span class="t-body-sm t-semibold" data-testid="pset-child-name">রাফিদ হাসান</span>
+              <span class="t-caption" data-testid="pset-child-meta">চতুর্থ শ্রেণি</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" data-testid="pset-child-remove" aria-label="রাফিদ হাসানকে মুছুন">
+              <i data-lucide="trash-2" class="icon-md" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="pset-child" data-testid="pset-child">
+            <span class="avatar" aria-hidden="true">ম</span>
+            <div class="pset-child-text">
+              <span class="t-body-sm t-semibold" data-testid="pset-child-name">মাহিন হাসান</span>
+              <span class="t-caption" data-testid="pset-child-meta">দ্বিতীয় শ্রেণি</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" data-testid="pset-child-remove" aria-label="মাহিন হাসানকে মুছুন">
+              <i data-lucide="trash-2" class="icon-md" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <button class="btn btn-secondary pset-add" style="margin-top:var(--space-md)" data-testid="pset-child-add">
+            <i data-lucide="plus"></i>
+            সন্তান যোগ করো
+          </button>
+          <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="pset-child-quota">
+            ২ / ৩ ব্যবহৃত · সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়
+          </p>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pset-security-label">
+          <p class="t-body t-semibold" id="pset-security-label" style="margin-bottom:var(--space-sm)" data-testid="pset-security-label">নিরাপত্তা</p>
+
+          <div class="pset-row">
+            <div class="pset-left">
+              <i data-lucide="key-round" class="icon-md" aria-hidden="true"></i>
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-pin-title">৬ সংখ্যার পিন</span>
+                <span class="t-caption" data-testid="pset-pin-help">৩ ধাপ: বর্তমান → নতুন → নিশ্চিত</span>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" data-testid="pset-pin-change">বদলান</button>
+          </div>
+
+          </section>
+
+        <section class="card" data-component="list" aria-labelledby="pset-privacy-label">
+          <p class="t-body t-semibold" id="pset-privacy-label" style="margin-bottom:var(--space-sm)" data-testid="pset-privacy-label">লিডারবোর্ড প্রদর্শন</p>
+          <p class="t-caption" data-testid="pset-privacy-help">প্রতি সন্তান আলাদাকরে · ডিফল্টে নাম লুকানো থাকে</p>
+
+          <div class="pset-row">
+            <div class="pset-left">
+              <i data-lucide="eye-off" class="icon-md" aria-hidden="true"></i>
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-board-child">রাফিদ হাসান</span>
+                <span class="t-caption" data-testid="pset-board-help">লিডারবোর্ডে নাম লুকান</span>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" aria-pressed="false" data-testid="pset-board-toggle">বন্ধ</button>
+          </div>
+
+          <div class="pset-row">
+            <div class="pset-left">
+              <i data-lucide="eye-off" class="icon-md" aria-hidden="true"></i>
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-board-child">মাহিন হাসান</span>
+                <span class="t-caption" data-testid="pset-board-help">লিডারবোর্ডে নাম লুকান</span>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" aria-pressed="true" data-testid="pset-board-toggle">চালু</button>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pset-notif-label">
+          <p class="t-body t-semibold" id="pset-notif-label" style="margin-bottom:var(--space-sm)" data-testid="pset-notif-label">কোন বার্তা পাবেন</p>
+          <p class="t-caption" data-testid="pset-notif-help">বাধ্যতামূলকগুলো বন্ধ করা যায় না — দুর্বলতা না জানালে এই অ্যাপটি কেন কিনেছেন তা কেউ জানতে পারবে না। রাত ১০টা থেকে সকাল ৬টার মধ্যে ইমেইল বা পুশ যায় না।</p>
+
+          <div class="pset-row">
+            <div class="pset-left">
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-notif-result-title">পরীক্ষার ফলাফল</span>
+                <span class="t-caption" data-testid="pset-notif-result-help">বাধ্যতামূলক · অ্যাপ ও ইমেইল</span>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" aria-pressed="true" disabled data-testid="pset-notif-result-toggle">চালু</button>
+          </div>
+
+          <div class="pset-row">
+            <div class="pset-left">
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-notif-weak-title">দুর্বলতা ও রিটেক</span>
+                <span class="t-caption" data-testid="pset-notif-weak-help">বাধ্যতামূলক · অ্যাপ ও ইমেইল</span>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" aria-pressed="true" disabled data-testid="pset-notif-weak-toggle">চালু</button>
+          </div>
+
+          <div class="pset-row">
+            <div class="pset-left">
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-notif-pay-title">পেমেন্ট ও সাবস্ক্রিপশন</span>
+                <span class="t-caption" data-testid="pset-notif-pay-help">বাধ্যতামূলক · অ্যাপ ও ইমেইল</span>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" aria-pressed="true" disabled data-testid="pset-notif-pay-toggle">চালু</button>
+          </div>
+
+          <div class="pset-row">
+            <div class="pset-left">
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-notif-remind-title">অনুশীলনের স্মারক</span>
+                <span class="t-caption" data-testid="pset-notif-remind-help">আপনি বদলাতে পারবেন · অ্যাপ ও পুশ</span>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" aria-pressed="true" data-testid="pset-notif-remind-toggle">চালু</button>
+          </div>
+
+          <div class="pset-row">
+            <div class="pset-left">
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-notif-promo-title">প্রচারণা</span>
+                <span class="t-caption" data-testid="pset-notif-promo-help">আপনি বদলাতে পারবেন · ডিফল্টে বন্ধ</span>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" aria-pressed="false" data-testid="pset-notif-promo-toggle">বন্ধ</button>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pset-lang-label">
+          <p class="t-body t-semibold" id="pset-lang-label" style="margin-bottom:var(--space-md)" data-testid="pset-lang-label">ভাষা</p>
+          <div class="pset-row">
+            <div class="pset-left">
+              <i data-lucide="languages" class="icon-md" aria-hidden="true"></i>
+              <div class="pset-text">
+                <span class="t-body-sm t-semibold" data-testid="pset-lang-name">অ্যাপের ভাষা</span>
+                <span class="t-caption" data-testid="pset-lang-help">পাঠের ব্যাখ্যা সবসময় বাংলায় থাকবে</span>
+              </div>
+            </div>
+            <div class="segmented" role="group" aria-label="অ্যাপের ভাষা" data-testid="pset-lang-segment">
+              <button class="segment" type="button" aria-pressed="true" data-testid="pset-lang-option">বাংলা</button>
+              <button class="segment" type="button" aria-pressed="false" data-testid="pset-lang-option">English</button>
+            </div>
+          </div>
+        </section>
+
+        <button class="btn btn-secondary" data-testid="pset-logout" style="width:100%">
+          <i data-lucide="log-out"></i>
+          লগ আউট
+        </button>
+
+        <!-- PRD L2839: Tap remove child | Confirm dialog -->
+        <div class="modal-scrim" hidden data-testid="pset-remove-scrim"></div>
+        <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="pset-remove-title" hidden data-testid="pset-remove-modal">
+          <div class="modal-header">
+            <h2 class="modal-title" id="pset-remove-title" data-testid="pset-remove-title">সন্তান মুছে দেবেন?</h2>
+            <button class="modal-close" data-testid="pset-remove-close" aria-label="বন্ধ করুন">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="t-body-sm" data-testid="pset-remove-body">রাফিদ হাসান · চতুর্থ শ্রেণি</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-testid="pset-remove-cancel">না</button>
+            <button class="btn btn-danger" data-testid="pset-remove-confirm">মুছে ফেলুন</button>
+          </div>
+        </div>
+
+      </div>
+  </main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="18-parent-dashboard.html" data-testid="nav-dashboard">
+      <i data-lucide="layout-dashboard" class="icon-md"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="tabbar-item" href="19-parent-progress.html" data-testid="nav-progress">
+      <i data-lucide="trending-up" class="icon-md"></i>
+      অগ্রগতি
+    </a>
+    <a class="tabbar-item" href="21-screen-time.html" data-testid="nav-screentime">
+      <i data-lucide="timer" class="icon-md"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="tabbar-item" href="22-alerts.html" data-testid="nav-alerts">
+      <i data-lucide="bell" class="icon-md"></i>
+      অ্যালার্ট
+    </a>
+    <a class="tabbar-item" href="24-parent-settings.html" data-testid="nav-settings" aria-current="page">
+      <i data-lucide="settings" class="icon-md"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

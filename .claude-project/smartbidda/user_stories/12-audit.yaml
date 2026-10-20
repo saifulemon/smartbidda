@@ -1,0 +1,74 @@
+id: US-12-AUDIT
+role: admin
+feature: "Admin audit log — search, sort, paginate and date-range the read-only trail of every actor's change with secrets redacted"
+page: 12-audit.html
+goal: |
+  As an admin on the অডিট লগ page I can search by actor or entity, sort by time/actor/action/entity, page
+  through the trail and bound it by date range, so that I can prove who changed what and when without any
+  possibility of editing — or reading — a password or PIN value.
+scenarios_total: 21
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Audit trail loads read-only with actor, action, entity, change diff and IP"
+    ui_route: /admin/audit
+    endpoint: GET /api/admin/audit-logs
+    expected: "200 — heading 'অডিট লগ' (audit-heading) with 'মোট ১৮,৪০২ টি ঘটনা' (audit-count) and note 'পড়ার অনুমতি মাত্র · কোনো সম্পাদনা সম্ভব নয় · পাসওয়ার্ড ও পিনের মান মুছে ফেলা হয়' (audit-note); table audit-table renders audit-row au-1 '2026-10-16 21:03 · গতকাল' · 'system · সিস্টেম' · update · subscription · 'স্থিতি: সক্রিয় → মেয়াদোত্তীর্ণ' · 103.21.58.14 and au-4 'অ্যাডমিন ১ · অ্যাডমিন' · reset · user"
+  - id: AC-2
+    description: "Search by actor or entity filters the log server-side"
+    ui_route: /admin/audit
+    endpoint: GET /api/admin/audit-logs
+    expected: "200 — typing 'রুবেল' into audit-search (placeholder 'অ্যাক্টর বা এন্টিটি দিয়ে খুঁজুন') requests ?search=রুবেল and only the audit-row 'রুবেল মিয়া · শিক্ষক' · publish · learningContent remains; clearing restores all rows"
+  - id: AC-3
+    description: "Sortable headers re-order the trail via the API"
+    ui_route: /admin/audit
+    endpoint: GET /api/admin/audit-logs
+    expected: "200 — 'সময়' (data-sort=createdAt, initially aria-sort=ascending) toggles newest/oldest; 'অ্যাক্টর' (actorId), 'কাজ' (action) and 'এন্টিটি' (entityType) each send their own sort key and rows re-order in audit-table"
+  - id: AC-4
+    description: "Date-range filter bounds the trail"
+    ui_route: /admin/audit
+    endpoint: GET /api/admin/audit-logs
+    expected: "200 — selecting 2026-10-15 → 2026-10-17 requests ?from=2026-10-15&to=2026-10-17 and only rows inside that window return, with relative captions 'আজ', 'গতকাল', '২ দিন আগে' still rendering"
+  - id: AC-5
+    description: "Pagination walks the whole trail"
+    ui_route: /admin/audit
+    endpoint: GET /api/admin/audit-logs
+    expected: "200 — tapping 'পরের' (audit-page-next) requests page=2 and audit-page-info updates to 'পৃষ্ঠা ২ / ৭৩৭' while 'আগের' (audit-page-prev) becomes enabled; on page ১ 'আগের' is disabled"
+  - id: AC-6
+    description: "Entry detail opens from the row menu (no spine endpoint)"
+    ui_route: /admin/audit
+    endpoint: none
+    expected: "no HTTP call (endpoint: none) — 'বিস্তারিত' (audit-menu-view) expands the row's own change diff inline (e.g. 'লিডারবোর্ডে প্রদর্শন: লুকানো → দেখানো'); no edit controls appear because the table is data-listing=readonly"
+  - id: AC-7
+    description: "Copy an entry and export the filtered trail (client-side only)"
+    ui_route: /admin/audit
+    endpoint: none
+    expected: "no HTTP call (endpoint: none) — 'কপি করুন' (audit-menu-copy) copies the row's actor/action/entity/change/IP line, and 'রপ্তানি' (audit-export) downloads the current search/date/page slice as CSV"
+
+boundary_cases:
+  - case: "Inverted date range (from later than to) — 422 from GET /api/admin/audit-logs, the range control keeps the typed dates and the previous result set stays on screen"
+  - case: "Whitespace-only search ('   ') counts as no query — audit-count returns to 'মোট ১৮,৪০২ টি ঘটনা'; a nonsense query returns zero rows and the empty slot 'কোনো লগ নেই'"
+  - case: "Secret columns are always redacted — au-4 renders 'parentPinHash: •••••••• → ••••••••' and no raw password/PIN value is ever returned, matching the note 'পাসওয়ার্ড ও পিনের মান মুছে ফেলা হয়'"
+  - case: "Page beyond the last page ('পৃষ্ঠা ৭৩৮ / ৭৩৭') — the request clamps to page 737 and audit-page-info stays at 'পৃষ্ঠা ৭৩৭ / ৭৩৭' with 'পরের' disabled"
+  - case: "Date range with no matching events — zero rows with 'কোনো লগ নেই' and both pagination buttons disabled"
+
+error_scenarios:
+  - scenario: "401 expired admin session on GET /api/admin/audit-logs — redirect to /auth/login and back to /admin/audit after re-login; no log lines are shown"
+  - scenario: "403 — a student, parent or teacher session reaching /admin/audit is bounced to /auth/login; the trail is never rendered"
+  - scenario: "500 from GET /api/admin/audit-logs — inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with 'আবার চেষ্টা' retry button; audit-count and audit-note remain visible"
+  - scenario: "422 invalid filter params (date '2026-13-45', sort key not in the column set) — the request is rejected, the offending control shows its validation hint and the last good result set stays rendered"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton card with three 16px bars at 72% / 100% / 54% (st-frame); audit-table hidden until GET /api/admin/audit-logs resolves"
+  - state: empty
+    expected: "Empty slot 'কোনো লগ নেই' (st-edge) in place of the tbody; header keeps 'মোট ০ টি ঘটনা' and 'রপ্তানি' remains available"
+  - state: error
+    expected: "Inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with 'আবার চেষ্টা' retry button; search, sort and pagination disabled until retry succeeds"
+  - state: redacted-secrets
+    expected: "Secret changes render masked, e.g. 'parentPinHash: •••••••• → ••••••••', never the real value"
+  - state: readonly
+    expected: "Table stays data-listing=readonly — no row edit menu, no bulk bar and no modal; only 'বিস্তারিত', 'কপি করুন' and 'রপ্তানি' are offered, under the note 'পড়ার অনুমতি মাত্র · কোনো সম্পাদনা সম্ভব নয়'"
+
+fixture_refs:
+  - admin_audit

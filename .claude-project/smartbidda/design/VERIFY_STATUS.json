@@ -1,0 +1,20 @@
+{
+  "ranAt": "2026-10-19T10:49:07.965Z",
+  "newestFileMs": 1792406947965.124,
+  "newestFile": "manifest.json",
+  "fileCount": 160,
+  "delivery": false,
+  "passed": true,
+  "failing": [],
+  "passing": [
+    "contract",
+    "consistency",
+    "contrast",
+    "links",
+    "icons",
+    "listing",
+    "copy",
+    "viewport",
+    "surface"
+  ]
+}

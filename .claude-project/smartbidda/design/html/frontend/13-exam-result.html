@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ফলাফল — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+
+  /* KPI trio inside the result hero panel */
+  .er-kpis { display: flex; align-items: flex-start; justify-content: space-around;
+    gap: var(--space-md); text-align: center; }
+  .er-kpi { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; }
+
+  /* compare + topic rows live in shared .ksr-list */
+  .er-rows { margin-top: var(--space-md); }
+
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-exam-result {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <!-- StudentSubLayout chrome: back + title appbar, NO tabbar -->
+  <header class="ksr-appbar" data-shell="topbar">
+    <a class="ksr-back" href="11-exam-list.html" aria-label="ফিরে যান" data-testid="sub-back">
+      <i data-lucide="arrow-left" class="icon-sm" aria-hidden="true"></i>
+      ফিরে যান
+    </a>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title">ফলাফল</span>
+  </header>
+
+  <main class="ksr-main sf-exam-result" data-shell="content">
+
+    <!-- 1 · verdict — the glow hero -->
+    <section class="ksr-hero" data-component="card" aria-labelledby="examres-heading">
+      <span class="ksr-badge is-ok" data-testid="examres-status">উত্তীর্ণ</span>
+      <h1 class="t-display-md" id="examres-heading" style="margin-top:var(--space-sm)" data-testid="examres-heading">১ম সাময়িক পরীক্ষা</h1>
+      <p class="t-body-sm t-muted" style="margin-top:var(--space-xs)" data-testid="examres-date">চতুর্থ শ্রেণি · ১৬ অক্টোবর ২০২৬</p>
+    </section>
+
+    <!-- 2 · score · pass mark · class position -->
+    <section class="ksr-panel" data-component="kpi" aria-label="ফলাফল">
+      <div class="er-kpis">
+        <div class="er-kpi">
+          <p class="t-caption" data-testid="examres-score-label">প্রাপ্ত</p>
+          <p class="t-display-lg" data-testid="examres-score">৬৯%</p>
+        </div>
+        <div class="er-kpi">
+          <p class="t-caption" data-testid="examres-pass-label">উত্তীর্ণ</p>
+          <p class="t-display-md" data-testid="examres-pass">৬০%</p>
+        </div>
+        <div class="er-kpi">
+          <p class="t-caption" data-testid="examres-rank-label">শ্রেণি অবস্থান</p>
+          <p class="t-display-md" data-testid="examres-rank">১৮তম</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · a term exam attempt is support-quotable; the UUID never shows -->
+    <p class="t-caption t-muted" style="text-align:center" data-testid="examres-attempt-no">
+      প্রচেষ্টা নং <span class="t-code">SB-EXM-20261016-0487</span>
+    </p>
+
+    <!-- 4 · overall score -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="examres-compare-label">
+      <p class="t-body t-semibold" id="examres-compare-label" data-testid="examres-compare-label">সামগ্রিক নম্বর</p>
+      <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="examres-compare-note">
+        রি-এক্সাম দেওয়া হয়নি, তাই একটিমাত্র বার দেখানো হচ্ছে।
+      </p>
+      <div class="row" style="margin-top:var(--space-md)">
+        <span class="t-body-sm ksr-grow" data-testid="examres-before">১ম সাময়িক · ১৬ অক্টোবর ২০২৬</span>
+        <span class="t-body-sm t-bold" data-testid="examres-before-v">৬৯%</span>
+      </div>
+      <div class="progress is-sm" style="margin-top:var(--space-sm)" role="progressbar"
+           aria-valuenow="69" aria-valuemin="0" aria-valuemax="100" aria-label="এই পরীক্ষার নম্বর">
+        <div class="progress-fill" style="width:69%" data-testid="examres-bar"></div>
+      </div>
+    </section>
+
+    <!-- 5 · per-topic scores — weakest first -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="examres-subjects-label">
+      <p class="t-body t-semibold" id="examres-subjects-label" data-testid="examres-subjects-label">পাঠভিত্তিক নম্বর</p>
+      <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="examres-subjects-note">কম পাওয়া বিষয় আগে দেখানো হচ্ছে।</p>
+      <ul class="ksr-list er-rows">
+        <li class="ksr-row">
+          <span class="ksr-col ksr-grow">
+            <span class="row">
+              <span class="ksr-item-t ksr-grow" data-testid="examres-topic-name">ভগ্নাংশের তুলনা · গণিত</span>
+              <span class="t-body-sm t-bold" data-testid="examres-topic-v">৪৮%</span>
+            </span>
+            <span class="progress is-sm" role="progressbar" aria-valuenow="48" aria-valuemin="0" aria-valuemax="100"
+                  aria-label="গণিত নম্বর">
+              <span class="progress-fill is-warning" style="width:48%" data-testid="examres-topic-bar"></span>
+            </span>
+          </span>
+        </li>
+        <li class="ksr-row">
+          <span class="ksr-col ksr-grow">
+            <span class="row">
+              <span class="ksr-item-t ksr-grow" data-testid="examres-topic-name">বাক্য গঠন · ইংরেজি</span>
+              <span class="t-body-sm t-bold" data-testid="examres-topic-v">৫৮%</span>
+            </span>
+            <span class="progress is-sm" role="progressbar" aria-valuenow="58" aria-valuemin="0" aria-valuemax="100"
+                  aria-label="ইংরেজি নম্বর">
+              <span class="progress-fill is-warning" style="width:58%" data-testid="examres-topic-bar"></span>
+            </span>
+          </span>
+        </li>
+        <li class="ksr-row">
+          <span class="ksr-col ksr-grow">
+            <span class="row">
+              <span class="ksr-item-t ksr-grow" data-testid="examres-topic-name">বাংলা ব্যাকরণ · বাংলা</span>
+              <span class="t-body-sm t-bold" data-testid="examres-topic-v">৬৪%</span>
+            </span>
+            <span class="progress is-sm" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"
+                  aria-label="বাংলা নম্বর">
+              <span class="progress-fill" style="width:64%" data-testid="examres-topic-bar"></span>
+            </span>
+          </span>
+        </li>
+        <li class="ksr-row">
+          <span class="ksr-col ksr-grow">
+            <span class="row">
+              <span class="ksr-item-t ksr-grow" data-testid="examres-topic-name">ভগ্নাংশচিহ্নিতকরণ · গণিত</span>
+              <span class="t-body-sm t-bold" data-testid="examres-topic-v">৭২%</span>
+            </span>
+            <span class="progress is-sm" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"
+                  aria-label="গণিত নম্বর">
+              <span class="progress-fill" style="width:72%" data-testid="examres-topic-bar"></span>
+            </span>
+          </span>
+        </li>
+        <li class="ksr-row">
+          <span class="ksr-col ksr-grow">
+            <span class="row">
+              <span class="ksr-item-t ksr-grow" data-testid="examres-topic-name">মৌখিক প্রকাশ · গণিত</span>
+              <span class="t-body-sm t-bold" data-testid="examres-topic-v">৮২%</span>
+            </span>
+            <span class="progress is-sm" role="progressbar" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100"
+                  aria-label="গণিত নম্বর">
+              <span class="progress-fill" style="width:82%" data-testid="examres-topic-bar"></span>
+            </span>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 6 · weak topics (PRD L1973) — topic names + retake status, hidden when none -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="examres-weak-label">
+      <p class="t-body t-semibold" id="examres-weak-label" data-testid="examres-weak-label">দুর্বল পাঠ</p>
+      <ul class="ksr-list er-rows">
+        <li class="ksr-row">
+          <span class="ksr-col ksr-grow">
+            <span class="row">
+              <span class="ksr-item-t ksr-grow" data-testid="examres-weak-name">ভগ্নাংশের তুলনা</span>
+              <span class="ksr-badge is-warn" data-testid="examres-weak-status">রিটেক প্রয়োজন</span>
+            </span>
+            <span class="t-caption" data-testid="examres-weak-meta">গণিত · ৪৮% · উত্তীর্ণের নিচে ১২ পয়েন্ট</span>
+          </span>
+        </li>
+        <li class="ksr-row">
+          <span class="ksr-col ksr-grow">
+            <span class="row">
+              <span class="ksr-item-t ksr-grow" data-testid="examres-weak-name">বাক্য গঠন</span>
+              <span class="ksr-badge is-warn" data-testid="examres-weak-status">রিটেক প্রয়োজন</span>
+            </span>
+            <span class="t-caption" data-testid="examres-weak-meta">ইংরেজি · ৫৮% · উত্তীর্ণের নিচে ২ পয়েন্ট</span>
+          </span>
+        </li>
+      </ul>
+      <!-- PRD L1816: a pending retake blocks the re-exam and routes here -->
+      <a class="ksr-btn is-quiet is-block" style="margin-top:var(--space-md)" href="10-retake-class.html" data-testid="examres-weak-retake">
+        রিটেক ক্লাসে যান
+        <i data-lucide="arrow-right" class="icon-sm" aria-hidden="true"></i>
+      </a>
+    </section>
+
+    <!-- 7 · actions — thumb-reach -->
+    <div class="ksr-stack">
+      <a class="ksr-btn is-block" href="06-chapter-list.html" data-testid="examres-next">
+        পরের পড়ায় যাও
+        <i data-lucide="arrow-right" class="icon-sm" aria-hidden="true"></i>
+      </a>
+      <button class="ksr-btn is-quiet is-block" type="button" data-testid="examres-print">
+        <i data-lucide="printer" class="icon-sm" aria-hidden="true"></i>
+        প্রিন্ট
+      </button>
+      <a class="ksr-back" style="justify-content:center" href="01-home.html" data-testid="examres-home">হোমে ফিরে যান</a>
+    </div>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

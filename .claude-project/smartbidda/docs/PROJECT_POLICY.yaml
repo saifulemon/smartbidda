@@ -1,0 +1,206 @@
+schema_version: 1
+project: smartbidda
+generated_at: "2026-10-19"
+source: PRD (feature + technical), confirmed decisions [📌 Adopted] and technical resolutions [T#]
+
+billing:
+  currency: BDT
+  storage_unit: poisha
+  poisha_per_bdt: 100
+  gateway: SSLCommerz
+  payment_methods: [BKASH, NAGAD, UPAY, CARD]
+  billing_unit: family
+  entitlement_scope: per_family
+  entitlement_covers: every_child_linked_to_family
+  max_children_self_serve: 3
+  max_children_admin_override: true
+  removing_child_changes_entitlement: false
+
+plans:
+  - key: FREE
+    price_poisha: 0
+    cycle: none
+    includes: NCTB core lessons, quizzes, leaderboard
+    locks: crash packs and premium chapters
+  - key: FAMILY_MONTHLY
+    price_poisha: 39900
+    price_status: client_confirmed_launch
+    cycle: monthly
+    scope: all subjects, every linked child
+    display_bn: ৳৩৯৯ / মাস
+  - key: FAMILY_ANNUAL
+    price_poisha: 349900
+    price_status: client_confirmed_launch
+    cycle: annual
+    scope: all subjects, every linked child
+    monthly_equivalent_poisha: 29158
+    savings_percent_vs_monthly: 27
+    display_bn: ৳৩,৪৯৯ / বছর
+  - key: CRASH_PACK_TERM
+    price_poisha: 14900
+    price_status: client_confirmed_launch
+    cycle: one_time
+    validity: 15_days
+    validity_anchor: 1st_term_exam_window
+    includes: "২ টি বিশেষ পাঠ প্রতি বিষয়ে"
+    display_bn: ৳১৪৯
+  - key: CRASH_PACK_ANNUAL
+    price_poisha: 29900
+    price_status: client_confirmed_launch
+    cycle: one_time
+    validity: 30_days
+    validity_anchor: annual_exam_window
+    includes: "সব বিষয়ের পুনরাবৃত্তি"
+    display_bn: ৳২৯৯
+
+commission: none
+
+refund_policy:
+  version: 1
+  model: compensating_transaction
+  original_payment_row_edited: false
+  issuer: admin_only
+  tiers:
+    - trigger: admin_issued
+      rate_percent: 100
+      window: any_time_before_and_after_payment
+      effect: refund_row_created_referencing_original_payment_AND_entitlement_revoked_immediately
+  partial_refunds: not_modeled
+  double_refund_blocked: true
+  double_refund_message_bn: রিফান্ড আগেই সম্পন্ন হয়েছে
+
+cancellation_policy:
+  renewal_stop: at_period_end
+  entitlement_persists_until: entitlement_until
+  cancellation_fee_poisha: 0
+
+payment_policy:
+  intent_status_pending_expiry_minutes: 30
+  pending_expiry_transition: PENDING_TO_FAILED
+  webhook_authentication: gateway_signature_only
+  webhook_idempotency_key: gateway_ref
+  webhook_retries: 3
+  webhook_retry_strategy: exponential
+  client_status_poll_ceiling_seconds: 30
+  page_return_alone_grants_entitlement: false
+  manual_offline_record_allowed: admin_only
+
+subscription_policy:
+  grace_days_past_entitlement_until: 3
+  grace_status: GRACE
+  premium_lock_after_grace: true
+  expiry_sweep_schedule: nightly
+  expiry_notice_days: 3
+  expiry_notice_send_time: "09:00"
+  expiry_notice_timezone: Asia/Dhaka
+
+dispute: none
+
+assessment_policy:
+  quiz_questions_per_session: 10
+  quiz_timer_seconds_class_1_2: 0
+  quiz_timer_seconds_class_3_5: 60
+  quiz_timer_expiry_action: auto_submit_blank_counts_wrong
+  adaptive_tier_start: 2
+  adaptive_up_after_consecutive_correct: 2
+  adaptive_down_after_consecutive_wrong: 2
+  adaptive_window_last_answers: 10
+  pass_threshold_percent_default: 60
+  pass_threshold_per_exam_configurable: true
+  pass_threshold_locked_while_attempts_open: true
+  reexam_gate: all_assigned_retakes_COMPLETED
+  retakes_per_chapter_before_escalation: 2
+  escalation_failure_count: 3
+  escalation_effect: status_to_teacher_review_no_further_auto_queue
+  term_exams_per_class_per_year: 3
+
+weakness_detection_policy:
+  weak_below_accuracy_percent: 50
+  weak_last_attempts_window: 3
+  min_answer_sample: 5
+  low_sample_marker_bn: নমুনা কম
+  ai_fallback: rule_based_topic_selection
+  ai_fallback_log_event: ai_selection_fallback
+  ai_unknown_content_id_action: discard_and_fall_back
+
+gamification_policy:
+  quiz_pass_points: 25
+  exam_pass_points: 100
+  perfect_score_bonus_points: 10
+  leaderboard_scope: per_class_no
+  leaderboard_list_size: 100
+  leaderboard_own_row_pinned: true
+  leaderboard_opt_out_default: true
+  leaderboard_visible_fields: [display_name, class_no]
+  rewards_redeemable_for_real_world: false
+
+screen_time_policy:
+  default_daily_limit_min: 60
+  unlimited_value: null
+  unlimited_requires_explicit_parent_toggle: true
+  extension_grant_min: 15
+  heartbeat_granularity_seconds: 60
+  enforcement: server_side_hard_block
+  block_screen_primary_action_bn: মাকে বলি
+  authoritative_ledger: screen_time_ledger
+
+parental_control_policy:
+  nudge_max_per_day_per_student: 5
+  nudge_type: one_way_onscreen_prompt
+  kid_pin_digits: 4
+  parent_pin_digits: 6
+  parent_mode_required_for_parent_routes: true
+  child_limit_per_parent: 3
+  single_acting_guardian_in_mvp: true
+
+auth_policy:
+  parent_credential: email_plus_password
+  password_min_length: 8
+  password_requires_number: true
+  password_storage: bcrypt
+  pin_failure_lockout_after: 3
+  pin_lockout_seconds: 600
+  pin_lockout_message_bn: পিন ভুল হয়েছে। ১০ মিনিট পরে চেষ্টা করো।
+  otp_auth_in_mvp: false
+  social_login_in_mvp: false
+  token_storage: httpOnly_cookie_never_localstorage
+
+notification_policy:
+  quiet_hours_start: "22:00"
+  quiet_hours_end: "06:00"
+  quiet_hours_timezone: Asia/Dhaka
+  mandatory_categories_bypass_quiet_hours: true
+  payment_categories_mandatory: true
+  promo_broadcast_default_off: true
+  weekly_digest_default_on: false
+  # Confirmed 2026-10-19: critical alerts are opt-out; every other category is opt-in.
+  alert_default_on_categories: [weakness_detected, retake_escalated, payment_failed]
+  alert_default_off_categories: [weekly_digest, promo_broadcast, streak_reminder, nudge_receipt]
+  delivery_primary: in_app_and_push
+  email_delivery: best_effort
+  email_retry_policy: none
+  email_failure_blocks_alert: false
+
+content_policy:
+  video_max_mb: 500
+  video_formats: [mp4, webm]
+  pdf_max_mb: 25
+  rights_attestation_required_for_publish: true
+  content_kinds: [LESSON, REMEDIAL]
+  voiceover: pre_authored_assets_only
+  live_stt_in_mvp: false
+
+retention_policy:
+  usage_heartbeat_purge_days: 90
+  suspended_account_progress_retention_days: 90
+  withdrawn_soft_delete_hard_delete_days: 90
+  parent_child_data_purge_days: 7
+  append_only_tables: [points_ledger, screen_time_ledger, nudges, audit_logs, usage_heartbeat]
+
+identity_policy:
+  display_id_formats:
+    family: "SB-FAM-YYYYMMDD-NNNN"
+    subscription: "SB-SUB-YYYYMMNN-NNNN"
+    payment: "SB-PAY-YYYYMMDD-NNNN"
+    quiz_session: "SB-QIZ-YYYYMMDD-NNNN"
+    exam_attempt: "SB-EXM-YYYYMMDD-NNNN"

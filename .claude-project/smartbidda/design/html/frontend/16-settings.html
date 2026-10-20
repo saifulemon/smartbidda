@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>সেটিংস — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+
+  /* setting row — label block left, control right */
+  .set-row-dlv { display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-md); }
+  .set-left { display: flex; align-items: center; gap: var(--space-md); min-width: 0; flex: 1 1 auto; }
+  .set-chips { display: flex; gap: var(--space-xs); flex-wrap: wrap; }
+
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-settings {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <!-- StudentSubLayout chrome: back + title appbar, NO tabbar -->
+  <header class="ksr-appbar" data-shell="topbar">
+    <a class="ksr-back" href="01-home.html" aria-label="ফিরে যান" data-testid="sub-back">
+      <i data-lucide="arrow-left" class="icon-sm" aria-hidden="true"></i>
+      ফিরে যান
+    </a>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title">সেটিংস</span>
+  </header>
+
+  <main class="ksr-main sf-settings" data-shell="content">
+
+    <!-- 1 · language -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="set-lang-label">
+      <p class="t-body t-semibold" id="set-lang-label" data-testid="set-lang-label">ভাষা</p>
+      <div class="set-row-dlv">
+        <span class="set-left">
+          <i data-lucide="languages" class="icon-md ksr-mute" aria-hidden="true"></i>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="set-lang-name">অ্যাপের ভাষা</span>
+            <span class="t-caption" data-testid="set-lang-help">পাঠের ব্যাখ্যা সবসময় বাংলায় থাকবে</span>
+          </span>
+        </span>
+        <span class="segmented" role="group" aria-label="অ্যাপের ভাষা" data-testid="set-lang-segment">
+          <button class="segment" type="button" aria-pressed="true" data-testid="set-lang-option">বাংলা</button>
+          <button class="segment" type="button" aria-pressed="false" data-testid="set-lang-option">English</button>
+        </span>
+      </div>
+    </section>
+
+    <!-- 2 · font size -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="set-font-label">
+      <p class="t-body t-semibold" id="set-font-label" data-testid="set-font-label">অক্ষরের আকার</p>
+      <div class="set-row-dlv">
+        <span class="set-left">
+          <i data-lucide="type" class="icon-md ksr-mute" aria-hidden="true"></i>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="set-font-name">লেখার আকার</span>
+            <span class="t-caption" data-testid="set-font-help">ছোট, মাঝারি বা বড় — বদলালে পুরো অ্যাপে লাগবে</span>
+          </span>
+        </span>
+        <span class="set-chips" role="group" aria-label="লেখার আকার" data-testid="set-font-size">
+          <button class="ksr-chip" type="button" aria-pressed="false" data-testid="set-font-sm">ছোট</button>
+          <button class="ksr-chip is-on" type="button" aria-pressed="true" data-testid="set-font-md">মাঝারি</button>
+          <button class="ksr-chip" type="button" aria-pressed="false" data-testid="set-font-lg">বড়</button>
+        </span>
+      </div>
+    </section>
+
+    <!-- 3 · sound -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="set-voice-label">
+      <p class="t-body t-semibold" id="set-voice-label" data-testid="set-voice-label">শব্দ</p>
+      <div class="set-row-dlv">
+        <span class="set-left">
+          <i data-lucide="volume-2" class="icon-md ksr-mute" aria-hidden="true"></i>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="set-voice-name">ভয়েস নির্দেশনা</span>
+            <span class="t-caption" data-testid="set-voice-help">প্রশ্ন ও ব্যাখ্যা কণ্ঠে পড়ে শোনাবে</span>
+          </span>
+        </span>
+        <button class="ksr-chip is-on" type="button" aria-pressed="true" data-testid="set-voice-toggle">চালু</button>
+      </div>
+      <div class="set-row-dlv">
+        <span class="set-left">
+          <i data-lucide="music" class="icon-md ksr-mute" aria-hidden="true"></i>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="set-sound-name">সব শব্দ বন্ধ</span>
+            <span class="t-caption" data-testid="set-sound-help">কণ্ঠস্বর, ফলাফল ও অ্যানিমেশন — সব শব্দ একসাথে বন্ধ হয়ে যাবে</span>
+          </span>
+        </span>
+        <button class="ksr-chip is-on" type="button" aria-pressed="true" data-testid="set-sound-toggle">চালু</button>
+      </div>
+    </section>
+
+    <!-- 4 · account -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="set-account-label">
+      <p class="t-body t-semibold" id="set-account-label" data-testid="set-account-label">অ্যাকাউন্ট</p>
+      <div class="set-row-dlv">
+        <span class="set-left">
+          <span class="avatar" aria-hidden="true">র</span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="set-profile-name">রাফিদ হাসান</span>
+            <span class="t-caption" data-testid="set-profile-class">চতুর্থ শ্রেণি · SB-FAM-20260902-1041</span>
+          </span>
+        </span>
+        <a class="ksr-chip" href="04-onboarding.html" data-testid="set-profile-edit">বদলান</a>
+      </div>
+      <a class="ksr-item" href="#" data-testid="set-parent-link">
+        <i data-lucide="phone" class="icon-md ksr-mute" aria-hidden="true"></i>
+        <span class="ksr-item-t ksr-grow" data-testid="set-parent-link-label">মাকে বলি</span>
+        <i data-lucide="chevron-right" class="icon-sm ksr-mute" aria-hidden="true"></i>
+      </a>
+      <a class="ksr-item" href="02-login.html" data-testid="set-logout">
+        <i data-lucide="log-out" class="icon-md ksr-mute" aria-hidden="true"></i>
+        <span class="ksr-item-t ksr-grow" data-testid="set-logout-label">লগ আউট</span>
+        <i data-lucide="chevron-right" class="icon-sm ksr-mute" aria-hidden="true"></i>
+      </a>
+    </section>
+
+    <p class="t-caption" data-testid="set-version">স্মার্টবিদ্যা সংস্করণ ১.০.০</p>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

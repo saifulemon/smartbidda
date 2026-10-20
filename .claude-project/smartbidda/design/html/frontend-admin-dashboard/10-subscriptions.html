@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>সাবস্ক্রিপশন — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+
+  .subs-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+</style>
+</head>
+<body data-app="frontend-admin-dashboard" data-layout="AdminLayout">
+  <div class="ksr-console">
+
+    <aside class="ksr-side" data-shell="sidebar" data-component="nav" aria-label="প্রধান নেভিগেশন">
+      <span class="ksr-wordmark" data-testid="admin-brand">স্মার্টবিদ্যা</span>
+      <a class="ksr-side-item" href="01-dashboard.html" data-testid="side-dashboard"><i data-lucide="layout-dashboard" class="icon-sm" aria-hidden="true"></i>ড্যাশবোর্ড</a>
+      <a class="ksr-side-item" href="02-students.html" data-testid="side-students"><i data-lucide="users" class="icon-sm" aria-hidden="true"></i>শিক্ষার্থী</a>
+      <a class="ksr-side-item" href="03-parents.html" data-testid="side-parents"><i data-lucide="users" class="icon-sm" aria-hidden="true"></i>অভিভাবক</a>
+      <a class="ksr-side-item" href="04-teachers.html" data-testid="side-teachers"><i data-lucide="graduation-cap" class="icon-sm" aria-hidden="true"></i>শিক্ষক</a>
+      <a class="ksr-side-item" href="05-curriculum.html" data-testid="side-curriculum"><i data-lucide="book-open" class="icon-sm" aria-hidden="true"></i>পাঠ্যক্রম</a>
+      <a class="ksr-side-item" href="06-content.html" data-testid="side-content"><i data-lucide="play" class="icon-sm" aria-hidden="true"></i>কনটেন্ট</a>
+      <a class="ksr-side-item" href="07-questions.html" data-testid="side-questions"><i data-lucide="circle-help" class="icon-sm" aria-hidden="true"></i>প্রশ্নব্যাংক</a>
+      <a class="ksr-side-item" href="08-exams.html" data-testid="side-exams"><i data-lucide="clipboard-check" class="icon-sm" aria-hidden="true"></i>পরীক্ষা</a>
+      <a class="ksr-side-item" href="09-remedial.html" data-testid="side-remedial"><i data-lucide="rotate-ccw" class="icon-sm" aria-hidden="true"></i>রিমিডিয়াল</a>
+      <a class="ksr-side-item" href="10-subscriptions.html" data-testid="side-subscriptions" aria-current="page"><i data-lucide="wallet" class="icon-sm" aria-hidden="true"></i>সাবস্ক্রিপশন</a>
+      <a class="ksr-side-item" href="11-notifications.html" data-testid="side-notifications"><i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>নোটিফিকেশন</a>
+      <a class="ksr-side-item" href="12-audit.html" data-testid="side-audit"><i data-lucide="scroll-text" class="icon-sm" aria-hidden="true"></i>অডিট লগ</a>
+    </aside>
+
+    <div class="app-main">
+
+    <div class="app-main">
+            <header class="ksr-appbar" data-shell="topbar">
+        <button class="ksr-navtoggle" type="button" data-testid="admin-nav-toggle" aria-label="মেনু" aria-expanded="false"
+          onclick="const s=this.closest('.ksr-console').querySelector('.ksr-side');const o=s.classList.toggle('is-open');this.setAttribute('aria-expanded',o)">
+          <i data-lucide="menu" class="icon-sm" aria-hidden="true"></i>
+        </button>
+        <h1 class="ksr-appbar-title" data-slot="title" data-testid="admin-title">সাবস্ক্রিপশন</h1>
+        <div class="row" style="margin-left:auto">
+          <button class="ksr-round" type="button" data-testid="admin-user-menu" aria-label="ব্যবহারকারী মেনু">
+            <span class="avatar" aria-hidden="true">প</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="ksr-main" data-shell="content">
+        <div class="card subs-safe" data-component="card" style="padding:0;overflow:hidden">
+          <div class="card-header listing-head" style="padding:var(--space-lg);margin:0">
+            <div>
+              <h2 class="ksr-hd" data-testid="subs-heading">সাবস্ক্রিপশন</h2>
+              <p class="t-caption" data-testid="subs-count">মোট ২৯১ টি · ৩ টি পেমেন্ট সমস্যা</p>
+            </div>
+            <div class="listing-filters">
+              <button class="ksr-btn is-quiet" type="button" data-testid="subs-export">
+                <i data-lucide="download" class="icon-sm"></i>
+                রপ্তানি
+              </button>
+              <button class="ksr-btn" type="button" data-component="cta" data-testid="subs-create">
+                <i data-lucide="plus" class="icon-sm"></i>
+                নিজে থেকে সক্রিয় করুন
+              </button>
+            </div>
+          </div>
+
+          <div class="listing-body">
+            <div class="search" data-component="search-bar">
+              <i data-lucide="search" class="icon-sm"></i>
+              <input class="input" type="search" placeholder="পরিবারের কোড বা নাম দিয়ে খুঁজুন" aria-label="সাবস্ক্রিপশন খুঁজুন" data-testid="subs-search">
+            </div>
+
+          </div>
+
+          <div class="bulk-bar" data-component="bulk-actions" hidden data-testid="subs-bulk-bar">
+            <span class="t-body-sm" data-testid="subs-bulk-count">৩ জন নির্বাচিত</span>
+            <button class="btn btn-secondary btn-sm" data-testid="subs-bulk-action">
+              সামূহিক কাজ
+            </button>
+            <button class="btn btn-danger btn-sm" data-testid="subs-bulk-delete">
+              মুছুন
+            </button>
+          </div>
+
+          <div class="table-scroll">
+            <table class="table" data-listing="writable" data-component="data-table" data-testid="subs-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" class="row-check" data-component="row-select" aria-label="সব নির্বাচন করুন" data-testid="subs-select-all"></th>
+                  <th class="sortable" data-sort="paymentNo">পেমেন্ট নং <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="familyCode">পরিবার <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="plan">প্ল্যান <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="amount">পরিমাণ <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="method">মাধ্যম <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th class="sortable" data-sort="status">অবস্থা <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th>গেটওয়ে রেফ</th>
+                  <th class="sortable" data-sort="createdAt" aria-sort="ascending">তৈরির সময় <i data-lucide="chevrons-up-down" class="icon-sm"></i></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-testid="subs-row" data-id="su-1">
+                  <td><input type="checkbox" class="row-check" data-component="row-select" aria-label="SB-FAM-20260902-1041 পরিবার প্ল্যান নির্বাচন করুন" data-testid="subs-row-select"></td>
+                  <td><span class="t-code">SB-PAY-20260925-4181</span></td>
+                  <td><span class="t-code">SB-FAM-20260902-1041</span> · ফারহানা রহমান</td>
+                  <td>পরিবার প্ল্যান</td>
+                  <td>৳৩৯৯</td>
+                  <td>বিকাশ</td>
+                  <td><span class="ksr-badge is-ok">সফল</span></td>
+                  <td><span class="t-code">TRX418112345</span></td>
+                  <td>2026-09-25</td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="subs-row-actions">
+                      <button class="row-actions-trigger" aria-label="SB-FAM-20260902-1041 পরিবার প্ল্যান-এর কার্যক্রম" data-testid="subs-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="subs-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="subs-menu-refund">ফেরত দিন</button>
+                        <button class="row-menu-item" data-testid="subs-menu-reconcile">মিলিয়ে নিন</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-testid="subs-row" data-id="su-2">
+                  <td><input type="checkbox" class="row-check" data-component="row-select" aria-label="SB-FAM-20260815-0392 ক্র্যাশ প্যাক নির্বাচন করুন" data-testid="subs-row-select"></td>
+                  <td><span class="t-code">SB-PAY-20260910-3921</span></td>
+                  <td><span class="t-code">SB-FAM-20260815-0392</span> · নাসরিন আক্তার</td>
+                  <td>ক্র্যাশ প্যাক</td>
+                  <td>৳১৪৯</td>
+                  <td>নগদ</td>
+                  <td><span class="ksr-badge is-ok">সফল</span></td>
+                  <td><span class="t-code">TRX392112987</span></td>
+                  <td>2026-09-10</td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="subs-row-actions">
+                      <button class="row-actions-trigger" aria-label="SB-FAM-20260815-0392 ক্র্যাশ প্যাক-এর কার্যক্রম" data-testid="subs-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="subs-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="subs-menu-refund">ফেরত দিন</button>
+                        <button class="row-menu-item" data-testid="subs-menu-reconcile">মিলিয়ে নিন</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-testid="subs-row" data-id="su-3">
+                  <td><input type="checkbox" class="row-check" data-component="row-select" aria-label="SB-FAM-20260810-0177 পরিবার প্ল্যান নির্বাচন করুন" data-testid="subs-row-select"></td>
+                  <td><span class="t-code">SB-PAY-20261016-0177</span></td>
+                  <td><span class="t-code">SB-FAM-20260810-0177</span> · মোঃ সাইফুল ইসলাম</td>
+                  <td>পরিবার প্ল্যান</td>
+                  <td>৳৩৯৯</td>
+                  <td>আপায়</td>
+                  <td><span class="ksr-badge is-bad">ব্যর্থ</span></td>
+                  <td><span class="t-code">TRX01771016</span></td>
+                  <td>2026-10-16</td>
+                  <td>
+                    <div class="row-actions" data-component="row-actions" data-testid="subs-row-actions">
+                      <button class="row-actions-trigger" aria-label="SB-FAM-20260810-0177 পরিবার প্ল্যান-এর কার্যক্রম" data-testid="subs-row-actions-trigger">
+                        <i data-lucide="more-horizontal" class="icon-md"></i>
+                      </button>
+                      <div class="row-menu" hidden>
+                        <button class="row-menu-item" data-testid="subs-menu-view">বিস্তারিত</button>
+                        <button class="row-menu-item" data-testid="subs-menu-refund">ফেরত দিন</button>
+                        <button class="row-menu-item" data-testid="subs-menu-reconcile">মিলিয়ে নিন</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="padding:var(--space-lg)">
+            <div class="pagination" data-testid="subs-pagination">
+              <button class="ksr-btn is-quiet" type="button" data-testid="subs-page-prev" disabled>
+                <i data-lucide="chevron-left" class="icon-sm"></i>
+                আগের
+              </button>
+              <span class="t-caption" data-testid="subs-page-info">পৃষ্ঠা ১ / ১২</span>
+              <button class="ksr-btn is-quiet" type="button" data-testid="subs-page-next">
+                পরের
+                <i data-lucide="chevron-right" class="icon-sm"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ONE shared modal serves BOTH create and edit — only the prefilled values differ -->
+        <div class="modal-scrim" hidden data-testid="subs-modal-scrim"></div>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="subs-modal-title" hidden data-component="entity-form-modal" data-testid="subs-modal">
+          <div class="modal-header">
+            <h2 class="modal-title" id="subs-modal-title" data-testid="subs-modal-title">নিজে থেকে সক্রিয় করুন</h2>
+            <button class="modal-close" data-testid="subs-modal-close" aria-label="বন্ধ করুন">
+              <i data-lucide="x" class="icon-md"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="form-grid" data-component="form">
+              <div class="field">
+                <label class="label" for="subs-f-family">পরিবারের কোড</label>
+                <input class="input" id="subs-f-family" type="text" required placeholder="SB-FAM-YYYYMMDD-NNNN" data-testid="subs-f-family">
+                <p class="help-text">§৩.৬ ফরম্যাট: SB-FAM-YYYYMMDD-NNNN</p>
+              </div>
+              <div class="field">
+                <label class="label" for="subs-f-plan">প্ল্যান</label>
+                <select class="input" id="subs-f-plan" data-testid="subs-f-plan"><option selected>পরিবার প্ল্যান</option><option>ক্র্যাশ প্যাক</option><option>নিঃশুল্ক ট্রায়াল</option></select>
+              </div>
+              <div class="field">
+                <label class="label" for="subs-f-months">মেয়াদ (মাস)</label>
+                <input class="input" id="subs-f-months" type="number" value="1" min="1" max="12" data-testid="subs-f-months">
+              </div>
+              <div class="field">
+                <label class="label" for="subs-f-reason">কারণ</label>
+                <input class="input" id="subs-f-reason" type="text" data-testid="subs-f-reason">
+                <p class="help-text">অডিট লগে কারণ ছাড়া বদল থাকবে না।</p>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="ksr-btn is-quiet" type="button" data-testid="subs-modal-cancel">বাতিল</button>
+            <button class="ksr-btn" type="button" data-testid="subs-modal-save">সংরক্ষণ</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

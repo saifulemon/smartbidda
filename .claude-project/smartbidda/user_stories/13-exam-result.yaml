@@ -1,0 +1,60 @@
+id: US-13-EXAM-RESULT
+role: student
+feature: "Term exam result — verdict, score against the 60% pass line, class position, per-topic marks and weak-topic retake route"
+page: 13-exam-result.html
+goal: |
+  As a student on the ফলাফল page for ১ম সাময়িক পরীক্ষা I see my score against the ৬০% pass line, my
+  class position and per-topic marks weakest first, so that I know which topics pulled me down and can
+  go straight to the retake class that fixes them.
+scenarios_total: 17
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The submitted attempt loads its verdict and score triad"
+    ui_route: /exams/:examId/result
+    endpoint: GET /api/exams/:id/attempts/:aid
+    expected: "200 — badge 'উত্তীর্ণ' (examres-status), heading '১ম সাময়িক পরীক্ষা' (examres-heading), sub 'চতুর্থ শ্রেণি · ১৬ অক্টোবর ২০২৬' (examres-date), score '৬৯%' (examres-score), pass line '৬০%' (examres-pass) and class position '১৮তম' (examres-rank)"
+  - id: AC-2
+    description: "The attempt reference is shown as a support-quotable number"
+    ui_route: /exams/:examId/result
+    endpoint: GET /api/exams/:id/attempts/:aid
+    expected: "200 — caption 'প্রচেষ্টা নং' with code SB-EXM-20261016-0487 (examres-attempt-no); the route's examId and attemptId are not printed as raw URL text"
+  - id: AC-3
+    description: "Per-topic marks list weakest first with warning bars below the pass line"
+    ui_route: /exams/:examId/result
+    endpoint: GET /api/exams/:id/attempts/:aid
+    expected: "200 — panel 'পাঠভিত্তিক নম্বর' notes 'কম পাওয়া বিষয় আগে দেখানো হচ্ছে।'; rows read 'ভগ্নাংশের তুলনা · গণিত ৪৮%', 'বাক্য গঠন · ইংরেজি ৫৮%', 'বাংলা ব্যাকরণ · বাংলা ৬৪%', 'ভগ্নাংশচিহ্নিতকরণ · গণিত ৭২%', 'মৌখিক প্রকাশ · গণিত ৮২%' (examres-topic-name / examres-topic-v); ৪৮% and ৫৮% bars use is-warning"
+  - id: AC-4
+    description: "Weak topics show retake status and route to the retake class"
+    ui_route: /exams/:examId/result
+    endpoint: GET /api/exams/:id/attempts/:aid
+    expected: "200 — 'দুর্বল পাঠ' lists 'ভগ্নাংশের তুলনা' (গণিত · ৪৮% · উত্তীর্ণের নিচে ১২ পয়েন্ট) and 'বাক্য গঠন' (ইংরেজি · ৫৮% · উত্তীর্ণের নিচে ২ পয়েন্ট), both badged 'রিটেক প্রয়োজন' (examres-weak-status); 'রিটেক ক্লাসে যান' (examres-weak-retake) routes to /retake/:retakeId"
+  - id: AC-5
+    description: "The overall-score panel explains why only one bar is drawn"
+    ui_route: /exams/:examId/result
+    endpoint: GET /api/exams/:id/attempts/:aid
+    expected: "200 — 'সামগ্রিক নম্বর' (examres-compare-label) shows the note 'রি-এক্সাম দেওয়া হয়নি, তাই একটিমাত্র বার দেখানো হচ্ছে।', row '১ম সাময়িক · ১৬ অক্টোবর ২০২৬' with '৬৯%' and a bar at 69% (examres-before-v / examres-bar)"
+
+boundary_cases:
+  - case: "Score lands exactly on the pass line (৬০%) — the 'উত্তীর্ণ' badge still renders because the ৬০% threshold is inclusive, and the weak-topic section hides any topic at or above ৬০%"
+  - case: "Attempt fails below ৬০% — hero badge drops the is-ok styling, 'রিটেক ক্লাসে যান' becomes the primary action and 'পরের পড়ায় যাও' gives way to the retake route"
+  - case: "No topic falls below the pass line — the entire 'দুর্বল পাঠ' section is omitted rather than rendering an empty heading"
+  - case: "This is a re-exam attempt — the overall panel draws two bars (before and after) instead of the single-bar note, and the rank updates to the better attempt"
+error_scenarios:
+  - scenario: "401 session expired on GET /api/exams/:id/attempts/:aid — redirect to /auth/login for the 4-digit PIN; no score is shown from a stale cache"
+  - scenario: "500 from the attempt endpoint — 'রেজাল্ট লোড হয়নি। আবার চেষ্টা করো।' (st-error) with an 'আবার চেষ্টা করো' retry control"
+  - scenario: "Attempt id does not belong to this exam (404) — 'রেজাল্ট পাওয়া যায়নি।' (st-err-msg) shows with 'ফিরে যান' to /exams instead of an empty result shell"
+  - scenario: "Offline after the exam list cached the result — 'ইন্টারনেট সংযোগ নেই।' (st-edge) banner shows and 'প্রিন্ট' is disabled until the attempt is refetched"
+state_transitions:
+  - state: loading
+    expected: "Skeleton bars 72% / 100% / 54% at 16px height under 'লোড হচ্ছে' (st-label); verdict, score and printable actions are hidden"
+  - state: empty
+    expected: "empty-state 'রেজাল্ট পাওয়া যায়নি।' (st-empty) with 'ফিরে যান' (sub-back) to /exams"
+  - state: error
+    expected: "inline 'রেজাল্ট লোড হয়নি। আবার চেষ্টা করো।' (st-error) plus retry; no partial KPI trio is left on screen"
+  - state: reexam-locked
+    expected: "edge copy 'রিটেক শেষ করলে আবার দিতে পারবে' (st-edge) replaces the re-exam affordance while a mandatory retake is still open"
+
+fixture_refs:
+  - exam_result
+  - identity.examAttemptId

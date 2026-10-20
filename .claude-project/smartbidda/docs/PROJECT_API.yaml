@@ -1,0 +1,675 @@
+project: smartbidda
+# Every endpoint in the smartbidda API surface.
+# - Every method+path listed under any feature's `endpoints:` in PROJECT_KNOWLEDGE.yaml
+#   appears here verbatim (mandatory, enforced by spec-spine-integrity).
+# - Additional endpoints implied by the PRD/auth description and derived_values are
+#   included and marked as such in the `feature` field.
+# `auth` is a role name from PROJECT_AUTH (parent | student | teacher | admin) or `public`.
+endpoints:
+  # ---- auth (spine) ----
+  - method: POST
+    path: /api/auth/signup
+    auth: public
+    entity: users
+    feature: auth
+    request: "email, password, ToS/privacy/child-data consent checkboxes"
+    response: "user, family, access token (httpOnly cookie)"
+  - method: POST
+    path: /api/auth/login
+    auth: public
+    entity: users
+    feature: auth
+    request: "email, password"
+    response: "access token (httpOnly cookie)"
+    note: "implied: parent email/password login path described in auth feature"
+  - method: POST
+    path: /api/auth/student-login
+    auth: public
+    entity: students
+    feature: auth
+    request: "4-digit PIN, avatar selection"
+    response: "access token (httpOnly cookie)"
+  - method: POST
+    path: /api/auth/forgot-password
+    auth: public
+    entity: users
+    feature: auth
+    request: "email"
+    response: "reset token sent by transactional email"
+    note: "implied: parents sign in with email; password reset requires email account (PRD checklist)"
+  - method: POST
+    path: /api/auth/reset-password
+    auth: public
+    entity: users
+    feature: auth
+    request: "reset token, new password"
+    response: "access token (httpOnly cookie)"
+    note: "implied: completes the forgot-password flow"
+  - method: POST
+    path: /api/auth/logout
+    auth: public
+    entity: users
+    feature: auth
+    request: "none"
+    response: "cleared session cookie"
+    note: "implied: counterpart to the login paths"
+  - method: GET
+    path: /api/auth/children
+    auth: public
+    entity: students
+    feature: auth
+    request: "family code / device hint (no session exists yet)"
+    response: "list of linked child (student) profiles for the child selector"
+    note: "PRD /auth/login is GUEST and its loading state resolves GET /api/auth/children before any session exists; scope by the device's family code and keep the NFR account-enumeration protection (generic empty state when unknown)"
+  - method: POST
+    path: /api/students
+    auth: parent
+    entity: students
+    feature: auth
+    request: "child name, avatar, grade/class"
+    response: "created student profile (max 3 per family)"
+  - method: POST
+    path: /api/parent/verify-pin
+    auth: parent
+    entity: users
+    feature: auth
+    request: "6-digit PIN"
+    response: "proxy-mode session token"
+  - method: PATCH
+    path: /api/students/:id
+    auth: parent
+    entity: students
+    feature: settings
+    request: "editable child fields (name, avatar, class)"
+    response: "updated student profile"
+    note: "implied: settings feature allows create/edit/delete of up to 3 children"
+  - method: DELETE
+    path: /api/students/:id
+    auth: parent
+    entity: students
+    feature: settings
+    request: "none"
+    response: "deleted"
+    note: "implied: settings feature allows create/edit/delete of up to 3 children"
+  - method: PATCH
+    path: /api/student/settings
+    auth: student
+    entity: students
+    feature: settings
+    request: "locale (bn/en), voice mute"
+    response: "updated settings"
+  - method: PATCH
+    path: /api/parent/settings
+    auth: parent
+    entity: users
+    feature: settings
+    request: "linked-child management, alert category toggles"
+    response: "updated settings"
+  # ---- localization-voice (spine) ----
+  - method: GET
+    path: /api/i18n/catalog
+    auth: public
+    entity: vo_assets
+    feature: localization-voice
+    request: "locale"
+    response: "Bangla/default UI string catalog"
+  - method: GET
+    path: /api/i18n/voice
+    auth: student
+    entity: vo_assets
+    feature: localization-voice
+    request: "asset key (navigation/state event)"
+    response: "Bangla voice-over audio URL"
+  # ---- curriculum (spine) ----
+  - method: GET
+    path: /api/curriculum/subjects
+    auth: student
+    entity: subjects
+    feature: curriculum
+    request: "classNo, subjectSlug filters"
+    response: "list of subjects (PUBLISHED, entitlement-gated)"
+  - method: GET
+    path: /api/curriculum/chapters
+    auth: student
+    entity: chapters
+    feature: curriculum
+    request: "classNo, subjectSlug filters"
+    response: "list of chapters with unlock state"
+  - method: GET
+    path: /api/curriculum/chapters/:slug
+    auth: student
+    entity: chapters
+    feature: curriculum
+    request: "none"
+    response: "chapter detail with topic tags, lessons, questions"
+  - method: POST
+    path: /api/lessons/:slug/start
+    auth: student
+    entity: learning_content
+    feature: curriculum
+    request: "lesson slug"
+    response: "lesson session, video/PDF URLs"
+  # ---- quiz (spine) ----
+  - method: POST
+    path: /api/quizzes/sessions
+    auth: student
+    entity: quiz_sessions
+    feature: quiz
+    request: "lesson reference"
+    response: "quiz session, 10 questions, tier"
+  - method: POST
+    path: /api/quizzes/sessions/:id/answers
+    auth: student
+    entity: quiz_answers
+    feature: quiz
+    request: "per-topic answer capture"
+    response: "answers recorded, tier adjustment"
+  - method: POST
+    path: /api/quizzes/sessions/:id/complete
+    auth: student
+    entity: quiz_sessions
+    feature: quiz
+    request: "none"
+    response: "pass/fail, unlock or remedial path"
+  - method: GET
+    path: /api/quizzes/sessions/:id
+    auth: student
+    entity: quiz_sessions
+    feature: quiz
+    request: "none"
+    response: "quiz session and result"
+  # ---- exams (spine) ----
+  - method: GET
+    path: /api/exams
+    auth: student
+    entity: term_exams
+    feature: exams
+    request: "classNo filter"
+    response: "list of term exams (First Term, Half-Yearly, Annual)"
+  - method: GET
+    path: /api/exams/:id
+    auth: student
+    entity: term_exams
+    feature: exams
+    request: "none"
+    response: "exam detail, pass threshold, question set"
+    note: "implied: exam detail screen /exams/:examId"
+  - method: POST
+    path: /api/exams/:id/attempts
+    auth: student
+    entity: exam_attempts
+    feature: exams
+    request: "exam id"
+    response: "attempt started"
+  - method: POST
+    path: /api/exams/:id/attempts/:aid/submit
+    auth: student
+    entity: exam_answers
+    feature: exams
+    request: "answers"
+    response: "attempt submitted, score, RETAKE_REQUIRED status"
+  - method: GET
+    path: /api/exams/:id/attempts/:aid
+    auth: student
+    entity: exam_attempts
+    feature: exams
+    request: "none"
+    response: "attempt, before/after recovery delta"
+  - method: POST
+    path: /api/remedial/:id/complete
+    auth: student
+    entity: remedial_assignments
+    feature: exams
+    request: "remedial id"
+    response: "RETAKE_COMPLETED, re-exam unlocked"
+  # ---- gamification (spine) ----
+  - method: GET
+    path: /api/leaderboard
+    auth: student
+    entity: points_ledger
+    feature: gamification
+    request: "classNo"
+    response: "top 100 + viewer's own row pinned when opted out"
+  - method: GET
+    path: /api/rewards
+    auth: student
+    entity: badges
+    feature: gamification
+    request: "none"
+    response: "badges and virtual rewards"
+  # ---- parent-proxy (spine) ----
+  - method: GET
+    path: /api/parent/dashboard
+    auth: parent
+    entity: screen_time_ledger
+    feature: parent-proxy
+    request: "none"
+    response: "per-child mastery, before/after remedial chart, weak-topic count"
+  - method: GET
+    path: /api/parent/students/:id/screen-time
+    auth: parent
+    entity: screen_time_ledger
+    feature: parent-proxy
+    request: "none"
+    response: "screen-time remaining (limitMin − used today)"
+  - method: PUT
+    path: /api/parent/students/:id/screen-time
+    auth: parent
+    entity: screen_time_ledger
+    feature: parent-proxy
+    request: "daily limit minutes"
+    response: "updated limit"
+  - method: POST
+    path: /api/parent/students/:id/screen-time/extend
+    auth: parent
+    entity: screen_time_ledger
+    feature: parent-proxy
+    request: "extension minutes"
+    response: "extended limit, one-time grant"
+  - method: POST
+    path: /api/parent/nudge
+    auth: parent
+    entity: nudges
+    feature: parent-proxy
+    request: "child id, message"
+    response: "nudge sent (hard-capped 5/day)"
+  - method: POST
+    path: /api/usage/heartbeat
+    auth: student
+    entity: usage_heartbeat
+    feature: parent-proxy
+    request: "minutes elapsed"
+    response: "heartbeat accounted, hard block at limit"
+  # ---- notifications (spine) ----
+  - method: GET
+    path: /api/notifications
+    auth: parent
+    entity: notifications
+    feature: notifications
+    request: "none (?unread=true for unread-only)"
+    response: "alert inbox with unread count badge"
+  - method: POST
+    path: /api/notifications/:id/read
+    auth: parent
+    entity: notifications
+    feature: notifications
+    request: "notification id"
+    response: "marked read"
+  - method: POST
+    path: /api/notifications/read-all
+    auth: parent
+    entity: notifications
+    feature: notifications
+    request: "none"
+    response: "all marked read"
+  # ---- payments (spine) ----
+  - method: POST
+    path: /api/payments/intents
+    auth: parent
+    entity: payments
+    feature: payments
+    request: "subscription or crash pack selection"
+    response: "payment intent, SSLCommerz checkout URL"
+  - method: GET
+    path: /api/payments/:id
+    auth: parent
+    entity: payments
+    feature: payments
+    request: "payment id"
+    response: "payment state, amount in poisha (BDT)"
+  - method: POST
+    path: /api/payments/webhook
+    auth: public
+    entity: payments
+    feature: payments
+    request: "SSLCommerz webhook payload"
+    response: "acknowledged, entitlement updated only on webhook confirmation"
+    note: "page-return alone never grants entitlement"
+  - method: GET
+    path: /api/parent/subscription
+    auth: parent
+    entity: subscriptions
+    feature: payments
+    request: "none"
+    response: "family entitlement state (ACTIVE + entitlementUntil > now)"
+  # ---- admin-content (spine) ----
+  # PRD §3.3 /admin/content: Access "Admin, Teacher". A Teacher is the NCTB-aligned
+  # content author (§1 User Roles) and PROJECT_AUTH grants learning_content
+  # create-upload / edit-publish-archive-own, so these guards are admin+teacher, not
+  # admin-only. Admin-only would lock the PRD's primary author out of the authoring flow.
+  - method: GET
+    path: /api/content
+    auth: "admin, teacher"
+    entity: learning_content
+    feature: admin-content
+    request: "class, subject, chapter, kind (LESSON|REMEDIAL) filters"
+    response: "content library list"
+    note: "implied: read side of content authoring + content-library oversight"
+  - method: GET
+    path: /api/content/:id
+    auth: "admin, teacher"
+    entity: learning_content
+    feature: admin-content
+    request: "content id"
+    response: "content detail, video (<=500MB) / PDF (<=25MB), rights attestation"
+    note: "implied: read before publish/edit"
+  - method: POST
+    path: /api/content
+    auth: "admin, teacher"
+    entity: learning_content
+    feature: admin-content
+    request: "curriculum tree position, topic tags, kind, rights attestation (mandatory; 422 RIGHTS_ATTESTATION_REQUIRED when false)"
+    response: "created content item, status DRAFT"
+  - method: PATCH
+    path: /api/content/:id
+    auth: "admin, teacher"
+    entity: learning_content
+    feature: admin-content
+    request: "updates to content, topic tags, publish status"
+    response: "updated content item"
+  - method: DELETE
+    path: /api/content/:id
+    auth: "admin, teacher"
+    entity: learning_content
+    feature: admin-content
+    request: "content id"
+    response: "soft-deleted (archived) content item"
+    note: "PRD /admin/content Possible Actions: archive / delete (soft)"
+  # ---- ai-analytics (spine) ----
+  - method: GET
+    path: /api/parent/students/:id/forecast
+    auth: parent
+    entity: remedial_assignments
+    feature: ai-analytics
+    request: "student id"
+    response: "likely term-exam band, chapters needing revision, forecast inputs"
+  - method: GET
+    path: /api/parent/students/:id/progress
+    auth: parent
+    entity: quiz_answers
+    feature: derived_values
+    request: "student id, topic tag"
+    response: "topic mastery / accuracy over the window"
+    note: "declared in derived_values (Topic mastery / accuracy)"
+  # ---- administration (spine) ----
+  - method: GET
+    path: /api/admin/students
+    auth: admin
+    entity: users
+    feature: administration
+    request: "search, filters, sort, pagination"
+    response: "student/parent/user list with soft-delete and status"
+  - method: GET
+    path: /api/admin/parents
+    auth: admin
+    entity: families
+    feature: administration
+    request: "search, filters, sort, pagination"
+    response: "parent/family list"
+  - method: GET
+    path: /api/admin/subscriptions
+    auth: admin
+    entity: subscriptions
+    feature: administration
+    request: "search, filters, sort, pagination"
+    response: "subscriptions ledger"
+  - method: GET
+    path: /api/admin/payments
+    auth: admin
+    entity: payments
+    feature: administration
+    request: "search, filters, sort, pagination"
+    response: "payments ledger"
+  - method: GET
+    path: /api/admin/audit-logs
+    auth: admin
+    entity: audit_logs
+    feature: administration
+    request: "search, filters, sort, pagination, date range"
+    response: "audit log entries"
+  # ---- admin console: must-have MVP authoring + oversight (PRD §0 MVP Scope) ----
+  # The PRD's MVP scope names "Admin/teacher content upload" and "Admin console: users,
+  # curriculum, question bank, exams, remedial, audit" as Must-have. These endpoints were
+  # absent from the first generation, which would have left four /admin screens with no
+  # backing API and pushed the gap into MISSING_ENDPOINTS self-healing.
+  - method: GET
+    path: /api/admin/teachers
+    auth: admin
+    entity: users
+    feature: administration
+    request: "search, filters, sort, pagination"
+    response: "teacher list (role = teacher) with status and content counts"
+  - method: GET
+    path: /api/admin/questions
+    auth: "admin, teacher"
+    entity: questions
+    feature: admin-content
+    request: "class/subject/chapter, difficulty 1-3, type (MCQ|TRUE_FALSE), search, sort, pagination"
+    response: "question bank list with topic tags and usage counts"
+  - method: GET
+    path: /api/admin/questions/:id
+    auth: "admin, teacher"
+    entity: questions
+    feature: admin-content
+    request: "question id"
+    response: "full question, options, correct answer, explanation, usage stats"
+  - method: POST
+    path: /api/admin/questions
+    auth: "admin, teacher"
+    entity: questions
+    feature: admin-content
+    request: "question text (5-500), options (2-4, >=1 correct), chapter, topic tags (>=1), difficulty 1-3, explanation (<=500)"
+    response: "created question"
+  - method: PATCH
+    path: /api/admin/questions/:id
+    auth: "admin, teacher"
+    entity: questions
+    feature: admin-content
+    request: "editable question fields"
+    response: "updated question"
+  - method: POST
+    path: /api/admin/questions/:id/duplicate
+    auth: "admin, teacher"
+    entity: questions
+    feature: admin-content
+    request: "question id"
+    response: "duplicated question as a new DRAFT"
+    note: "PRD /admin/questions Possible Actions: duplicate (as a new draft)"
+  - method: DELETE
+    path: /api/admin/questions/:id
+    auth: "admin, teacher"
+    entity: questions
+    feature: admin-content
+    request: "question id"
+    response: "retired (soft-deleted) question"
+    note: "PRD /admin/questions Possible Actions: retire (soft)"
+  - method: GET
+    path: /api/admin/exams
+    auth: "admin, teacher"
+    entity: term_exams
+    feature: exams
+    request: "class, status, search, sort, pagination"
+    response: "term exam configuration list"
+  - method: POST
+    path: /api/admin/exams
+    auth: "admin, teacher"
+    entity: term_exams
+    feature: exams
+    request: "class, name, date window, question set, pass threshold (default 60)"
+    response: "created term exam"
+  - method: PATCH
+    path: /api/admin/exams/:id
+    auth: "admin, teacher"
+    entity: term_exams
+    feature: exams
+    request: "date window, question set, pass threshold — only while status is upcoming"
+    response: "updated term exam"
+  - method: POST
+    path: /api/admin/exams/:id/close
+    auth: "admin, teacher"
+    entity: term_exams
+    feature: exams
+    request: "exam id"
+    response: "exam closed early"
+    note: "PRD /admin/exams Possible Actions: extend window, close early, regenerate question set"
+  - method: GET
+    path: /api/admin/remedial
+    auth: "admin, teacher"
+    entity: remedial_assignments
+    feature: exams
+    request: "escalation status, class, search, sort, pagination"
+    response: "remedial assignment queue including escalated retakes"
+  - method: PATCH
+    path: /api/admin/remedial/:id
+    auth: "admin, teacher"
+    entity: remedial_assignments
+    feature: exams
+    request: "reassign content, manual complete (reason required), dismiss (reason required), escalate"
+    response: "updated remedial assignment"
+  - method: POST
+    path: /api/admin/curriculum
+    auth: "admin, teacher"
+    entity: chapters
+    feature: curriculum
+    request: "class, subject, chapter name, sort order, topic tags"
+    response: "created curriculum node"
+    note: "PRD /admin/curriculum Possible Actions: edit, reorder, add/remove topic tags, archive"
+  - method: PATCH
+    path: /api/admin/curriculum/:id
+    auth: "admin, teacher"
+    entity: chapters
+    feature: curriculum
+    request: "name, sort order, topic tags, archived"
+    response: "updated curriculum node"
+  - method: GET
+    path: /api/admin/notifications
+    auth: admin
+    entity: notifications
+    feature: notifications
+    request: "category, suppression state, date range, search, sort, pagination"
+    response: "notification delivery log including suppressed sends"
+    note: "PRD /admin/notifications: suppression is visible here for audit"
+  - method: PATCH
+    path: /api/admin/students/:id/status
+    auth: admin
+    entity: users
+    feature: administration
+    request: "status (ACTIVE|SUSPENDED|WITHDRAWN)"
+    response: "updated account status"
+    note: "PRD /admin/students Possible Actions: change status, edit, reset password, soft delete"
+  # ---- screen-required reads/writes reconciled from design/manifest.json (CONTRACT §2a) ----
+  # Every edge below is declared by a screen in the manifest but had no endpoint in this spec,
+  # so the frontend would have had nothing to call. Additions follow the existing REST shapes
+  # (sessions/attempts stay nested; screen-level aggregates get one explicit read).
+  - method: GET
+    path: /api/student/home
+    auth: student
+    entity: students
+    feature: curriculum
+    request: "none"
+    response: "greeting, continueLesson, subjects, pendingTasks, streak, points, screenTime"
+    note: "PRD Page Map: / -> GET /api/student/home (student home aggregate)"
+  - method: GET
+    path: /api/auth/prefill
+    auth: public
+    entity: families
+    feature: auth
+    request: "family code (optional, from an invite link)"
+    response: "family, children, class options for the child selector"
+    note: "PRD /auth/signup and /auth/login: the child selector renders before authentication completes"
+  - method: GET
+    path: /api/onboarding
+    auth: parent
+    entity: students
+    feature: auth
+    request: "none"
+    response: "steps, profile draft, class options"
+    note: "PRD /onboarding: resume state for a partially completed child profile; the write is POST /api/students"
+  - method: POST
+    path: /api/lessons/:slug/progress
+    auth: student
+    entity: lesson_progress
+    feature: curriculum
+    request: "step, completed flag, position"
+    response: "updated lesson progress"
+    note: "PRD /learn/:class/:subject/:chapter: per-step lesson progress, distinct from screen-time heartbeats"
+  - method: GET
+    path: /api/student/settings
+    auth: student
+    entity: students
+    feature: settings
+    request: "none"
+    response: "language, fontSize, voice, account"
+    note: "read counterpart to PATCH /api/student/settings"
+  - method: GET
+    path: /api/parent/settings
+    auth: parent
+    entity: users
+    feature: settings
+    request: "none"
+    response: "notifications, screenTimeEnforced, children"
+    note: "read counterpart to PATCH /api/parent/settings"
+  - method: GET
+    path: /api/remedial/:id
+    auth: student
+    entity: remedial_assignments
+    feature: exams
+    request: "none"
+    response: "chapter, video, note, verification"
+    note: "PRD /retake/:retakeId: the assigned remedial class the student must complete"
+  - method: POST
+    path: /api/remedial
+    auth: student
+    entity: remedial_assignments
+    feature: exams
+    request: "chapterId"
+    response: "remedial assignment (case_no, chapter, status)"
+    note: "PRD /learn Possible Actions: start a retake for a chapter; weakness detection may also assign automatically"
+  - method: GET
+    path: /api/admin/dashboard
+    auth: "admin, teacher"
+    entity: audit_logs
+    feature: administration
+    request: "none"
+    response: "kpis, activity, pending escalations"
+    note: "PRD Section 4 Dashboard Home: Access Admin, Teacher; cards + charts aggregate"
+  - method: POST
+    path: /api/admin/students
+    auth: admin
+    entity: students
+    feature: administration
+    request: "name, class, family, status"
+    response: "created student row"
+    note: "PRD /admin/students: create modal (admin-standards)"
+  - method: DELETE
+    path: /api/admin/students/:id
+    auth: admin
+    entity: students
+    feature: administration
+    request: "none"
+    response: "soft-deleted student; audit entry"
+    note: "PRD /admin/students: soft delete preserves history"
+  - method: POST
+    path: /api/admin/teachers
+    auth: admin
+    entity: users
+    feature: administration
+    request: "name, email, role"
+    response: "created teacher row"
+    note: "PRD /admin/teachers: create modal (admin-standards)"
+  - method: GET
+    path: /api/admin/curriculum
+    auth: "admin, teacher"
+    entity: chapters
+    feature: admin-content
+    request: "classNo, subject, search"
+    response: "curriculum tree: classes, subjects, chapters"
+    note: "PRD /admin/curriculum: authoring tree; teachers are NCTB content authors"
+  - method: POST
+    path: /api/admin/subscriptions/:id/refund
+    auth: admin
+    entity: payments
+    feature: payments
+    request: "reason"
+    response: "refund payment row; entitlement revoked immediately"
+    note: "PRD /admin/subscriptions: admin-only compensating refund (PROJECT_POLICY.refund_policy)"

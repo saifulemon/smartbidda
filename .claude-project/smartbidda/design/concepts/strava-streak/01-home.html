@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>আজকের পাঠ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-strava-streak.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local selectors only — every colour / size / radius / shadow is a token */
+  .hm-greet { display: flex; align-items: center; gap: var(--space-md); min-width: 0; }
+  .hm-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-sm); align-items: end; }
+  .hm-day { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+  .hm-bar { display: flex; align-items: flex-end; width: 100%; height: 84px;
+    background: var(--c-surface-soft); border-radius: var(--radius-xs); overflow: hidden; }
+  .hm-bar > span { display: block; width: 100%; background: var(--ks-fire);
+    border-radius: var(--radius-xs); }
+  .hm-day.is-today .hm-bar > span { background: var(--c-ink); }
+  .hm-day-lab { font-size: var(--t-caption-size); font-weight: var(--t-caption-weight);
+    letter-spacing: var(--t-caption-ls); color: var(--c-muted); }
+  .hm-day.is-today .hm-day-lab { color: var(--c-ink); }
+  .hm-subj { display: flex; align-items: center; gap: var(--space-md); flex: 1; min-width: 0; }
+</style>
+</head>
+<body class="kss-app" data-app="frontend" data-layout="StudentLayout">
+
+  <header class="kss-appbar" data-shell="topbar">
+    <a class="kss-wordmark" href="01-home.html" data-testid="appbar-brand">স্মার্টবিদ্যা</a>
+    <span class="kss-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="kss-iconbtn" type="button" aria-label="নোটিফিকেশন" data-testid="appbar-notifications">
+        <i data-lucide="bell" class="icon-md" aria-hidden="true"></i>
+      </button>
+      <button class="kss-iconbtn" type="button" aria-label="প্রোফাইল" data-testid="appbar-profile">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="kss-page" data-shell="content">
+
+    <!-- 1 · greeting + voice -->
+    <div class="hm-greet">
+      <span class="avatar avatar-lg" data-testid="home-avatar" aria-hidden="true">র</span>
+      <div class="kss-lrow-body">
+        <p class="t-title-md" data-testid="home-greeting">আসসালামু আলাইকুম, রাফিদ</p>
+        <p class="t-caption" data-testid="home-class">চতুর্থ শ্রেণি · ৫ দিনের ধারাবাহিকতা</p>
+      </div>
+    </div>
+
+    <div class="row" data-testid="home-voice">
+      <button class="kss-chipsq" type="button" aria-pressed="true" data-testid="home-voice-toggle">
+        <i data-lucide="volume-2" class="icon-sm" aria-hidden="true"></i>
+        কণ্ঠস্বর চালু
+      </button>
+      <p class="t-caption" data-testid="home-voice-state">পাতাটি একবার পড়ে শোনানো হয়েছে</p>
+    </div>
+
+    <!-- 2 · the metric is the headline -->
+    <section class="kss-band" aria-label="আজকের পরিসংখ্যান" data-testid="home-band">
+      <div class="kss-band-cell" data-component="kpi" data-testid="home-time">
+        <p class="kss-band-lab" data-testid="home-time-label">আজকের স্ক্রিন টাইম</p>
+        <p class="t-display-lg kss-num" data-testid="home-time-value">২৪ / ৬০<span class="kss-unit">মিনিট</span></p>
+        <div class="kss-micro" role="progressbar" aria-valuenow="24" aria-valuemin="0" aria-valuemax="60"
+             aria-label="আজকের স্ক্রিন টাইম">
+          <span style="width:40%" data-testid="home-time-bar"></span>
+        </div>
+        <p class="kss-band-note" data-testid="home-time-remaining">আরও ৩৬ মিনিট বাকি</p>
+      </div>
+      <a class="kss-band-cell" href="14-leaderboard.html" data-component="kpi"
+         data-testid="home-points-rank" aria-label="লিডারবোর্ডে তোমার অবস্থান">
+        <p class="kss-band-lab" data-testid="home-points-label">পয়েন্ট ও র‍্যাংক</p>
+        <p class="t-display-lg kss-num" data-testid="home-points-value">১,২৪০</p>
+        <p class="kss-band-note" data-testid="home-points-note">#৪ · লিডারবোর্ড</p>
+      </a>
+      <div class="kss-band-cell" data-component="kpi" data-testid="home-chapters">
+        <p class="kss-band-lab" data-testid="home-chapters-label">অধ্যায় শেষ</p>
+        <p class="t-display-lg kss-num" data-testid="home-chapters-value">৩<span class="kss-unit">/ ১৮</span></p>
+        <p class="kss-band-note" data-testid="home-chapters-note">চতুর্থ শ্রেণি</p>
+      </div>
+    </section>
+
+    <!-- 3 · গত ৭ দিন activity strip -->
+    <section class="kss-sec" aria-labelledby="home-strip-heading">
+      <div class="kss-hdrow">
+        <h2 class="kss-hd" id="home-strip-heading" data-testid="home-strip-heading">গত ৭ দিন</h2>
+        <p class="t-caption" data-testid="home-strip-meta">স্ক্রিন টাইম · প্রতিদিন</p>
+      </div>
+      <div class="hm-strip" role="img" aria-label="গত ৭ দিনের স্ক্রিন টাইম" data-testid="home-strip">
+        <div class="hm-day">
+          <div class="hm-bar"><span style="height:36%"></span></div>
+          <span class="hm-day-lab">শনি</span>
+        </div>
+        <div class="hm-day">
+          <div class="hm-bar"><span style="height:62%"></span></div>
+          <span class="hm-day-lab">রবি</span>
+        </div>
+        <div class="hm-day">
+          <div class="hm-bar"><span style="height:48%"></span></div>
+          <span class="hm-day-lab">সোম</span>
+        </div>
+        <div class="hm-day">
+          <div class="hm-bar"><span style="height:74%"></span></div>
+          <span class="hm-day-lab">মঙ্গল</span>
+        </div>
+        <div class="hm-day">
+          <div class="hm-bar"><span style="height:30%"></span></div>
+          <span class="hm-day-lab">বুধ</span>
+        </div>
+        <div class="hm-day">
+          <div class="hm-bar"><span style="height:58%"></span></div>
+          <span class="hm-day-lab">বৃহ</span>
+        </div>
+        <div class="hm-day is-today">
+          <div class="hm-bar"><span style="height:40%" data-testid="home-strip-today"></span></div>
+          <span class="hm-day-lab">শুক্র</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · আজকের কাজ -->
+    <section class="kss-sec" aria-labelledby="home-tasks-heading">
+      <div class="kss-hdrow">
+        <h2 class="kss-hd" id="home-tasks-heading" data-testid="home-tasks-heading">আজকের কাজ</h2>
+      </div>
+      <div class="kss-ledger" data-testid="home-tasks">
+        <a class="kss-lrow" href="../../base/frontend/10-retake-class.html" data-testid="home-task-retake">
+          <i data-lucide="rotate-ccw" class="icon-md" aria-hidden="true"></i>
+          <span class="kss-lrow-body">
+            <span class="t-body-sm t-semibold" data-testid="home-task-retake-label">২ টি রিটেক বাকি</span>
+            <span class="t-caption" data-testid="home-task-retake-meta">গণিত · অধ্যায় ৪</span>
+          </span>
+          <i data-lucide="chevron-right" class="icon-sm" aria-hidden="true"></i>
+        </a>
+        <a class="kss-lrow is-marked" href="../../base/frontend/11-exam-list.html" data-testid="home-task-exam">
+          <span class="kss-sq" aria-hidden="true"></span>
+          <span class="kss-lrow-body">
+            <span class="t-body-sm t-semibold" data-testid="home-task-exam-label">১ম সাময়িক পরীক্ষা দিতে হবে</span>
+            <span class="t-caption" data-testid="home-task-exam-meta">উত্তীর্ণ ৬০%</span>
+          </span>
+          <i data-lucide="chevron-right" class="icon-sm" aria-hidden="true"></i>
+        </a>
+        <a class="kss-lrow" href="../../base/frontend/07-lesson.html" data-testid="home-task-lesson">
+          <i data-lucide="play-circle" class="icon-md" aria-hidden="true"></i>
+          <span class="kss-lrow-body">
+            <span class="t-body-sm t-semibold" data-testid="home-task-lesson-label">ভগ্নাংশ চিহ্নিতকরণ শেষ করুন</span>
+            <span class="t-caption" data-testid="home-task-lesson-meta">গণিত · ভিডিও ১২ মিনিট</span>
+          </span>
+          <i data-lucide="chevron-right" class="icon-sm" aria-hidden="true"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- 5 · continue lesson -->
+    <section class="kss-sec" aria-labelledby="home-today-heading">
+      <div class="kss-hdrow">
+        <h2 class="kss-hd" id="home-today-heading" data-testid="home-today-heading">আজকের পাঠ</h2>
+        <span class="kss-badge" data-testid="home-lesson-subject">গণিত</span>
+      </div>
+      <div class="kss-block" data-component="card" data-testid="home-lesson">
+        <div class="row" style="align-items:flex-start">
+          <span class="kss-lrow-body">
+            <span class="t-caption" data-testid="home-lesson-chapter">অধ্যায় ৪ · ভগ্নাংশ</span>
+            <span class="t-title-md" style="margin-top:var(--space-xxs)" data-testid="home-lesson-title">ভগ্নাংশ চিহ্নিতকরণ</span>
+            <span class="t-caption" style="margin-top:var(--space-xs)" data-testid="home-lesson-meta">ভিডিও ১২ মিনিট · ভয়েস সহ</span>
+          </span>
+          <span class="t-display-xl kss-num" data-testid="home-lesson-pct">৬৫%</span>
+        </div>
+        <div class="kss-micro" style="margin-top:var(--space-lg)" role="progressbar"
+             aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="পাঠের অগ্রগতি">
+          <span style="width:65%" data-testid="home-lesson-progress"></span>
+        </div>
+        <a class="kss-btn is-block" style="margin-top:var(--space-lg)" href="../../base/frontend/07-lesson.html"
+           data-testid="home-lesson-cta">
+          <i data-lucide="play" class="icon-sm" aria-hidden="true"></i>
+          পড়া চালিয়ে যান
+        </a>
+      </div>
+    </section>
+
+    <!-- 6 · subject ledger -->
+    <section class="kss-sec" aria-labelledby="home-subjects-heading">
+      <div class="kss-hdrow">
+        <h2 class="kss-hd" id="home-subjects-heading" data-testid="home-subjects-heading">তোমার বিষয়সমূহ</h2>
+        <a class="kss-link" href="../../base/frontend/05-subject-list.html" data-testid="home-subjects-all">সব দেখুন</a>
+      </div>
+      <div class="kss-ledger">
+        <a class="kss-lrow" href="06-chapter-list.html" data-testid="home-subject-ganit">
+          <i data-lucide="calculator" class="icon-md" aria-hidden="true"></i>
+          <span class="hm-subj">
+            <span class="t-body-sm t-semibold" data-testid="home-subject-ganit-name">গণিত</span>
+            <span class="kss-micro is-fixed" style="width:64px" aria-hidden="true"><span style="width:17%"></span></span>
+          </span>
+          <span class="t-body-sm t-bold" data-testid="home-subject-ganit-progress">৩ / ১৮</span>
+        </a>
+        <a class="kss-lrow" href="06-chapter-list.html" data-testid="home-subject-bangla">
+          <i data-lucide="book-open" class="icon-md" aria-hidden="true"></i>
+          <span class="hm-subj">
+            <span class="t-body-sm t-semibold" data-testid="home-subject-bangla-name">বাংলা</span>
+            <span class="kss-micro is-fixed" style="width:64px" aria-hidden="true"><span style="width:56%"></span></span>
+          </span>
+          <span class="t-body-sm t-bold" data-testid="home-subject-bangla-progress">৯ / ১৬</span>
+        </a>
+        <a class="kss-lrow" href="06-chapter-list.html" data-testid="home-subject-science">
+          <i data-lucide="flask-conical" class="icon-md" aria-hidden="true"></i>
+          <span class="hm-subj">
+            <span class="t-body-sm t-semibold" data-testid="home-subject-science-name">বিজ্ঞান</span>
+            <span class="kss-micro is-fixed" style="width:64px" aria-hidden="true"><span style="width:36%"></span></span>
+          </span>
+          <span class="t-body-sm t-bold" data-testid="home-subject-science-progress">৫ / ১৪</span>
+        </a>
+        <a class="kss-lrow" href="06-chapter-list.html" data-testid="home-subject-english">
+          <i data-lucide="languages" class="icon-md" aria-hidden="true"></i>
+          <span class="hm-subj">
+            <span class="t-body-sm t-semibold" data-testid="home-subject-english-name">ইংরেজি</span>
+            <span class="kss-micro is-fixed" style="width:64px" aria-hidden="true"><span style="width:47%"></span></span>
+          </span>
+          <span class="t-body-sm t-bold" data-testid="home-subject-english-progress">৭ / ১৫</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 7 · nudge -->
+    <section class="kss-block" data-component="card" aria-labelledby="home-nudge-heading" data-testid="home-nudge">
+      <div class="row" style="align-items:flex-start">
+        <i data-lucide="message-circle" class="icon-md" aria-hidden="true"></i>
+        <div class="kss-lrow-body">
+          <p class="kss-eyebrow" id="home-nudge-heading" data-testid="home-nudge-from">মায়ের বার্তা</p>
+          <p class="t-body-sm" style="margin-top:var(--space-xs)" data-testid="home-nudge-body">আজ গণিতের অধ্যায় ৪ শেষ করলে পুরস্কার পাবে।</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="kss-tabbar" data-shell="bottomnav" aria-label="প্রধান নেভিগেশন">
+    <a class="kss-tab is-on" href="01-home.html" data-testid="nav-home" aria-current="page">
+      <i data-lucide="home" class="icon-md" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="kss-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="icon-md" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="kss-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="kss-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="icon-md" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="kss-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

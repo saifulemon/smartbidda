@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>লিডারবোর্ড · অবস্থা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* state sheet — every class below is shared (styles/components.css) */
+</style>
+</head>
+<body data-component="dev-states" data-app="frontend" data-layout="StudentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-md"></i>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+        <div class="stwrap" data-testid="st-wrap">
+        <div class="stnote" data-testid="st-intro">
+          <i data-lucide="layers" class="icon-md" aria-hidden="true"></i>
+          <p class="t-caption">প্রতিটি কার্ড একটি আলাদা অবস্থা · একসাথে কখনও দেখানো হবে না</p>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="st-1-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">লোডিং</span>
+            <code class="t-code" data-testid="st-ref">/leaderboard</code>
+          </div>
+          <p class="t-body t-semibold" id="st-1-label" data-testid="st-label">লোড হচ্ছে</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="skeleton" style="height:16px;width:72%"></div>
+            <div class="skeleton" style="height:16px;width:100%"></div>
+            <div class="skeleton" style="height:16px;width:54%"></div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-2-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">খালি</span>
+            <code class="t-code" data-testid="st-ref">/leaderboard</code>
+          </div>
+          <p class="t-body t-semibold" id="st-2-label" data-testid="st-label">কিছু নেই</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="empty-state" data-testid="st-empty">
+              <p class="t-body">এই শ্রেণিতে এখনো কেউ যোগ হয়নি।</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-3-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">ত্রুটি</span>
+            <code class="t-code" data-testid="st-ref">/leaderboard</code>
+          </div>
+          <p class="t-body t-semibold" id="st-3-label" data-testid="st-label">লোড করা যায়নি</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-error">লিডারবোর্ড লোড হয়নি। আবার চেষ্টা করো।</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-4-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">ত্রুটি বার্তা</span>
+            <code class="t-code" data-testid="st-ref">/leaderboard</code>
+          </div>
+          <p class="t-body t-semibold" id="st-4-label" data-testid="st-label">কোন অবস্থায় কী দেখাবে</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">ইন্টারনেট সংযোগ</span>
+              <span class="t-body-sm" data-testid="st-err-msg">ইন্টারনেট সংযোগ নেই।</span>
+            </div>
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">সার্ভার ত্রুটি</span>
+              <span class="t-body-sm" data-testid="st-err-msg">লিডারবোর্ড লোড হয়নি।</span>
+            </div>
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">অনুমতি নেই</span>
+              <span class="t-body-sm" data-testid="st-err-msg">তোমার সময় শেষ হয়ে গেছে।</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-5-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">বিশেষ অবস্থা</span>
+            <code class="t-code" data-testid="st-ref">/leaderboard</code>
+          </div>
+          <p class="t-body t-semibold" id="st-5-label" data-testid="st-label">অপ্ট-আউট নোটিশ</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-extra">তুমি লিডারবোর্ডে দেখাচ্ছো না</p>
+            <p class="t-caption t-muted" data-testid="st-note">অপ্ট-আউট করলে এই নোটিশ দেখা যায় — ভিত্তিপর্দায় শুধু প্রবেশের সময়</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-6-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/leaderboard</code>
+          </div>
+          <p class="t-body t-semibold" id="st-6-label" data-testid="st-label">অফলাইন</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">ইন্টারনেট সংযোগ নেই।</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-7-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/leaderboard</code>
+          </div>
+          <p class="t-body t-semibold" id="st-7-label" data-testid="st-label">নিজের নাম লুকানো</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">লিডারবোর্ডে তোমার নাম দেখানো হচ্ছে না</p>
+          </div>
+        </section>
+        </div>
+</main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md"></i>
+      হোম
+    </a>
+    <a class="tabbar-item" href="05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="icon-md"></i>
+      পড়াশোনা
+    </a>
+    <a class="tabbar-item" href="11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md"></i>
+      পরীক্ষা
+    </a>
+    <a class="tabbar-item" href="14-leaderboard.html" data-testid="nav-leaderboard" aria-current="page">
+      <i data-lucide="trophy" class="icon-md"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="tabbar-item" href="15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

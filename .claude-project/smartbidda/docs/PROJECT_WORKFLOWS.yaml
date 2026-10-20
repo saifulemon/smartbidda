@@ -1,0 +1,384 @@
+schema_version: 1
+# PROJECT_WORKFLOWS — smartbidda business state machines + the §3.4 Action Ledger (행동 원장).
+# Source of truth: PRD §2 (module state machines), §2.5 (notification template keys), §3.4 (Action
+# Ledger, transcribed verbatim into `actions` below). Entity names and enum states follow
+# PROJECT_DATABASE.yaml; transition endpoints are only ones that exist in PROJECT_API.yaml.
+
+workflows:
+  # ── auth (PROJECT_KNOWLEDGE feature `auth`) ────────────────────────────────────────────────
+  # PRD §1 User Status: Pending(0) → Active(1) on onboarding completion; Suspended/Withdrawn are
+  # operator/parent decisions. Account status enforcement + lockout after repeated PIN failures.
+  - workflow: auth
+    name: auth
+    entity: users
+    states: [PENDING, ACTIVE, SUSPENDED, WITHDRAWN]
+    initial: PENDING
+    terminal: [WITHDRAWN]
+    transitions:
+      - { from: PENDING, to: ACTIVE, actor: parent, endpoint: POST /api/students, effect: "Onboarding complete — first child profile created; user.status set to ACTIVE (PRD §2 Auth flow, step 7)" }
+      - { from: ACTIVE, to: SUSPENDED, actor: admin, endpoint: PATCH /api/admin/students/:id/status, effect: "Account suspended; login blocked with the Bangla suspended message; personal data retained per policy (AL-23)" }
+      - { from: SUSPENDED, to: ACTIVE, actor: admin, endpoint: PATCH /api/admin/students/:id/status, effect: "Account reactivated; login restored (AL-24)" }
+      - { from: ACTIVE, to: WITHDRAWN, actor: parent, endpoint: DELETE /api/students/:id, effect: "Child removed by parent; child session terminates on the next heartbeat; entitlement unchanged — it is per-family (AL-2)" }
+
+  # ── localization (feature `localization-voice`) ────────────────────────────────────────────
+  # Pre-authored Bangla VO assets only [📌 Adopted: C8]; a missing asset returns 204 and logs
+  # `voice_asset_missing` so the gap is measurable on /admin/content.
+  - workflow: localization
+    name: localization
+    entity: vo_assets
+    states: [MISSING, AUTHORED]
+    initial: MISSING
+    terminal: [AUTHORED]
+    transitions:
+      - { from: MISSING, to: AUTHORED, actor: system, effect: "Pre-authored Bangla VO audio recorded for event_key + locale; until then GET /api/i18n/voice returns 204 silent and the client logs voice_asset_missing, rendering the text label instead" }
+
+  # ── curriculum (feature `curriculum`) ──────────────────────────────────────────────────────
+  # Chapter tree visibility: status = PUBLISHED drives student visibility (PRD §2 Curriculum);
+  # status column is content_status. Sequential unlock is a derived value (DV-2), not a state.
+  - workflow: curriculum
+    name: curriculum
+    entity: chapters
+    states: [DRAFT, PUBLISHED, ARCHIVED]
+    initial: DRAFT
+    terminal: [ARCHIVED]
+    transitions:
+      - { from: DRAFT, to: PUBLISHED, actor: teacher, endpoint: PATCH /api/admin/curriculum/:id, effect: "Chapter published in the curriculum tree; attached published lessons become visible to entitled students" }
+      - { from: PUBLISHED, to: ARCHIVED, actor: teacher, endpoint: PATCH /api/admin/curriculum/:id, effect: "Chapter archived (সংরক্ষিত); hidden from students; blocked from archive while lessons remain attached unless force-archived with a second confirmation" }
+
+  # ── quiz (feature `quiz`) ──────────────────────────────────────────────────────────────────
+  # Mandatory auto-triggered quiz; one session per lesson; a completed session is immutable
+  # (re-completion → 409 SESSION_ALREADY_COMPLETED → route to the existing result).
+  - workflow: quiz
+    name: quiz
+    entity: quiz_sessions
+    states: [IN_PROGRESS, COMPLETED]
+    initial: IN_PROGRESS
+    terminal: [COMPLETED]
+    transitions:
+      - { from: IN_PROGRESS, to: COMPLETED, actor: student, endpoint: POST /api/quizzes/sessions/:id/complete, effect: "Quiz scored against the chapter's pass threshold (default 60%); pass unlocks the next chapter and sends quiz_passed to the student, fail keeps it locked and opens the remedial path with quiz_failed" }
+
+  # ── exams (feature `exams`) ────────────────────────────────────────────────────────────────
+  # PRD §2 Term Exams & Remedial Loop technical flow, steps 2-10. RETAKE_REQUIRED and
+  # RETAKE_COMPLETED are the PRD's progression states on the attempt; the Re-exam is a NEW
+  # attempt (POST /api/exams/:id/attempts { reexam: true }) against which the before/after
+  # delta (DV-8) is computed.
+  - workflow: exams
+    name: exams
+    entity: exam_attempts
+    states: [IN_PROGRESS, PASSED, FAILED, RETAKE_REQUIRED, RETAKE_COMPLETED]
+    initial: IN_PROGRESS
+    terminal: [PASSED, RETAKE_COMPLETED]
+    transitions:
+      - { from: IN_PROGRESS, to: PASSED, actor: student, endpoint: POST /api/exams/:id/attempts/:aid/submit, effect: "Score at or above the exam's pass threshold (default 60%); next module unlocked; parent notified via exam_completed" }
+      - { from: IN_PROGRESS, to: FAILED, actor: student, endpoint: POST /api/exams/:id/attempts/:aid/submit, effect: "Score below threshold; progression blocked (transient — the server immediately moves the attempt to RETAKE_REQUIRED)" }
+      - { from: FAILED, to: RETAKE_REQUIRED, actor: system, effect: "Weakness detection aggregates wrong answers → topic tags weighted by error rate → mandatory Retake Class(es) auto-assigned from the topic-tagged REMEDIAL library; parent alerted via weakness_detected" }
+      - { from: RETAKE_REQUIRED, to: RETAKE_COMPLETED, actor: system, endpoint: POST /api/remedial/:id/complete, effect: "Server checks all remedial assignments for this exam are COMPLETED → reexamUnlocked: true; 3rd consecutive failure instead escalates to the teacher (see ai-analytics)" }
+      - { from: RETAKE_COMPLETED, to: IN_PROGRESS, actor: student, endpoint: POST /api/exams/:id/attempts, effect: "Re-exam started ({ reexam: true }); the new attempt's score is recorded and the before/after recovery delta computed against the first failed attempt" }
+
+  # ── gamification (feature `gamification`) ──────────────────────────────────────────────────
+  # Points write is the trigger for the rank recomputation (PRD §2 Leaderboard & Gamification).
+  - workflow: gamification
+    name: gamification
+    entity: points_ledger
+    states: [PENDING, POSTED]
+    initial: PENDING
+    terminal: [POSTED]
+    transitions:
+      - { from: PENDING, to: POSTED, actor: system, effect: "Points ledger row written (lesson 10 / quiz pass 25 / perfect quiz +10 / exam pass 100 / retake pass 50); rank recomputed within classNo over leaderboardOptOut = false and pushed over WebSocket rank.changed; opted-out students still earn points and see their own rank" }
+
+  # ── screen-time (feature `parent-proxy`) ───────────────────────────────────────────────────
+  # Server-side heartbeat accounting with a hard block at the per-child daily limit [📌 Adopted:
+  # C6]; extension and the day rollover are two distinct paths back to OPEN.
+  - workflow: screen-time
+    name: screen-time
+    entity: screen_time_ledger
+    states: [OPEN, EXHAUSTED]
+    initial: OPEN
+    terminal: []
+    transitions:
+      - { from: OPEN, to: EXHAUSTED, actor: system, endpoint: POST /api/usage/heartbeat, effect: "Accrued usage reaches the daily limit; server returns blocked: true, WebSocket screen_time.blocked fires, client renders the সময় শেষ block screen and stops media playback (AL-14)" }
+      - { from: EXHAUSTED, to: OPEN, actor: parent, endpoint: POST /api/parent/students/:id/screen-time/extend, effect: "Parent grants a one-time extension; today's allowance raised, WebSocket screen_time.extended unblocks the child (AL-13)" }
+      - { from: EXHAUSTED, to: OPEN, actor: system, effect: "New day in Asia/Dhaka — the daily budget resets (limit − today's ledger sums from zero); block lifted without an extension" }
+
+  # ── notifications (feature `notifications`) ────────────────────────────────────────────────
+  # In-app + email + web push; quiet hours 22:00-06:00 Asia/Dhaka; per-category toggles; the
+  # read lifecycle on the parent's inbox row.
+  - workflow: notifications
+    name: notifications
+    entity: notifications
+    states: [UNREAD, READ]
+    initial: UNREAD
+    terminal: [READ]
+    transitions:
+      - { from: UNREAD, to: READ, actor: parent, endpoint: POST /api/notifications/:id/read, effect: "read_at set; unread count badge (DV-7) decrements" }
+      - { from: UNREAD, to: READ, actor: parent, endpoint: POST /api/notifications/read-all, effect: "Bulk path — every unread row marked read in one call; badge clears" }
+
+  # ── billing (feature `payments`) ───────────────────────────────────────────────────────────
+  # PRD §2 Payments technical flow + §5 Billing Flow: webhook-confirmed state only — a page
+  # return alone never grants entitlement. Amounts in poisha (BIGINT, BDT).
+  - workflow: billing
+    name: billing
+    entity: payments
+    states: [PENDING, COMPLETED, FAILED, REFUNDED]
+    initial: PENDING
+    terminal: [COMPLETED, FAILED, REFUNDED]
+    transitions:
+      - { from: PENDING, to: COMPLETED, actor: system, endpoint: POST /api/payments/webhook, effect: "Gateway (SSLCommerz) VALID webhook, signature verified, idempotent by gateway_ref → payment confirmed and the family subscription activated/extended; payment_success sent to the parent (AL-19)" }
+      - { from: PENDING, to: FAILED, actor: system, effect: "Abandoned intent — created but never webhookbed — auto-transitions after 30 minutes; also the FAILED/CANCELED webhook event; no entitlement granted, payment_failed sent (AL-20)" }
+      - { from: COMPLETED, to: REFUNDED, actor: admin, effect: "Refund is a compensating transaction (the original row is never edited in place); entitlement revoked; parent notified via payment_failed per the webhook table (AL-20)" }
+
+  # ── content-authoring (feature `admin-content`) ────────────────────────────────────────────
+  # PRD §2 Admin Content Management technical flow: upload → attestation → DRAFT → publish.
+  # rightsAttested = true is mandatory (422 RIGHTS_ATTESTATION_REQUIRED otherwise) [C10, S12].
+  - workflow: content-authoring
+    name: content-authoring
+    entity: learning_content
+    states: [DRAFT, PUBLISHED, ARCHIVED]
+    initial: DRAFT
+    terminal: [ARCHIVED]
+    transitions:
+      - { from: DRAFT, to: PUBLISHED, actor: teacher, endpoint: PATCH /api/content/:id, effect: "Asset published after preview; visible to students on the chapter and selectable by the weakness detector as REMEDIAL content; publish blocked without the rights attestation (AL-16)" }
+      - { from: PUBLISHED, to: ARCHIVED, actor: teacher, endpoint: PATCH /api/content/:id, effect: "Asset archived; drops out of the student view; retained with its attestation record (AL-17)" }
+
+  # ── ai-analytics (feature `ai-analytics`) ──────────────────────────────────────────────────
+  # Weakness detection → remedial assignment lifecycle. Max 2 retakes per chapter, then the 3rd
+  # failure escalates to the teacher with no further auto-queue [📌 Adopted: S7]. OpenAI is the
+  # primary selection path; the rule-based fallback always creates the assignment — the loop
+  # never stalls on the model.
+  - workflow: ai-analytics
+    name: ai-analytics
+    entity: remedial_assignments
+    states: [ASSIGNED, COMPLETED, ESCALATED]
+    initial: ASSIGNED
+    terminal: [COMPLETED, ESCALATED]
+    transitions:
+      - { from: ASSIGNED, to: COMPLETED, actor: student, endpoint: POST /api/remedial/:id/complete, effect: "Retake class completed by the student; when every assignment for the exam is COMPLETED the attempt moves to RETAKE_COMPLETED and the Re-exam unlocks (AL-8)" }
+      - { from: ASSIGNED, to: ESCALATED, actor: system, endpoint: PATCH /api/admin/remedial/:id, effect: "3rd consecutive failure on one chapter after the 2 allowed retakes; case routed to the teacher's escalated-retake review queue, remedial_escalated sent; no further auto-queue (AL-10)" }
+
+  # ── settings (feature `settings`) ──────────────────────────────────────────────────────────
+  # Two actors, two paths — per-USER preference writes on the users row.
+  - workflow: settings
+    name: settings
+    entity: users
+    states: [DEFAULT, CUSTOMIZED]
+    initial: DEFAULT
+    terminal: [CUSTOMIZED]
+    transitions:
+      - { from: DEFAULT, to: CUSTOMIZED, actor: student, endpoint: PATCH /api/student/settings, effect: "Student path — locale (bn default / en) and voice-mute persisted per user; applied on next render (AL-22)" }
+      - { from: DEFAULT, to: CUSTOMIZED, actor: parent, endpoint: PATCH /api/parent/settings, effect: "Parent path — alert category toggles, per-child leaderboard consent and locale persisted; mandatory categories stay locked (AL-21, AL-22)" }
+
+  # ── administration (feature `administration`) ──────────────────────────────────────────────
+  # Admin/parent-facing subscription lifecycle at the Family unit (per-family entitlement [C5]).
+  # PRD §5 grace = 3 days past entitlement_until before premium locks (PROJECT_DATABASE calls
+  # this state PAST_DUE); the nightly subscription expiry sweep drives the system transitions.
+  - workflow: administration
+    name: administration
+    entity: subscriptions
+    states: [ACTIVE, PAST_DUE, EXPIRED, CANCELLED]
+    initial: ACTIVE
+    terminal: [EXPIRED, CANCELLED]
+    transitions:
+      - { from: ACTIVE, to: PAST_DUE, actor: system, effect: "entitlement_until passed without a renewal payment; 3-day grace begins — premium still resolves so a late MFS payment does not strand a mid-lesson child" }
+      - { from: PAST_DUE, to: ACTIVE, actor: parent, endpoint: POST /api/payments/webhook, effect: "Renewal payment webhook-confirmed within the grace window; subscription reactivated" }
+      - { from: PAST_DUE, to: EXPIRED, actor: system, effect: "Grace window ended (3 days past entitlement_until) without payment; premium content locked, entitlement revoked (DV-6)" }
+      - { from: ACTIVE, to: EXPIRED, actor: system, effect: "Period end reached (plan term, or a Crash Pack at its exam close date) with no renewal; past period end" }
+      - { from: ACTIVE, to: CANCELLED, actor: parent, effect: "Parent cancels: renewal stops at period end; entitlement persists until entitlement_until, after which the state resolves to EXPIRED" }
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+# Action Ledger (§3.4, transcribed verbatim — one row per action PATH; every row carries a
+# Visible-on (`screens`) decision and a Notify decision; every `none` carries its reason).
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+actions:
+  - id: AL-1
+    action: Create child
+    actor: parent
+    changes: "student (insert)"
+    audience: [parent]
+    screens: ["/parent", "/parent/settings", "/"]
+    notify: "none — the parent performed it themselves"
+    inverse: AL-6
+  - id: AL-2
+    action: Remove child
+    actor: parent
+    changes: "student.status → WITHDRAWN"
+    audience: [parent, student]
+    screens: ["/parent/settings", "/"]  # `/` shows the child session ending
+    notify: "none — direct action, child session is terminated in-band"
+    inverse: AL-1
+  - id: AL-3
+    action: Complete lesson
+    actor: student
+    changes: "lesson_progress.watchedPct"
+    audience: [student, parent]
+    screens: ["/learn/.../:chapterSlug", "/parent/progress"]
+    notify: "none — continuous, too frequent to announce"
+    inverse: AL-5
+  - id: AL-4
+    action: Submit quiz
+    actor: student
+    changes: "quiz_attempt (insert, score)"
+    audience: [student, parent]
+    screens: ["/quiz/:sessionId/result", "/parent/progress"]
+    notify: "quiz_passed / quiz_failed (student)"
+    inverse: AL-5
+  - id: AL-5
+    action: Unlock next chapter
+    actor: system
+    changes: "chapter_unlock"
+    audience: [student, parent]
+    screens: ["/learn/:classNo/:subjectSlug", "/"]
+    notify: "none — surfaced by the quiz result the same second"
+    inverse: AL-4
+  - id: AL-6
+    action: Submit term exam
+    actor: student
+    changes: "exam_attempt (insert, score)"
+    audience: [student, parent, teacher]
+    screens: ["/exams/:examId/result", "/parent", "/admin/remedial"]
+    notify: "exam_completed"
+    inverse: AL-7
+  - id: AL-7
+    action: Queue remedial assignment
+    actor: "system (AI)"
+    changes: "remedial_assignment (insert)"
+    audience: [student, parent, teacher]
+    screens: ["/retake/:id", "/parent", "/admin/remedial"]
+    notify: "weakness_detected"
+    inverse: AL-8
+  - id: AL-8
+    action: Complete remedial
+    actor: student
+    changes: "remedial_assignment.status → COMPLETED"
+    audience: [student, parent, teacher]
+    screens: ["/retake/:id", "/parent/progress", "/admin/remedial"]
+    notify: "remedial_completed"
+    inverse: AL-7
+  - id: AL-9
+    action: Unlock re-exam
+    actor: system
+    changes: "exam_attempt.status → RETAKE_COMPLETED"
+    audience: [student, parent]
+    screens: ["/exams", "/exams/:examId/result"]
+    notify: "reexam_completed"
+    inverse: AL-6
+  - id: AL-10
+    action: Escalate retake to teacher
+    actor: system
+    changes: "remedial_assignment.status → ESCALATED"
+    audience: [teacher, parent]
+    screens: ["/admin/remedial", "/parent/alerts"]
+    notify: "remedial_escalated"
+    inverse: AL-8
+  - id: AL-11
+    action: Set screen-time limit
+    actor: parent
+    changes: "student.screenTimeLimitMin"
+    audience: [parent, student]
+    screens: ["/parent/screen-time", "/"]  # `/` shows the remaining-time indicator
+    notify: "none — the parent is the actor and sees the confirmation toast"
+    inverse: AL-12
+  - id: AL-12
+    action: Remove screen-time limit
+    actor: parent
+    changes: "student.screenTimeLimitMin → NULL"
+    audience: [parent, student]
+    screens: ["/parent/screen-time", "/"]
+    notify: "none — symmetric with AL-11"
+    inverse: AL-11
+  - id: AL-13
+    action: Grant screen-time extension
+    actor: parent
+    changes: "screen_time_ledger (insert)"
+    audience: [student]
+    screens: ["/", "block screen"]  # `/` indicator and the block screen both update
+    notify: "screen_time_extended"
+    inverse: AL-11
+  - id: AL-14
+    action: Exhaust screen-time budget
+    actor: system
+    changes: "screen_time_ledger (insert)"
+    audience: [student, parent]
+    screens: ["block screen", "/parent/screen-time"]
+    notify: "screen_time_blocked"
+    inverse: AL-13
+  - id: AL-15
+    action: Send nudge
+    actor: parent
+    changes: "nudge (insert)"
+    audience: [student]
+    screens: ["child device overlay"]
+    notify: "nudge_received"
+    inverse: "-"
+    note: "One-way by design: a nudge is an insert with no undo. `inverse` is an ID reference or `-` for none — prose here is looked up as an ID and fails action-reach-check."
+  - id: AL-16
+    action: Publish content
+    actor: teacher
+    changes: "learningContent.status → PUBLISHED"
+    audience: [student, parent]
+    screens: ["/learn/.../:chapterSlug", "/admin/content"]
+    notify: "none — content availability is not a parent alert"
+    inverse: AL-17
+  - id: AL-17
+    action: Archive content
+    actor: teacher
+    changes: "learningContent.status → ARCHIVED"
+    audience: [student, parent]
+    screens: ["/admin/content"]  # the student view drops the asset
+    notify: "none — symmetric with AL-16"
+    inverse: AL-16
+  - id: AL-18
+    action: Start payment
+    actor: parent
+    changes: "payment (insert, PENDING)"
+    audience: [parent]
+    screens: ["/parent/subscription"]
+    notify: "none — the parent is mid-flow"
+    inverse: AL-20
+  - id: AL-19
+    action: Confirm payment
+    actor: "system (webhook)"
+    changes: "payment.status → SUCCESS, subscription activate"
+    audience: [parent]
+    screens: ["/parent/subscription", "/parent/alerts"]
+    notify: "payment_success"
+    inverse: AL-20
+  - id: AL-20
+    action: Fail / refund payment
+    actor: "system / admin"
+    changes: "payment.status → FAILED / REFUNDED, entitlement revoke"
+    audience: [parent]
+    screens: ["/parent/subscription", "/parent/alerts"]
+    notify: "payment_failed"
+    inverse: AL-19
+  - id: AL-21
+    action: Update leaderboard consent
+    actor: parent
+    changes: "student.leaderboardOptOut"
+    audience: [parent, student]
+    screens: ["/parent/settings", "/leaderboard"]  # the child's entry appears/disappears
+    notify: "none — the parent is the actor and the child's visibility is not an alert"
+    inverse: AL-21  # self-inverse
+  - id: AL-22
+    action: Update UI locale
+    actor: "student, parent"
+    changes: "user.locale"
+    audience: [self]
+    screens: ["whole app"]
+    notify: "none — self-visible only"
+    inverse: AL-22  # self-inverse
+  - id: AL-23
+    action: Suspend user
+    actor: admin
+    changes: "user.status → SUSPENDED"
+    audience: [user, parent]
+    screens: ["/login"]  # the blocked message on login
+    notify: "none — in MVP the user_restricted template is not authored; add it when a parent-facing notice is written (deliberate gap recorded in the PRD's Open Questions)"
+    inverse: AL-24
+  - id: AL-24
+    action: Reactivate user
+    actor: admin
+    changes: "user.status → ACTIVE"
+    audience: [user, parent]
+    screens: ["/login"]  # login restored
+    notify: "none — symmetric with AL-23"
+    inverse: AL-23

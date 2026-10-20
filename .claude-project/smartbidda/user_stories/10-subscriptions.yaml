@@ -1,0 +1,72 @@
+id: US-10-SUBSCRIPTIONS
+role: admin
+feature: "Admin subscriptions ledger — list, search and sort subscriptions and payments, inspect payment detail, reconcile mismatches and issue a compensating refund"
+page: 10-subscriptions.html
+goal: |
+  As an admin on the সাবস্ক্রিপশন page I can review the full subscription and payment ledger, search by
+  family code or name, sort by any column, open a payment's detail, reconcile a stuck pending payment and
+  issue a refund with a reason, so that entitlements and money always match and every change is auditable.
+scenarios_total: 22
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Subscription ledger loads with plan, amount, method, gateway ref and payment status"
+    ui_route: /admin/subscriptions
+    endpoint: GET /api/admin/subscriptions
+    expected: "200 — heading 'সাবস্ক্রিপশন' (subs-heading) with 'মোট ২৯১ টি · ৩ টি পেমেন্ট সমস্যা' (subs-count); table subs-table renders subs-row su-1 'SB-PAY-20260925-4181' · 'SB-FAM-20260902-1041' · ফারহানা রহমান · পরিবার প্ল্যান · ৳৩৯৯ · বিকাশ · badge 'সফল' · 'TRX418112345', su-3 with badge 'ব্যর্থ' (is-bad)"
+  - id: AC-2
+    description: "Payment detail opens from the row menu and is backed by the payments ledger"
+    ui_route: /admin/subscriptions
+    endpoint: GET /api/admin/payments
+    expected: "200 — 'বিস্তারিত' (subs-menu-view) fetches GET /api/admin/payments and shows payment 'SB-PAY-20260925-4181' with plan পরিবার প্ল্যান, ৳৩৯৯, বিকাশ, status 'সফল', gateway ref 'TRX418112345' and created date 2026-09-25"
+  - id: AC-3
+    description: "Search by family code or name filters the ledger server-side"
+    ui_route: /admin/subscriptions
+    endpoint: GET /api/admin/subscriptions
+    expected: "200 — typing 'SB-FAM-20260902-1041' into subs-search (placeholder 'পরিবারের কোড বা নাম দিয়ে খুঁজুন') requests ?search=SB-FAM-20260902-1041 and only subs-row su-1 remains; clearing restores the ledger"
+  - id: AC-4
+    description: "Sortable headers re-order the ledger via the API"
+    ui_route: /admin/subscriptions
+    endpoint: GET /api/admin/subscriptions
+    expected: "200 — clicking 'পেমেন্ট নং' (data-sort=paymentNo) or 'তৈরির সময়' (data-sort=createdAt, initially aria-sort=ascending) sends that sort key; 'পরিবার', 'প্ল্যান', 'পরিমাণ', 'মাধ্যম' and 'অবস্থা' headers behave the same"
+  - id: AC-5
+    description: "Issue a refund from the row menu, confirming first"
+    ui_route: /admin/subscriptions
+    endpoint: POST /api/admin/subscriptions/:id/refund
+    expected: "200 — 'ফেরত দিন' (subs-menu-refund) opens a confirmation modal; confirming sends POST /api/admin/subscriptions/:id/refund with a reason; on success the UI shows 'রিফান্ড সম্পন্ন' and the row status changes to refunded (entitlement revoked immediately), on failure it shows 'রিফান্ড করা যায়নি' and the row is left untouched"
+  - id: AC-6
+    description: "Manual activation of a family plan from the header CTA"
+    ui_route: /admin/subscriptions
+    endpoint: none
+    expected: "no HTTP call (endpoint: none) — 'নিজে থেকে সক্রিয় করুন' (subs-create) opens subs-modal 'নিজে থেকে সক্রিয় করুন' with subs-f-family (placeholder 'SB-FAM-YYYYMMDD-NNNN'), subs-f-plan, subs-f-months 1–12 and subs-f-reason; nothing is written until a spine endpoint exists"
+
+boundary_cases:
+  - case: "Refund requested on an already refunded payment — the action is blocked with the edge 'রিফান্ড আগেই সম্পন্ন হয়েছে' and the row stays as-is"
+  - case: "Pending payment that does not reconcile with the gateway — 'মিলিয়ে নিন' (subs-menu-reconcile) reports the mismatch edge 'মিল নেই' and no entitlement change is applied"
+  - case: "Family code that does not match §৩.৬ format — subs-f-family 'SB-FAM-1234' → 422 with the help text '§৩.৬ ফরম্যাট: SB-FAM-YYYYMMDD-NNNN'; the modal stays open"
+  - case: "Term length outside 1–12 months (0 or 13) — subs-f-months rejects with 422 against min=1 max=12 and no row is written"
+  - case: "Activation with an empty reason — blocked client-side by the help 'অডিট লগে কারণ ছাড়া বদল থাকবে না।'; with a reason the save proceeds"
+  - case: "Refund attempted on a failed payment row (su-3, badge 'ব্যর্থ', ৳৩৯৯ আপায়) — there is nothing to capture: the action is disabled and the ledger keeps the 'ব্যর্থ' row visible"
+
+error_scenarios:
+  - scenario: "401 expired admin session on GET /api/admin/subscriptions — redirect to /auth/login and back to /admin/subscriptions after re-login; no ledger rows exposed"
+  - scenario: "403 — a non-admin or teacher session reaching /admin/subscriptions is bounced to /auth/login without seeing payment data"
+  - scenario: "500 from GET /api/admin/subscriptions — inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with 'আবার চেষ্টা' retry button; subs-count keeps its last known value"
+  - scenario: "500 from GET /api/admin/payments — the 'বিস্তারিত' panel shows the inline error with retry while the ledger table remains usable"
+  - scenario: "Refund submission fails (backend/network) — the modal stays open and shows the failure copy 'রিফান্ড করা যায়নি' with the amount and payment number intact"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton card with three 16px bars at 72% / 100% / 54% (st-frame); subs-table, bulk bar and CTAs hidden until GET /api/admin/subscriptions resolves"
+  - state: empty
+    expected: "Empty slot 'কোনো সাবস্ক্রিপশন নেই' in place of the tbody with the recovery CTA 'নিজে থেকে সক্রিয় করুন' (subs-create); subs-count renders 'মোট ০ টি · ০ টি পেমেন্ট সমস্যা'"
+  - state: error
+    expected: "Inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with 'আবার চেষ্টা' retry button; sort headers and pagination disabled until retry succeeds"
+  - state: already-refunded
+    expected: "Row-level edge 'রিফান্ড আগেই সম্পন্ন হয়েছে' with 'ফেরত দিন' disabled for that payment"
+  - state: pending-mismatch
+    expected: "Stuck pending row surfaces 'মিল নেই' next to the payment and the 'মিলিয়ে নিন' action prompts for reconciliation"
+
+fixture_refs:
+  - admin_subscriptions
+  - identity.paymentId

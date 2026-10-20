@@ -1,0 +1,69 @@
+id: US-06-CHAPTER-LIST
+role: student
+feature: "Chapter list — subject hero with progress, continue CTA on the first available chapter, and per-chapter status (শেষ / রিটেক প্রয়োজন / শুরু হয়নি / লকড) derived from the quiz-pass chain"
+page: 06-chapter-list.html
+goal: |
+  As a student on a subject's chapter page I see every chapter with its unlock state and mastery,
+  plus a continue button on my next chapter, so that I resume exactly where my quiz-pass chain
+  left off without guessing what is open.
+scenarios_total: 19
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Chapters load with subject hero and overall progress"
+    ui_route: /learn/:classNo/:subjectSlug
+    endpoint: GET /api/curriculum/chapters
+    expected: "200 (classNo=4, subjectSlug=ganit) — hero shows eyebrow 'চতুর্থ শ্রেণি' (data-testid chapter-subject-class), title 'গণিত' (chapter-subject-name), 'অগ্রগতি' label with '৩ / ১৮ অধ্যায় শেষ' (chapter-progress-value) and progress-fill 17% (chapter-progress-fill)"
+  - id: AC-2
+    description: "Each chapter row renders number, title, duration/quiz meta, status badge and mastery"
+    ui_route: /learn/:classNo/:subjectSlug
+    endpoint: GET /api/curriculum/chapters
+    expected: "200 — list heading 'অধ্যায়সমূহ' (chapter-list-heading) with meta '১৮টির মধ্যে ৩টি অধ্যায় শেষ' (chapter-list-meta); every chapter-row shows num (chapter-row-num), title (chapter-row-title) e.g. 'সংখ্যা পদ্ধতি', meta 'ভিডিও ১১ মিনিট · কুইজ ১০ প্রশ্ন' (chapter-row-meta), badge (chapter-row-status) and mastery (chapter-row-mastery)"
+  - id: AC-3
+    description: "Completed chapters show the done badge and mastery ১০০%"
+    ui_route: /learn/:classNo/:subjectSlug
+    endpoint: none
+    expected: "Chapters ১–৩ ('সংখ্যা পদ্ধতি', 'যোগ-বিয়োগ গুণ-ভাগ', 'সংখ্যারেখা') render badge 'শেষ' (ksr-badge is-ok) with check icon and '১০০%' mastery; tapping a done row reopens its lesson"
+  - id: AC-4
+    description: "Failed-quiz chapter shows the retake badge and routes to the retake class"
+    ui_route: /learn/:classNo/:subjectSlug
+    endpoint: none
+    expected: "Chapter 'ভগ্নাংশ চিহ্নিতকরণ' renders badge 'রিটেক প্রয়োজন' (ksr-badge is-warn) with mastery '৬৫%'; tapping that row navigates to the retake class route /retake/:retakeId (fixture /retake/bhagnansho) instead of the lesson"
+  - id: AC-5
+    description: "Locked chapters are inert and explain the lock state"
+    ui_route: /learn/:classNo/:subjectSlug
+    endpoint: none
+    expected: "Chapter ৯ 'জ্যামিতিক আকৃতি' renders as a non-link div (data-id ch-9) with lock icon, muted title (.ch-locked-t), badge 'লকড' and mastery '০%'; it is not tappable and unlock is derived from the preceding chapter's quiz-pass chain"
+  - id: AC-6
+    description: "'চালিয়ে যাও' continue CTA lands on the first available chapter's lesson"
+    ui_route: /learn/:classNo/:subjectSlug
+    endpoint: none
+    expected: "The block CTA 'চালিয়ে যাও' (data-testid chapter-continue, play icon) sits on the first unlocked unfinished chapter and navigates to that chapter's lesson route /learn/:classNo/:subjectSlug/:chapterSlug with no extra API call"
+
+boundary_cases:
+  - case: "All chapters completed — meta reads '১৮টির মধ্যে ১৮টি অধ্যায় শেষ', every badge is 'শেষ' ১০০%, and the continue CTA points at the first chapter for review"
+  - case: "Chapter with a detected weakness — row 'মৌলিক ও জটিল সংখ্যা' shows an extra warn badge 'দুর্বলতা শনাক্ত' (data-testid chapter-row-weakness) next to 'শুরু হয়নি' ০%"
+  - case: "Fresh student, nothing passed — only chapter ১ is unlocked; chapters ২+ all render 'লকড' and the continue CTA targets chapter ১"
+  - case: "Back link 'ফিরে যান' (sub-back) returns to /learn with the class and search state preserved"
+
+error_scenarios:
+  - scenario: "GET /api/curriculum/chapters returns 500 — 'অধ্যায় লোড হয়নি। আবার চেষ্টা করো।' (data-testid st-error) with retry"
+  - scenario: "Unknown subjectSlug — state sheet kind 'পাওয়া যায়নি' copy 'সাবজেক্ট পাওয়া যায়নি।' shown under the appbar title"
+  - scenario: "Session expired — permission copy 'তোমার সময় শেষ হয়ে গেছে।' (state sheet kind 'অনুমতি নেই') shows and the student is redirected to /auth/login"
+  - scenario: "Offline — 'ইন্টারনেট সংযোগ নেই।' (state sheet edge) replaces the chapter list"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack (16px lines at 72%/100%/54%) while chapters hydrate; continue CTA disabled"
+  - state: empty
+    expected: "Empty state 'এই সাবজেক্টে এখনো কোনো অধ্যায় যোগ করা হয়নি।' (data-testid st-empty); hero progress shows ০ / ০"
+  - state: error
+    expected: "'অধ্যায় লোড হয়নি। আবার চেষ্টা করো।' (data-testid st-error) with retry re-firing GET /api/curriculum/chapters"
+  - state: retake-pending
+    expected: "Edge 'রিটেক প্রয়োজন' (data-testid st-edge, kind 'রিটেক বাকি') — the affected row's badge is is-warn and its tap routes to the retake class"
+  - state: offline
+    expected: "Edge 'ইন্টারনেট সংযোগ নেই।' (data-testid st-edge)"
+
+fixture_refs:
+  - chapter_list
+  - subject_list

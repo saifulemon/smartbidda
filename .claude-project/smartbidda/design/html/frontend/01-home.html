@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>আজকের পাঠ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-home {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentLayout">
+
+  <header class="ksr-appbar" data-shell="topbar">
+    <span class="ksr-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="ksr-round" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+      </button>
+      <button class="ksr-round" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="ksr-main sf-home" data-shell="content">
+
+    <!-- 1 · greeting header + 6 · voice prompt -->
+    <section class="ksr-section" aria-labelledby="home-greeting">
+      <div class="row">
+        <span class="avatar avatar-lg" data-testid="home-avatar" aria-hidden="true">র</span>
+        <div class="ksr-grow">
+          <p class="t-title-lg" id="home-greeting" data-testid="home-greeting">আসসালামু আলাইকুম, রাফিদ</p>
+          <p class="t-caption" data-testid="home-class">চতুর্থ শ্রেণি · ৫ দিনের ধারাবাহিকতা</p>
+        </div>
+      </div>
+      <div class="row">
+        <button class="ksr-chip" type="button" aria-pressed="true" data-testid="home-voice-toggle">
+          <i data-lucide="volume-2" class="icon-sm" aria-hidden="true"></i>
+          কণ্ঠস্বর চালু
+        </button>
+        <p class="t-caption ksr-grow" data-testid="home-voice-state">পাতাটি একবার পড়ে শোনানো হয়েছে</p>
+      </div>
+    </section>
+
+    <!-- 2 · continue-lesson — the glow hero -->
+    <section class="ksr-hero" data-component="card" aria-labelledby="home-today-heading">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-eyebrow" id="home-today-heading" data-testid="home-today-heading">আজকের পাঠ</h2>
+        <span class="ksr-badge" data-testid="home-lesson-subject">গণিত</span>
+      </div>
+      <p class="t-display-md" id="home-lesson-title" style="margin-top:var(--space-sm)" data-testid="home-lesson-title">ভগ্নাংশ চিহ্নিতকরণ</p>
+      <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="home-lesson-chapter">অধ্যায় ৪ · ভগ্নাংশ</p>
+      <p class="t-body-sm t-muted" style="margin-top:var(--space-xs)" data-testid="home-lesson-meta">ভিডিও ১২ মিনিট · ভয়েস সহ</p>
+      <div class="progress is-sm" style="margin-top:var(--space-md)" role="progressbar"
+           aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="পাঠের অগ্রগতি">
+        <div class="progress-fill" style="width:65%" data-testid="home-lesson-progress"></div>
+      </div>
+      <a class="ksr-btn is-block" style="margin-top:var(--space-lg)" href="07-lesson.html" data-component="cta" data-testid="home-lesson-cta">
+        <i data-lucide="play" class="icon-sm" aria-hidden="true"></i>
+        পড়া চালিয়ে যান
+      </a>
+    </section>
+
+    <!-- 3 · today's task strip — 3 pending items, green play affordances -->
+    <section class="ksr-section" aria-labelledby="home-tasks-heading">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-hd" id="home-tasks-heading" data-testid="home-tasks-heading">আজকের কাজ</h2>
+      </div>
+      <div class="ksr-list">
+        <a class="ksr-item" href="10-retake-class.html" data-testid="home-task-retake">
+          <span class="ksr-play" aria-hidden="true"><i data-lucide="rotate-ccw" class="icon-sm"></i></span>
+          <span class="ksr-grow ksr-item-t" data-testid="home-task-retake-label">২ টি রিটেক বাকি</span>
+          <i data-lucide="chevron-right" class="icon-sm ksr-mute" aria-hidden="true"></i>
+        </a>
+        <a class="ksr-item" href="11-exam-list.html" data-testid="home-task-exam">
+          <span class="ksr-play" aria-hidden="true"><i data-lucide="clipboard-check" class="icon-sm"></i></span>
+          <span class="ksr-grow ksr-item-t" data-testid="home-task-exam-label">১ম সাময়িক পরীক্ষা দিতে হবে</span>
+          <i data-lucide="chevron-right" class="icon-sm ksr-mute" aria-hidden="true"></i>
+        </a>
+        <a class="ksr-item" href="07-lesson.html" data-testid="home-task-lesson">
+          <span class="ksr-play" aria-hidden="true"><i data-lucide="play" class="icon-sm"></i></span>
+          <span class="ksr-grow ksr-item-t" data-testid="home-task-lesson-label">ভগ্নাংশ চিহ্নিতকরণ শেষ করুন</span>
+          <i data-lucide="chevron-right" class="icon-sm ksr-mute" aria-hidden="true"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- 8 · subject shortcuts — horizontal rail of cover art -->
+    <section class="ksr-section" aria-labelledby="home-subjects-heading">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-hd" id="home-subjects-heading" data-testid="home-subjects-heading">তোমার বিষয়সমূহ</h2>
+        <a class="ksr-sec-link" href="05-subject-list.html" data-testid="home-subjects-all">সব দেখুন</a>
+      </div>
+      <div class="ksr-rail" role="list">
+        <a class="ksr-tile" role="listitem" href="06-chapter-list.html" data-testid="home-subject-ganit">
+          <div class="media media-photo"><img class="pimg" src="https://picsum.photos/seed/sb-ganit/640/480" alt="গণিতের পাঠ্যবইয়ের প্রচ্ছদ" loading="lazy"></div>
+          <span class="ksr-tile-title" data-testid="home-subject-ganit-name">গণিত</span>
+          <span class="ksr-tile-meta" data-testid="home-subject-ganit-progress">৩ / ১৮ অধ্যায় শেষ</span>
+        </a>
+        <a class="ksr-tile" role="listitem" href="06-chapter-list.html" data-testid="home-subject-bangla">
+          <div class="media media-photo"><img class="pimg" src="https://picsum.photos/seed/sb-bangla/640/480" alt="বাংলার পাঠ্যবইয়ের প্রচ্ছদ" loading="lazy"></div>
+          <span class="ksr-tile-title" data-testid="home-subject-bangla-name">বাংলা</span>
+          <span class="ksr-tile-meta" data-testid="home-subject-bangla-progress">৯ / ১৬ অধ্যায় শেষ</span>
+        </a>
+        <a class="ksr-tile" role="listitem" href="06-chapter-list.html" data-testid="home-subject-science">
+          <div class="media media-photo"><img class="pimg" src="https://picsum.photos/seed/sb-biggan/640/480" alt="বিজ্ঞানের পাঠ্যবইয়ের প্রচ্ছদ" loading="lazy"></div>
+          <span class="ksr-tile-title" data-testid="home-subject-science-name">বিজ্ঞান</span>
+          <span class="ksr-tile-meta" data-testid="home-subject-science-progress">৫ / ১৪ অধ্যায় শেষ</span>
+        </a>
+        <a class="ksr-tile" role="listitem" href="06-chapter-list.html" data-testid="home-subject-english">
+          <div class="media media-photo"><img class="pimg" src="https://picsum.photos/seed/sb-ingreji/640/480" alt="ইংরেজির পাঠ্যবইয়ের প্রচ্ছদ" loading="lazy"></div>
+          <span class="ksr-tile-title" data-testid="home-subject-english-name">ইংরেজি</span>
+          <span class="ksr-tile-meta" data-testid="home-subject-english-progress">৭ / ১৫ অধ্যায় শেষ</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 4 · screen-time indicator — slim green track -->
+    <section class="ksr-panel" data-component="kpi" aria-labelledby="home-time-label">
+      <div class="row">
+        <p class="t-body-sm t-semibold ksr-grow" id="home-time-label" data-testid="home-time-label">আজকের স্ক্রিন টাইম</p>
+        <p class="t-body-sm t-bold" data-testid="home-time-value">২৪ / ৬০ মিনিট</p>
+      </div>
+      <div class="progress is-sm" style="margin-top:var(--space-sm)" role="progressbar"
+           aria-valuenow="24" aria-valuemin="0" aria-valuemax="60" aria-label="আজকের স্ক্রিন টাইম">
+        <div class="progress-fill" style="width:40%" data-testid="home-time-bar"></div>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="home-time-remaining">আরও ৩৬ মিনিট বাকি</p>
+    </section>
+
+    <!-- 7 · nudge surface — parent's one-way message -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="home-nudge-heading">
+      <div class="row" style="align-items:flex-start">
+        <i data-lucide="message-circle" class="icon-md ksr-mute" aria-hidden="true"></i>
+        <div class="ksr-grow">
+          <p class="t-caption" id="home-nudge-heading" data-testid="home-nudge-from">মায়ের বার্তা</p>
+          <p class="t-body-sm" style="margin-top:var(--space-xs)" data-testid="home-nudge-body">আজ গণিতের অধ্যায় ৪ শেষ করলে পুরস্কার পাবে।</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · points + rank badge · streak as the base shows it -->
+    <div class="row">
+      <a class="ksr-panel ksr-grow" href="14-leaderboard.html" data-component="kpi" data-testid="home-points-rank" aria-label="লিডারবোর্ডে তোমার অবস্থান">
+        <p class="t-caption" data-testid="home-points-label">পয়েন্ট ও র‍্যাংক</p>
+        <p class="t-title-lg" style="margin-top:var(--space-xs)" data-testid="home-points-value">১,২৪০ পয়েন্ট · #৪</p>
+      </a>
+      <div class="ksr-panel ksr-grow" data-component="kpi">
+        <p class="t-caption" data-testid="home-streak-label">ধারাবাহিকতা</p>
+        <p class="t-title-lg" style="margin-top:var(--space-xs)" data-testid="home-streak-value">৫ দিন</p>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="ksr-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="ksr-tab" href="01-home.html" data-testid="nav-home" aria-current="page">
+      <i data-lucide="home" class="ksr-tab-ico" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="ksr-tab" href="05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="ksr-tab-ico" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="ksr-tab" href="11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="ksr-tab-ico" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="ksr-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="ksr-tab-ico" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="ksr-tab" href="15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="ksr-tab-ico" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

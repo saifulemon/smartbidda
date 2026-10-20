@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>আবার দেখুন — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…) token */
+
+  /* verification options — wide stacked pills (the concept's answer-tile DNA) */
+  .rt-opts { display: flex; flex-direction: column; gap: var(--space-md); margin-top: var(--space-md); }
+  .rt-opt {
+    display: flex; align-items: center; gap: var(--space-md); width: 100%;
+    min-height: calc(var(--control-h) + var(--space-sm)); padding: var(--space-md) var(--space-lg);
+    background: var(--c-lift); color: var(--c-body); text-align: start; cursor: pointer;
+    border: var(--border-w) solid var(--c-hairline-strong); border-radius: var(--radius-pill);
+    font-family: var(--t-body-md-family); font-size: var(--t-body-lg-size);
+    font-weight: var(--t-weight-semibold);
+  }
+  .rt-opt[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary); }
+
+  /* icon tile (PDF thumb) */
+  .rt-tile { display: inline-grid; place-items: center; flex-shrink: 0;
+    width: 44px; height: 44px; border-radius: var(--radius-md);
+    background: var(--c-lift); color: var(--c-primary); }
+
+  /* disabled CTAs (retake not complete yet) + centred quiet link */
+  .rt-off { opacity: 0.5; pointer-events: none; }
+  .rt-center { justify-content: center; }
+
+  /* notch / home-indicator clearance — page-local layout class */
+  .sf-retake-class {
+    padding-bottom: calc(var(--space-xxl) + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <!-- StudentSubLayout chrome: back + title appbar, NO tabbar -->
+  <header class="ksr-appbar" data-shell="topbar">
+    <a class="ksr-back" href="09-quiz-result.html" aria-label="ফিরে যান" data-testid="sub-back">
+      <i data-lucide="arrow-left" class="icon-sm" aria-hidden="true"></i>
+      ফিরে যান
+    </a>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="sub-title">আবার দেখুন</span>
+  </header>
+
+  <main class="ksr-main sf-retake-class" data-shell="content">
+
+    <!-- 1 · status + heading + retake cap — the glow hero -->
+    <section class="ksr-hero" data-component="card" aria-labelledby="retake-heading">
+      <span class="ksr-badge" data-testid="retake-status">চলছে</span>
+      <h1 class="t-display-md" id="retake-heading" style="margin-top:var(--space-sm)" data-testid="retake-heading">ভগ্নাংশের তুলনা — আবার শিখি</h1>
+      <p class="t-body-sm t-muted" style="margin-top:var(--space-xs)" data-testid="retake-desc">
+        এই পাঠে দুটো পরীক্ষায় ভগ্নাংশ নিয়ে ভুল হয়েছে, তাই আবার দেখে বোঝা দরকার।
+      </p>
+      <div class="row" style="margin-top:var(--space-lg)">
+        <p class="t-body-sm t-semibold ksr-grow" id="retake-cap-label" data-testid="retake-cap-label">অগ্রগতি</p>
+        <p class="t-body-sm t-bold" data-testid="retake-cap-value">১ / ২ রিটেক শেষ</p>
+      </div>
+      <div class="progress is-sm" style="margin-top:var(--space-sm)" role="progressbar"
+           aria-valuenow="1" aria-valuemin="0" aria-valuemax="2" aria-label="রিটেকের অগ্রগতি">
+        <div class="progress-fill" style="width:50%" data-testid="retake-cap-bar"></div>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="retake-cap-note">
+        দুটির একটি শেষ হয়েছে — বাকিটা শেষ হলে রি-এক্সাম খুলবে।
+      </p>
+    </section>
+
+    <!-- 2 · remedial video — real photo in a framed media slot -->
+    <section class="ksr-panel" data-component="media" aria-labelledby="retake-title-text">
+      <div class="media media-video" data-component="media">
+        <img class="pimg" src="https://picsum.photos/seed/sb-retake-video/640/360" alt="শিক্ষক ভগ্নাংশের তুলনা বুঝিয়ে বলছেন" loading="lazy">
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="retake-media-caption">রিমিডিয়াল ভিডিও</p>
+      <div class="row" style="margin-top:var(--space-md);align-items:flex-start">
+        <span class="ksr-col ksr-grow">
+          <span class="ksr-badge" data-testid="retake-source">শিক্ষকের লাইব্রেরি</span>
+          <span class="ksr-item-t" id="retake-title-text" style="margin-top:var(--space-xs)" data-testid="retake-title-text">ভগ্নাংশের তুলনা — সহজ ব্যাখ্যা</span>
+          <span class="t-caption" data-testid="retake-meta">৪ মিনিট · বাংলা ভয়েস সহ</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- 3 · retake note (PDF) -->
+    <section class="ksr-panel" data-component="media" aria-labelledby="retake-pdf-title">
+      <div class="row">
+        <span class="rt-tile" aria-hidden="true"><i data-lucide="file-text" class="icon-md"></i></span>
+        <span class="ksr-col ksr-grow">
+          <span class="ksr-item-t" id="retake-pdf-title" data-testid="retake-pdf-title">রিটেক নোট</span>
+          <span class="t-caption" data-testid="retake-pdf-meta">১ পৃষ্ঠা · বাংলা</span>
+        </span>
+        <button class="ksr-btn is-quiet" type="button" data-testid="retake-pdf-open">পড়ো</button>
+      </div>
+    </section>
+
+    <!-- 4 · understanding check -->
+    <section class="ksr-panel" data-component="list" aria-labelledby="retake-check-label">
+      <div class="row">
+        <p class="t-body t-semibold ksr-grow" id="retake-check-label" data-testid="retake-check-label">বোঝাপড়া যাচাই</p>
+        <span class="ksr-badge is-quiet" data-testid="retake-check-count">১ / ৩</span>
+      </div>
+      <p class="t-body-sm" style="margin-top:var(--space-md)" data-testid="retake-check-q1">
+        ১। ৩/৪ এর সমান কোনটি?
+      </p>
+      <div class="rt-opts" role="group" aria-label="উত্তরের বিকল্প">
+        <button class="rt-opt" type="button" aria-pressed="true" data-testid="retake-check-option">
+          <i data-lucide="check-circle-2" class="icon-sm" aria-hidden="true"></i>
+          ৬/৮
+        </button>
+        <button class="rt-opt" type="button" aria-pressed="false" data-testid="retake-check-option">
+          <i data-lucide="circle" class="icon-sm" aria-hidden="true"></i>
+          ২/৩
+        </button>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-md)" data-testid="retake-check-note">
+        সবগুলো প্রশ্নের উত্তর দিতে হবে — নইলে সম্পন্ন করা যাবে না।
+      </p>
+    </section>
+
+    <!-- 5 · actions — thumb-reach, both gated on completion -->
+    <div class="ksr-stack">
+      <!-- PRD L1734 Complete button: hidden until content consumed, disabled before
+           threshold. The child is on question 1 of 3, so it is disabled. -->
+      <button class="ksr-btn is-block rt-off" type="button" aria-disabled="true" data-testid="retake-complete">
+        <i data-lucide="check" class="icon-sm" aria-hidden="true"></i>
+        সম্পন্ন করুন
+      </button>
+      <!-- PRD L1815 Re-exam button: disabled until the retake is completed -->
+      <a class="ksr-btn is-quiet is-block rt-off" href="11-exam-list.html" aria-disabled="true" data-testid="retake-reexam">
+        রি-এক্সাম
+      </a>
+      <a class="ksr-back rt-center" href="01-home.html" data-testid="retake-skip">হোমে ফিরে যান</a>
+    </div>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

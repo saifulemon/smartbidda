@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>অ্যালার্ট — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .al-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .al-filters { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  .al-item { display: flex; gap: var(--space-md); align-items: flex-start; padding: var(--space-md) 0; }
+  .al-item + .al-item { border-top: var(--border-w) solid var(--c-hairline); }
+  .al-icon {
+    display: grid; place-items: center; flex-shrink: 0;
+    width: 40px; height: 40px;
+    background: var(--c-surface-soft);
+    border-radius: var(--radius-pill);
+  }
+  .al-text { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; flex: 1; }
+  .al-head { display: flex; align-items: center; gap: var(--space-sm); }
+  .al-prefs { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-md) 0; }
+  .al-prefs + .al-prefs { border-top: var(--border-w) solid var(--c-hairline); }
+  .al-prefs-text { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-md"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="al-wrap">
+
+        <div>
+          <div class="al-head">
+            <p class="t-title-lg" data-testid="al-heading">অ্যালার্ট</p>
+            <span class="badge badge-primary" data-testid="al-unread">৩ টি নতুন</span>
+          </div>
+          <p class="t-body-sm t-muted" data-testid="al-sub">শেষ ৭ দিন · ১২ টি বার্তা</p>
+        </div>
+
+        <div class="al-filters" role="group" aria-label="বার্তার ধরন">
+          <button class="chip" aria-pressed="true" data-testid="al-filter-all">সব</button>
+          <button class="chip" aria-pressed="false" data-testid="al-filter-result">ফলাফল</button>
+          <button class="chip" aria-pressed="false" data-testid="al-filter-weakness">দুর্বলতা</button>
+          <button class="chip" aria-pressed="false" data-testid="al-filter-payment">পেমেন্ট</button>
+          <button class="chip" aria-pressed="false" data-testid="al-filter-other">অন্যান্য</button>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" type="button" data-testid="al-markall">সব পড়া হয়েছে</button>
+
+        <section class="card" data-component="list" aria-labelledby="al-list-label">
+          <p class="t-body t-semibold" id="al-list-label" style="margin-bottom:var(--space-sm)" data-testid="al-list-label">বার্তা</p>
+
+          <div class="al-item" data-testid="al-item">
+            <span class="al-icon"><i data-lucide="target" class="icon-md" aria-hidden="true"></i></span>
+            <div class="al-text">
+              <div class="al-head">
+                <span class="t-body-sm t-semibold" data-testid="al-title">ইংরেজিতে দুর্বলতা</span>
+                <span class="badge badge-warning" data-testid="al-badge">দুর্বলতা</span>
+                <span data-testid="al-unread-dot" aria-hidden="true" style="width:8px;height:8px;border-radius:var(--radius-pill);background:var(--c-primary);flex-shrink:0;margin-left:auto"></span>
+              </div>
+              <p class="t-caption" data-testid="al-body">বাক্য গঠনে ২ বার ভুল · রিমিডিয়াল পাঠ সুপারিশ করা হয়েছে</p>
+              <p class="t-caption" data-testid="al-meta">আজ · রাফিদ</p>
+            </div>
+          </div>
+
+          <div class="al-item" data-testid="al-item">
+            <span class="al-icon"><i data-lucide="timer" class="icon-md" aria-hidden="true"></i></span>
+            <div class="al-text">
+              <div class="al-head">
+                <span class="t-body-sm t-semibold" data-testid="al-title">স্ক্রিন টাইম শেষ</span>
+                <span class="badge" data-testid="al-badge">অন্যান্য</span>
+                <span data-testid="al-unread-dot" aria-hidden="true" style="width:8px;height:8px;border-radius:var(--radius-pill);background:var(--c-primary);flex-shrink:0;margin-left:auto"></span>
+              </div>
+              <p class="t-caption" data-testid="al-body">বৃহস্পতিবার ৬০ মিনিট পূর্ণ হয়েছে</p>
+              <p class="t-caption" data-testid="al-meta">১৫ অক্টোবর · রাফিদ</p>
+            </div>
+          </div>
+
+          <div class="al-item" data-testid="al-item">
+            <span class="al-icon"><i data-lucide="file-text" class="icon-md" aria-hidden="true"></i></span>
+            <div class="al-text">
+              <div class="al-head">
+                <span class="t-body-sm t-semibold" data-testid="al-title">১ম সাময়িক পরীক্ষা</span>
+                <span class="badge badge-primary" data-testid="al-badge">ফলাফল</span>
+                <span data-testid="al-unread-dot" aria-hidden="true" style="width:8px;height:8px;border-radius:var(--radius-pill);background:var(--c-primary);flex-shrink:0;margin-left:auto"></span>
+              </div>
+              <p class="t-caption" data-testid="al-body">১০–১৬ অক্টোবর · ফলাফল প্রকাশিত</p>
+              <p class="t-caption" data-testid="al-meta">১৪ অক্টোবর · সকল সন্তান</p>
+            </div>
+          </div>
+        </section>
+
+        <button class="btn btn-secondary" type="button" style="width:100%" data-testid="al-more">আরও দেখুন</button>
+
+
+      </div>
+  </main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="18-parent-dashboard.html" data-testid="nav-dashboard">
+      <i data-lucide="layout-dashboard" class="icon-md"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="tabbar-item" href="19-parent-progress.html" data-testid="nav-progress">
+      <i data-lucide="trending-up" class="icon-md"></i>
+      অগ্রগতি
+    </a>
+    <a class="tabbar-item" href="21-screen-time.html" data-testid="nav-screentime">
+      <i data-lucide="timer" class="icon-md"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="tabbar-item" href="22-alerts.html" data-testid="nav-alerts" aria-current="page">
+      <i data-lucide="bell" class="icon-md"></i>
+      অ্যালার্ট
+    </a>
+    <a class="tabbar-item" href="24-parent-settings.html" data-testid="nav-settings">
+      <i data-lucide="settings" class="icon-md"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>সেটআপ · অবস্থা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* state sheet — every class below is shared (styles/components.css) */
+</style>
+</head>
+<body data-component="dev-states" data-app="frontend" data-layout="StudentSubLayout">
+
+  <!-- StudentSubLayout chrome: back + title appbar, NO tabbar -->
+  <header class="ksr-appbar" data-shell="topbar">
+    <a class="ksr-back" href="../frontend/03-signup.html" aria-label="ফিরে যান" data-testid="onboarding-back">
+      <i data-lucide="arrow-left" class="icon-sm" aria-hidden="true"></i>
+      ফিরে যান
+    </a>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="onboarding-title">সেটআপ</span>
+  </header>
+
+  <main class="ksr-main" data-shell="content">
+        <div class="stwrap" data-testid="st-wrap">
+        <div class="stnote" data-testid="st-intro">
+          <i data-lucide="layers" class="icon-md" aria-hidden="true"></i>
+          <p class="t-caption">প্রতিটি কার্ড একটি আলাদা অবস্থা · একসাথে কখনও দেখানো হবে না</p>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="st-1-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">লোডিং</span>
+            <code class="t-code" data-testid="st-ref">/onboarding</code>
+          </div>
+          <p class="t-body t-semibold" id="st-1-label" data-testid="st-label">লোড হচ্ছে</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="skeleton" style="height:16px;width:72%"></div>
+            <div class="skeleton" style="height:16px;width:100%"></div>
+            <div class="skeleton" style="height:16px;width:54%"></div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-2-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">ত্রুটি বার্তা</span>
+            <code class="t-code" data-testid="st-ref">/onboarding</code>
+          </div>
+          <p class="t-body t-semibold" id="st-2-label" data-testid="st-label">কোন অবস্থায় কী দেখাবে</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">ইন্টারনেট সংযোগ</span>
+              <span class="t-body-sm" data-testid="st-err-msg">ইন্টারনেট সংযোগ নেই।</span>
+            </div>
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">সার্ভার ত্রুটি</span>
+              <span class="t-body-sm" data-testid="st-err-msg">সন্তান যোগ করা যায়নি।</span>
+            </div>
+            <div class="strow">
+              <span class="t-caption" data-testid="st-err-kind">সীমা পূর্ণ</span>
+              <span class="t-body-sm" data-testid="st-err-msg">সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-3-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/onboarding</code>
+          </div>
+          <p class="t-body t-semibold" id="st-3-label" data-testid="st-label">খালি তথ্য</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">তোমার প্রথম সন্তানকে যোগ করো</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-4-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/onboarding</code>
+          </div>
+          <p class="t-body t-semibold" id="st-4-label" data-testid="st-label">সর্বোচ্চ সীমা</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-5-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/onboarding</code>
+          </div>
+          <p class="t-body t-semibold" id="st-5-label" data-testid="st-label">অফলাইন</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">ইন্টারনেট সংযোগ নেই।</p>
+          </div>
+        </section>
+        </div>
+</main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

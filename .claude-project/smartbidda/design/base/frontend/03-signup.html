@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>নতুন অ্যাকাউন্ট — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local layout only — every colour / size / radius / shadow is a token.
+     AuthLayout: no appbar, no tabbar — one full-screen centred column. */
+  .signup-shell {
+    display: flex; flex-direction: column; gap: var(--space-xl);
+    min-height: 100dvh;
+    max-width: 520px;
+    padding-top: var(--space-xl);
+    /* notch / home-indicator clearance — scoped to this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+  }
+  .signup-form { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .signup-consents { display: flex; flex-direction: column; gap: var(--space-md); }
+  .signup-consent { display: flex; align-items: flex-start; gap: var(--space-sm); }
+  .signup-consent-check { width: 20px; height: 20px; margin-top: var(--space-xxs); accent-color: var(--c-primary); flex-shrink: 0; }
+  .signup-child { display: flex; flex-direction: column; gap: var(--space-lg); }
+</style>
+</head>
+<body data-app="frontend" data-layout="AuthLayout">
+
+  <main class="app-body signup-shell" data-shell="content">
+
+    <div>
+      <h1 class="t-title-lg" data-testid="signup-title">নতুন অ্যাকাউন্ট</h1>
+      <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="signup-subtitle">অভিভাবক হিসেবে নিবন্ধন করুন</p>
+    </div>
+
+    <form class="signup-form" data-component="form" data-testid="signup-form">
+      <div class="field">
+        <label class="label" for="signup-email" data-testid="signup-email-label">ইমেইল</label>
+        <input class="input" type="email" id="signup-email" name="email" autocomplete="email"
+          placeholder="আপনার ইমেইল" data-testid="signup-email-input">
+      </div>
+      <div class="field">
+        <label class="label" for="signup-name" data-testid="signup-name-label">নাম</label>
+        <input class="input" type="text" id="signup-name" name="name" autocomplete="name"
+          placeholder="আপনার পূর্ণ নাম" data-testid="signup-name-input">
+      </div>
+      <div class="field">
+        <label class="label" for="signup-password" data-testid="signup-password-label">পাসওয়ার্ড</label>
+        <input class="input" type="password" id="signup-password" name="password"
+          autocomplete="new-password" placeholder="পাসওয়ার্ড লিখুন" data-testid="signup-password-input">
+        <p class="help-text" data-testid="signup-password-help">কমপক্ষে ৮ অক্ষর, অন্তত একটি সংখ্যা</p>
+      </div>
+
+      <!-- PRD "Terms Agreement Fields": each term is a SEPARATE required
+           checkbox, marketing optional, and the hint + CTA state follow
+           "Re-enable submit when all required checked". -->
+      <div class="signup-consents" role="group" aria-labelledby="signup-consents-legend" data-testid="signup-consents-group">
+        <p class="t-caption" id="signup-consents-legend" data-testid="signup-consents-legend">সম্মতি</p>
+
+        <label class="signup-consent">
+          <input class="signup-consent-check" type="checkbox" name="terms" data-testid="signup-terms-check">
+          <span class="t-body-sm" data-testid="signup-terms-text">
+            আমি <a href="#" data-testid="signup-terms-link">ব্যবহারের শর্তাবলী</a> মেনে আছি
+          </span>
+        </label>
+
+        <label class="signup-consent">
+          <input class="signup-consent-check" type="checkbox" name="privacy" data-testid="signup-privacy-check">
+          <span class="t-body-sm" data-testid="signup-privacy-text">
+            আমি <a href="#" data-testid="signup-privacy-link">গোপনীয়তা নীতি</a> মেনে আছি
+          </span>
+        </label>
+
+        <label class="signup-consent">
+          <input class="signup-consent-check" type="checkbox" name="childData" data-testid="signup-childdata-check">
+          <span class="t-body-sm" data-testid="signup-childdata-text">
+            আমার সন্তানের তথ্য সংগ্রহে ও ব্যবহারে আমি সম্মত
+          </span>
+        </label>
+
+        <label class="signup-consent">
+          <input class="signup-consent-check" type="checkbox" name="marketing" data-testid="signup-marketing-check">
+          <span class="t-body-sm" data-testid="signup-marketing-text">
+            নতুন পাঠ ও অফারের খবর আমাকে জানান
+            <span class="t-caption" data-testid="signup-marketing-opt">ঐচ্ছিক</span>
+          </span>
+        </label>
+
+        <p class="error-text" data-testid="signup-consent-error">
+          শর্তাবলী মেনে নিতে হবে · গোপনীয়তা নীতি মেনে নিতে হবে · শিশুর তথ্যের অনুমতি চাই
+        </p>
+      </div>
+
+      <a class="btn btn-primary" href="04-onboarding.html" aria-disabled="true" data-testid="signup-submit">অ্যাকাউন্ট বানাও</a>
+      <p class="t-caption" style="text-align:center" data-testid="signup-login-hint">
+        ইতিমধ্যে অ্যাকাউন্ট আছে? <a class="t-semibold" href="02-login.html" data-testid="signup-login-link">লগ ইন</a>
+      </p>
+    </form>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

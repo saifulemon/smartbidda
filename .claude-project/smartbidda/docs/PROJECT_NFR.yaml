@@ -1,0 +1,225 @@
+project: smartbidda
+spec: PROJECT_NFR
+source: >-
+  smartbidda_PRD.md — Section 0 (locale rule, terms-consent table, Design Direction, MVP
+  Scope, Out of Scope), Section 2 (Localization & Voice, Screen Time, Notification, AI
+  Analytics), Section 3 (per-route loading/empty/error/offline state specs), Section 5
+  (Technologies, Auth Flow, File Pipeline, Real-time Architecture, Billing Flow,
+  Multi-tenancy), Section 6 (Data Model + index/retention notes), Section 7 (Permission
+  Matrix), Section 8.2 Technical Open Questions (T1-T8).
+
+performance:
+  stated_in_prd: partial
+  note: >-
+    The PRD states no latency, throughput or uptime number. api_p95_ms and lcp_s are
+    pipeline defaults; every entry under from_prd is stated in the PRD.
+  api_p95_ms: 300
+  lcp_s: 2.5
+  from_prd:
+    screen_time_heartbeat: >-
+      60s per student (T5) — client batches, server flushes under a Redis lock keyed
+      smartbidda:st:{studentId}; a Redis lock is required so two devices cannot
+      double-count (decision #2). Block/limit changes apply on the next heartbeat.
+    usage_heartbeat_storage: >-
+      Redis counter flushed nightly into screen_time_ledger; the usage_heartbeat table
+      exists for audit only (T8).
+    socket_heartbeat: "server ping 30s; client disconnects after 2 missed pings"
+    socket_reconnect: >-
+      exponential backoff — initial 1s, max 30s, 10 attempts; on reconnect the client
+      refetches the canonical screen (/api/leaderboard, /api/parent/dashboard) rather than
+      replaying events — the socket is a hint, the API is the truth.
+    jwt_access_ttl: 15m
+    jwt_refresh_ttl: 14d
+    search_debounce: "300ms debounced, URL-backed filters on /learn (S13)"
+    leaderboard_page: "top 100 rows + pinned own row (S2), class-scoped, points DESC server-locked"
+    quiz_session_size: "fixed 10 questions per quiz — Class 1-2 untimed, Class 3-5 60s per question (S3)"
+    asset_delivery: >-
+      video/PDF uploaded by presigned URL direct-to-storage (never proxied through NestJS),
+      limits 500MB video / 25MB PDF / 2MB VO audio (S12); lesson assets served private +
+      signed URLs via CDN_BASE_URL so a leaked URL expires; HLS 480p/720p + WebVTT Bangla
+      captions (T1); VO audio public.
+    offline_behavior: >-
+      every route defines loading/empty/error states; on network failure the cached render
+      is retained with the "ইন্টারনেট সংযোগ নেই।" banner, and queued writes (quiz/exam
+      answers, language toggle) flush on reconnect. Offline PDF download / offline sync is
+      deferred to Phase 2 (O3).
+    pagination: >-
+      audit log uses keyset pagination so no row is skipped or duplicated while writes
+      continue; notification/lesson/payment lists are paginated server-side.
+    scheduled_jobs: >-
+      node-cron nightly — retention purge, subscription expiry sweep, quiet-hours flush,
+      orphaned-upload cleanup (presigned but never completed, deleted after 7 days).
+    payment_webhook: >-
+      3 retries with exponential backoff, idempotent on unique gateway_ref (T7); abandoned
+      intent PENDING → FAILED after 30 minutes; gateway return page polls with a 30s ceiling.
+  caching:
+    redis: "screen-time accounting locks, notification dispatch queue, rate limiting (REDIS_PREFIX=smartbidda:)"
+    family_key_prefix: "family-scoped values are keyed smartbidda:{familyId}: — the Redis prefix guard rejects an unprefixed key"
+  data_volume_indexes: >-
+    hot paths are indexed up front — quiz/exam answers by (topic_tag_id, is_correct) for the
+    weakness rollup, learning_content by (chapter_id, kind, status), subscriptions by
+    (family_id, status, entitlement_until), students by (class_no, leaderboard_opt_out).
+
+security:
+  token: httponly-cookies
+  hashing: bcrypt
+  auth_method: >-
+    JWT in httpOnly cookies (never localStorage) — three session classes: parent/teacher/
+    admin, student (kid-PIN), and a re-authenticated parentMode claim stamped on the parent
+    session. WebSocket handshake re-validates the same session cookie.
+  token_strategy:
+    parent_teacher_admin: "access 15m + refresh 14d, rotated on use, httpOnly + SameSite=Lax"
+    cookies: [SmartbiddaToken, SmartbiddaRefreshToken, SmartbiddaAdminToken, SmartbiddaStudentToken]
+    student: "no password — session JWT scoped to one student_id, lifetime min(remaining screen-time budget, 4h) (S10)"
+    parent_mode: "6-digit PIN verification → parentMode claim valid 30 min; every /parent/* route re-asserts it, expiry = 403 PARENT_PIN_REQUIRED"
+    refresh_failure: "clear cookies and redirect to /auth/login?next=…"
+  password_policy: "parent passwords only — min 8 characters, at least 1 digit, bcrypt cost 12 (S1); students never hold a password"
+  kid_pin: "4-digit bcrypt-hashed (kid_pin_hash), 5 wrong → 429 PIN_LOCKED with retryAfterSeconds, fail counter independent of the parent login counter (C1)"
+  parent_pin_rate_limit: "3 attempts / 10 min per user, separate bucket from login (C2)"
+  login_lockout: "5 failures in 15 min → locked_until = now + 15 min; loginFailCount tracked on the user row"
+  account_enumeration: "POST /api/auth/forgot-password always answers 202 whether or not the email exists"
+  reset_token: "single-use token, 30 min TTL, emailed; on reset ALL refresh tokens for that user are invalidated"
+  rate_limiting: "Redis-backed; /auth/* is public AND rate-limited (Section 7 environment column)"
+  entitlement_check: >-
+    resolved server-side on every premium content fetch, never from a client flag
+    (decision #4); lesson assets are signed URLs minted only after the entitlement check.
+  multi_tenant_isolation: >-
+    row-level scoping by family_id through FamilyScopeGuard — the only path by which
+    family_id enters a query, passed as a required repository parameter; a cross-family row
+    answers 404, never 403, so existence is not leaked; curriculum/content are platform-global.
+  leaderboard_privacy: >-
+    cross-family reads exist only through the leaderboardOptOut = false projection
+    (display name + class) (C7); no student profile pages exist.
+  screen_time_enforcement: "server-side only — a client counter is bypassed by refresh and does not survive a device switch (C6)"
+  payment_webhook: "SSLCommerz VALID event signature verified before payment.status = SUCCESS; replay is a no-op (unique gateway_ref); refund is a compensating row, never an in-place edit"
+  secrets: >-
+    JWT secrets, gateway store id/password, VAPID keys, email and S3 credentials are
+    environment variables (Section 5 env table) — never in the repo.
+  file_upload_defense: >-
+    MIME + magic-byte sniff, rights-attestation gate (422 RIGHTS_ATTESTATION_REQUIRED),
+    async virus scan → clean / quarantined; client rejects oversize/wrong-type before upload.
+  audit: >-
+    every admin/teacher mutation writes an append-only audit_logs row (actor, action,
+    entity, before/after diff, IP); diffs mask password_hash, kid_pin_hash and parent_pin;
+    read/export is admin-only.
+  ledgers_append_only: >-
+    points_ledger, screen_time_ledger, nudges, audit_logs and usage_heartbeat are never
+    edited or removed; soft delete elsewhere requires admin role + an audit row.
+
+i18n:
+  default: bn
+  locales: [bn, en]
+  library: react-i18next
+  library_source: >-
+    PRD fixes the transport (locale-aware string catalog from GET /api/i18n/catalog?locale=
+    and VO index from GET /api/i18n/voice), not the client library; react-i18next is the
+    workspace React stack's i18n layer.
+  note: >-
+    Bangla is the default UI language — every user-visible string in the PRD is Bangla;
+    English is the documented secondary locale. Subject content stays bilingual by design.
+  toggle: "per-user (user.locale default 'bn'), persisted via PATCH, applied on next render; offline toggle applies locally, queued, synced on reconnect"
+  catalog: "GET /api/i18n/catalog?locale=bn → { catalogVersion, strings }; versioned so a client can refresh without a deploy"
+  voice: >-
+    pre-authored Bangla VO assets keyed by event (vo_assets.locale default bn-BD), auto-
+    played for students unless muted; a missing asset answers 204 and the client renders
+    the text label and logs voice_asset_missing (C8).
+  fonts: "Hind Siliguri for UI, Kalpurush as the long-form PDF fallback"
+  notifications: "every notification carries a locale-correct Bangla AND English template; notification_templates rows hold _bn and _en siblings"
+  notification_variable_parity: "save is rejected when the English body drops a variable used in Bangla — 'বাংলা ও ইংরেজি ভ্যারিয়েবল মিলতে হবে'"
+  numerals: "Bangla numerals and Bangla class tiles (১-৫) are the default rendering; money is ৳ with BIGINT poisha storage"
+
+accessibility: wcag-2.1-aa
+accessibility_detail:
+  stated_in_prd: false
+  note: "The PRD states no WCAG target; wcag-2.1-aa is the pipeline default. Everything under from_prd is stated."
+  from_prd:
+    audience: "pre-literate and early-reader children (ages 6-11) — voice-guided, Bangla-first"
+    voice_guidance: >-
+      pre-authored Bangla VO plays on mount and reads error messages aloud; voice respects
+      the student's mute setting, so every voice message also has a visible text label.
+    motion: "rich motion on student screens must respect prefers-reduced-motion; voice also respects prefers-reduced-data"
+    tap_targets: "large tap targets throughout — option tiles are 2-4 large targets, one primary action per screen, 5 large Bangla-numbered class tiles (কিছু একটি বড়)"
+    state_coverage: >-
+      every route defines Loading / Empty / Error screens with Bangla copy and a retry
+      action; premium gates redirect with an explanation instead of blurring content —
+      a 6-year-old cannot be expected to complete a blurred paywall.
+    offline_notice: "network failure shows a persistent banner and preserves form/answer state"
+    typography: "Bengali web fonts (Hind Siliguri / Kalpurush) so Bangla renders legibly on low-cost Android devices"
+    screen_time_block: "the block screen offers 'মাকে বলি' as a primary action rather than a dead end"
+
+compliance:
+  - id: child-data-consent
+    name: Child Data Consent (শিশুর তথ্য সম্মতি)
+    requirement: "separate required checkbox at signup because a child's data is created"
+    implementation: >-
+      signup collects Terms of Service, Privacy Policy and Child Data Consent as three
+      separate required checkboxes (marketing consent optional and separate); consent
+      history is shown on the admin family record.
+  - id: withdrawn-data-purge
+    name: Withdrawn account / child-data purge
+    requirement: "sessions invalidated immediately; personal data purged within 7 days on a parent's child-data purge request (S11)"
+    implementation: >-
+      status = WITHDRAWN + soft delete (deletedAt); a nightly job hard-deletes the row and
+      its personal fields after 90 days, or within 7 days when the request is a parent's
+      child-data purge.
+  - id: telemetry-retention
+    name: Telemetry retention
+    requirement: "transient usage data must not outlive its usefulness"
+    implementation: >-
+      usage_heartbeat and transient heartbeat rows are partitioned by day and purged after
+      90 days by the retention job; screen_time_ledger is the authoritative record.
+  - id: audit-retention
+    name: Audit log retention window
+    requirement: "entries older than the retention window are removed by the nightly job; the page states the retained range"
+    implementation: "append-only audit_logs, keyset pagination, sensitive fields masked as •••• and never recoverable"
+  - id: content-rights
+    name: Content rights attestation
+    requirement: "no video/PDF may be published without an explicit rights attestation (C10, S12)"
+    implementation: >-
+      upload stores rights_attested_by / rights_attestation_text snapshot / rights_attested_at;
+      publish without the attestation is rejected with 422 RIGHTS_ATTESTATION_REQUIRED and
+      the button stays disabled.
+  - id: child-privacy-leaderboard
+    name: Child visibility on the public leaderboard
+    requirement: "a child's presence on the leaderboard is opt-in — opt-out is the default (C7)"
+    implementation: >-
+      students.leaderboard_opt_out defaults to true; only display name + class are
+      projected, and the parent can flip consent per child in /parent/settings.
+  - id: screen-time-limit
+    name: Child screen-time cap
+    requirement: "server-side daily budget with a hard block (C6), default 60 minutes until the parent changes it"
+    implementation: >-
+      students.screen_time_limit_min default 60 (explicit NULL = parent chose 'no limit' —
+      never unlimited by omission); heartbeat accounting under a Redis lock; extensions
+      counted in screen_time_ext_used.
+  - id: payment-records
+    name: Financial record integrity
+    requirement: "payments are an append-only financial record; refunds are compensating transactions"
+    implementation: >-
+      the original payment row is never edited in place; a refund row references it;
+      entitlement is per-family and unchanged by adding or removing a child (C5); grace of
+      3 days past entitlement_until before premium locks.
+  - id: tenant-isolation
+    name: Per-family data isolation
+    requirement: "one family's data must never be readable by another"
+    implementation: "FamilyScopeGuard row-level scoping; cross-family access answers 404; family-prefixed cache keys enforced by a Redis prefix guard."
+
+availability:
+  stated_in_prd: false
+  note: "No uptime SLA in the PRD; the entries below are the degradation behaviours the PRD does specify."
+  degradation:
+    openai_down: >-
+      rule-based topic scoring is always built alongside the AI path — on timeout or an
+      unknown content id the selection falls back to rules, logs ai_selection_fallback, and
+      the remedial assignment is still created; the loop never stalls on the model (decision #3).
+    voice_asset_missing: "204 → text renders silently and voice_asset_missing is recorded so the content gap is measurable"
+    socket_down: "long-polling fallback on Socket.IO (T2); recovery = refetch the canonical screen, not event replay"
+    payment_pending: "'পেমেন্ট যাচাই হচ্ছে...' with a 30s poll ceiling and manual refresh — premium content stays locked until the webhook confirms"
+    entitlement_expiry: "3-day grace past entitlement_until so a late MFS payment does not strand a mid-lesson child"
+    offline: "cached screens + banner; queued answers/updates flush on reconnect"
+
+realtime:
+  protocol: socket.io
+  transport: "WebSocket with long-polling fallback (T2)"
+  channels: ["student:{id}", "parent:{id}", "leaderboard:class:{n}"]
+  reconnect: "exponential backoff — initial 1s, max 30s, 10 attempts; API refetch on reconnect (socket = hint, API = truth)"

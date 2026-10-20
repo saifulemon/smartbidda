@@ -1,0 +1,1549 @@
+{
+ "02-login.html": {
+  "route": "/auth/login",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "skeleton child cards while GET /api/auth/children resolves",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "তোমার কোনো প্রোফাইল নেই। তোমার মা বা বাবাকে বলো অ্যাকাউন্ট বানাতে! + link to /auth/signup",
+    "ui": "তোমার কোনো প্রোফাইল নেই। তোমার মা বা বাবাকে বলো অ্যাকাউন্ট বানাতে!"
+   },
+   "error": {
+    "raw": "লগ ইন করা যায়নি। আবার চেষ্টা করো। + retry",
+    "ui": "লগ ইন করা যায়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry button; keypad disabled"
+   },
+   {
+    "type": "Server error",
+    "message": "সাময়িক সমস্যা হচ্ছে। আবার চেষ্টা করো।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "তোমার সময় শেষ হয়ে গেছে।",
+    "recovery": "Route to / block screen"
+   },
+   {
+    "type": "Validation error",
+    "message": "ভুল পিন! আবার চেষ্টা করো।",
+    "recovery": "Clear dots"
+   },
+   {
+    "type": "Rate limit",
+    "message": "অনেকবার ভুল হয়েছে। ৫ মিনিট পরে চেষ্টা করো।",
+    "recovery": "Countdown, keypad disabled"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No children linked yet",
+    "ui": "তোমার কোনো প্রোফাইল নেই। + অ্যাকাউন্ট বানাও"
+   },
+   {
+    "category": "Max capacity",
+    "scenario": "3 children linked, parent tries a 4th",
+    "ui": "সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Connection lost mid-PIN",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Lockout",
+    "scenario": "5 wrong PINs",
+    "ui": "অনেকবার ভুল হয়েছে। ৫ মিনিট পরে চেষ্টা করো। +"
+   }
+  ]
+ },
+ "03-signup.html": {
+  "route": "/auth/signup",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "button spinner on submit",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "N/A (static form)",
+    "ui": ""
+   },
+   "error": {
+    "raw": "inline field errors + a top toast on server failure",
+    "ui": ""
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "অ্যাকাউন্ট বানানো যায়নি। আবার চেষ্টা করো।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Duplicate",
+    "message": "এই ইমেইল দিয়ে অ্যাকাউন্ট আছে। লগ ইন করো।",
+    "recovery": "Link to /auth/login"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Max capacity",
+    "scenario": "Email 255+ chars",
+    "ui": "সর্বোচ্চ ২৫৪ অক্ষর"
+   },
+   {
+    "category": "Concurrent access",
+    "scenario": "Same email submitted twice in two tabs",
+    "ui": "এই ইমেইল দিয়ে অ্যাকাউন্ট আছে।"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Submit while offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   }
+  ]
+ },
+ "01-home.html": {
+  "route": "/",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "skeleton tiles (3) matching final layout",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "তোমার কোনো পড়া শুরু হয়নি। চলো শুরু করি! + CTA → /learn",
+    "ui": "তোমার কোনো পড়া শুরু হয়নি। চলো শুরু করি!"
+   },
+   "error": {
+    "raw": "কিছু লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "কিছু লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "কিছু লোড হয়নি। আবার চেষ্টা করো।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "তোমার সময় শেষ হয়ে গেছে।",
+    "recovery": "Block screen"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Brand-new student, no lessons started",
+    "ui": "তোমার কোনো পড়া শুরু হয়নি। + শুরু করো"
+   },
+   {
+    "category": "Max capacity",
+    "scenario": "5+ pending tasks",
+    "ui": "আরও { } টি →"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Load fails",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Screen-time exhausted",
+    "scenario": "Daily budget spent",
+    "ui": "সময় শেষ \"মাকে বলি\""
+   }
+  ]
+ },
+ "04-onboarding.html": {
+  "route": "/onboarding",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "step indicator only",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "N/A (wizard)",
+    "ui": ""
+   },
+   "error": {
+    "raw": "inline + top toast on server failure",
+    "ui": ""
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "সন্তান যোগ করা যায়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Limit reached",
+    "message": "সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়",
+    "recovery": "Route to /parent/settings"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "First child ever",
+    "ui": "তোমার প্রথম সন্তানকে যোগ করো"
+   },
+   {
+    "category": "Max capacity",
+    "scenario": "3 children already linked",
+    "ui": "সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Submit fails",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   }
+  ]
+ },
+ "05-subject-list.html": {
+  "route": "/learn",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "6 skeleton tiles",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "এই শ্রেণিতে কোনো সাবজেক্ট নেই। + class-switch CTA",
+    "ui": "এই শ্রেণিতে কোনো সাবজেক্ট নেই।"
+   },
+   "error": {
+    "raw": "সাবজেক্ট লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "সাবজেক্ট লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "সাবজেক্ট লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "তোমার সময় শেষ হয়ে গেছে।",
+    "recovery": "Block screen"
+   },
+   {
+    "type": "Not found",
+    "message": "শ্রেণি পাওয়া যায়নি।",
+    "recovery": "Back to /learn"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Class with no published subjects",
+    "ui": "এই শ্রেণিতে কোনো সাবজেক্ট নেই।"
+   },
+   {
+    "category": "Max capacity",
+    "scenario": "Search returns 0",
+    "ui": "কিছু পাওয়া যায়নি + ফিল্টার মুছুন"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Filter applied offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Entitlement lapse",
+    "scenario": "Premium subject while expired",
+    "ui": "প্রিমিয়াম"
+   }
+  ]
+ },
+ "06-chapter-list.html": {
+  "route": "/learn/:classNo/:subjectSlug",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "5 skeleton rows",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "এই সাবজেক্টে এখনো কোনো অধ্যায় যোগ করা হয়নি। + back CTA",
+    "ui": "এই সাবজেক্টে এখনো কোনো অধ্যায় যোগ করা হয়নি।"
+   },
+   "error": {
+    "raw": "অধ্যায় লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "অধ্যায় লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "অধ্যায় লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Not found",
+    "message": "সাবজেক্ট পাওয়া যায়নি।",
+    "recovery": "Back to /learn"
+   },
+   {
+    "type": "Permission denied",
+    "message": "তোমার সময় শেষ হয়ে গেছে।",
+    "recovery": "Block screen"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No chapters published",
+    "ui": "এই সাবজেক্টে এখনো কোনো অধ্যায় যোগ করা হয়নি।"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Chapter tapped offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Retake pending",
+    "scenario": "Chapter requiring a retake",
+    "ui": "রিটেক প্রয়োজন"
+   }
+  ]
+ },
+ "07-lesson.html": {
+  "route": "/learn/:classNo/:subjectSlug/:chapterSlug",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "video poster + skeleton player controls",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "এই অধ্যায়ের কোনো লেসন নেই। + back CTA",
+    "ui": "এই অধ্যায়ের কোনো লেসন নেই।"
+   },
+   "error": {
+    "raw": "লেসন লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "লেসন লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Pause + resume on reconnect"
+   },
+   {
+    "type": "Server error",
+    "message": "লেসন লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "এই অংশটি দেখতে প্রিমিয়াম সাবস্ক্রিপশন প্রয়োজন।",
+    "recovery": "Route to /parent/subscription"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Chapter published with no asset",
+    "ui": "এই অধ্যায়ের কোনো লেসন নেই।"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Mid-video disconnect",
+    "ui": "ইন্টারনেট সংযোগ নেই।,"
+   }
+  ]
+ },
+ "08-quiz.html": {
+  "route": "/quiz/:sessionId",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "question skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "কুইজ পাওয়া যায়নি। + back CTA",
+    "ui": "কুইজ পাওয়া যায়নি।"
+   },
+   "error": {
+    "raw": "উত্তর পাঠানো যায়নি। আবার চেষ্টা করো। + retry",
+    "ui": "উত্তর পাঠানো যায়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Queue answer, retry"
+   },
+   {
+    "type": "Server error",
+    "message": "উত্তর পাঠানো যায়নি।",
+    "recovery": "Retry same answer"
+   },
+   {
+    "type": "Conflict",
+    "message": "কুইজ আগেই শেষ হয়েছে।",
+    "recovery": "Route to existing result"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Offline",
+    "scenario": "Answer submitted offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   }
+  ]
+ },
+ "09-quiz-result.html": {
+  "route": "/quiz/:sessionId/result",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "score ring skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "রেজাল্ট পাওয়া যায়নি। + back",
+    "ui": "রেজাল্ট পাওয়া যায়নি।"
+   },
+   "error": {
+    "raw": "রেজাল্ট লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "রেজাল্ট লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "রেজাল্ট লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Not found",
+    "message": "রেজাল্ট পাওয়া যায়নি।",
+    "recovery": "Back to /learn"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Max capacity",
+    "scenario": "10 weak topics",
+    "ui": "আরও { } টি রিটেক"
+   },
+   {
+    "category": "Concurrent access",
+    "scenario": "Retake completed then result revisited",
+    "ui": "রিটেক সম্পন্ন"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Result cached",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Perfect score",
+    "scenario": "10/10",
+    "ui": "১০ বোনাস"
+   }
+  ]
+ },
+ "10-retake-class.html": {
+  "route": "/retake/:retakeId",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "player skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "এই রিটেক ক্লাস এখনো তৈরি হয়নি। + notify-teacher CTA",
+    "ui": "এই রিটেক ক্লাস এখনো তৈরি হয়নি।"
+   },
+   "error": {
+    "raw": "রিটেক লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "রিটেক লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "রিটেক শেষ করা যায়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Conflict",
+    "message": "রিটেক আগেই শেষ হয়েছে।",
+    "recovery": "Route to re-exam"
+   },
+   {
+    "type": "Not found",
+    "message": "রিটেক পাওয়া যায়নি।",
+    "recovery": "Back to /"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Retake queued with no content",
+    "ui": "এই রিটেক ক্লাস এখনো তৈরি হয়নি।"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Complete while offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Escalated",
+    "scenario": "3rd consecutive chapter failure",
+    "ui": "শিক্ষক দেখছেন [📌 : ]"
+   }
+  ]
+ },
+ "11-exam-list.html": {
+  "route": "/exams",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "3 skeleton cards",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "এখনো কোনো পরীক্ষা দেওয়া হয়নি। + back CTA",
+    "ui": "এখনো কোনো পরীক্ষা দেওয়া হয়নি।"
+   },
+   "error": {
+    "raw": "পরীক্ষা লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "পরীক্ষা লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "পরীক্ষা লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "আগে রিটেক ক্লাস শেষ করতে হবে।",
+    "recovery": "Route to /retake/:id"
+   },
+   {
+    "type": "Conflict",
+    "message": "পরীক্ষা ইতিমধ্যে চলছে।",
+    "recovery": "Resume"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No exams scheduled for the class",
+    "ui": "এখনো কোনো পরীক্ষা দেওয়া হয়নি।"
+   },
+   {
+    "category": "Max capacity",
+    "scenario": "Exam window closed",
+    "ui": "সময় শেষ"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Start offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Retake pending",
+    "scenario": "Failed, retakes outstanding",
+    "ui": "রিটেক শেষ করলে রি-এক্সাম খুলবে"
+   }
+  ]
+ },
+ "12-exam.html": {
+  "route": "/exams/:examId",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "question skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "পরীক্ষা পাওয়া যায়নি। + back",
+    "ui": "পরীক্ষা পাওয়া যায়নি।"
+   },
+   "error": {
+    "raw": "উত্তর জমা দেওয়া যায়নি। আবার চেষ্টা করো। + retry",
+    "ui": "উত্তর জমা দেওয়া যায়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Answers cached locally, auto-retry"
+   },
+   {
+    "type": "Server error",
+    "message": "উত্তর জমা দেওয়া যায়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Conflict",
+    "message": "পরীক্ষা আগেই জমা হয়েছে।",
+    "recovery": "Route to result"
+   },
+   {
+    "type": "Permission denied",
+    "message": "এই পরীক্ষায় তুমি বসতে পারবে না।",
+    "recovery": "Back to /exams"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Exam with no questions",
+    "ui": "পরীক্ষা এখনো তৈরি হয়নি।"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Mid-exam disconnect",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   }
+  ]
+ },
+ "13-exam-result.html": {
+  "route": "/exams/:examId/result",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "banner skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "রেজাল্ট পাওয়া যায়নি। + back",
+    "ui": "রেজাল্ট পাওয়া যায়নি।"
+   },
+   "error": {
+    "raw": "রেজাল্ট লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "রেজাল্ট লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "রেজাল্ট লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Not found",
+    "message": "রেজাল্ট পাওয়া যায়নি।",
+    "recovery": "Back to /exams"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Offline",
+    "scenario": "Result cached",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "No re-exam yet",
+    "scenario": "Failed, retakes pending",
+    "ui": "রিটেক শেষ করলে আবার দিতে পারবে"
+   }
+  ]
+ },
+ "14-leaderboard.html": {
+  "route": "/leaderboard",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "10 skeleton rows",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "এই শ্রেণিতে এখনো কেউ যোগ হয়নি। + CTA → /learn",
+    "ui": "এই শ্রেণিতে এখনো কেউ যোগ হয়নি।"
+   },
+   "error": {
+    "raw": "লিডারবোর্ড লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "লিডারবোর্ড লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "লিডারবোর্ড লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "তোমার সময় শেষ হয়ে গেছে।",
+    "recovery": "Block screen"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No opted-in students in the class",
+    "ui": "এই শ্রেণিতে এখনো কেউ যোগ হয়নি।"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Board cached",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Self opted out",
+    "scenario": "Viewer excluded from the public list",
+    "ui": "লিডারবোর্ডে তোমার নাম দেখানো হচ্ছে না"
+   }
+  ]
+ },
+ "15-rewards.html": {
+  "route": "/rewards",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "badge grid skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "প্রথম ব্যাজ পেতে একটা পড়া শেষ করো! + CTA → /learn",
+    "ui": "প্রথম ব্যাজ পেতে একটা পড়া শেষ করো!"
+   },
+   "error": {
+    "raw": "ব্যাজ লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "ব্যাজ লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "ব্যাজ লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "তোমার সময় শেষ হয়ে গেছে।",
+    "recovery": "Block screen"
+   },
+   {
+    "type": "Not found",
+    "message": "ব্যাজ পাওয়া যায়নি।",
+    "recovery": "Grid view"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No badges earned",
+    "ui": "প্রথম ব্যাজ পেতে একটা পড়া শেষ করো!"
+   },
+   {
+    "category": "All earned",
+    "scenario": "Every badge unlocked",
+    "ui": "সব ব্যাজ পেয়েছো!"
+   }
+  ]
+ },
+ "16-settings.html": {
+  "route": "/settings",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "row skeletons",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "N/A (static settings)",
+    "ui": ""
+   },
+   "error": {
+    "raw": "সেটিংস লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "সেটিংস লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Revert toggle, retry"
+   },
+   {
+    "type": "Server error",
+    "message": "সেটিংস সেভ হয়নি।",
+    "recovery": "Revert + toast"
+   },
+   {
+    "type": "Permission denied",
+    "message": "পরিবর্তন সেভ করা যায়নি।",
+    "recovery": "Revert"
+   }
+  ],
+  "edges": []
+ },
+ "17-parent-login.html": {
+  "route": "/parent/login",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "keypad skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "N/A (auth screen)",
+    "ui": ""
+   },
+   "error": {
+    "raw": "inline + toast",
+    "ui": ""
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "সাময়িক সমস্যা।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Validation error",
+    "message": "পিন ভুল হয়েছে। আবার চেষ্টা করুন।",
+    "recovery": "Clear dots"
+   },
+   {
+    "type": "Rate limit",
+    "message": "পিন ভুল হয়েছে। ১০ মিনিট পরে চেষ্টা করুন।",
+    "recovery": "Countdown, disabled"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Offline",
+    "scenario": "Submit offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Lockout",
+    "scenario": "3 wrong PINs",
+    "ui": "পিন ভুল হয়েছে। ১০ মিনিট পরে চেষ্টা করুন।"
+   }
+  ]
+ },
+ "18-parent-dashboard.html": {
+  "route": "/parent",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "card skeletons",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "শুরু করতে সন্তানের পড়া শুরু করতে হবে। + link to the child's /learn",
+    "ui": "শুরু করতে সন্তানের পড়া শুরু করতে হবে।"
+   },
+   "error": {
+    "raw": "ড্যাশবোর্ড লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "ড্যাশবোর্ড লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "ড্যাশবোর্ড লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "প্যারেন্ট মোডে ঢুকতে হবে।",
+    "recovery": "Route to /parent/login"
+   },
+   {
+    "type": "Rate limit",
+    "message": "আজ অনেকবার পাঠিয়ে দিয়েছেন।",
+    "recovery": "Disable button for the day"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "New family, no activity",
+    "ui": "শুরু করতে সন্তানের পড়া শুরু করতে হবে।"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Dashboard cached",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Nudge cap",
+    "scenario": "6th nudge in a day",
+    "ui": "আজ অনেকবার পাঠিয়ে দিয়েছেন।"
+   }
+  ]
+ },
+ "19-parent-progress.html": {
+  "route": "/parent/progress",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "skeleton bars",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "সন্তান এখনো কিছু শেষ করেনি। + link",
+    "ui": "সন্তান এখনো কিছু শেষ করেনি।"
+   },
+   "error": {
+    "raw": "অগ্রগতি লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "অগ্রগতি লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "অগ্রগতি লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "এই সন্তানের তথ্য দেখতে পারবেন না।",
+    "recovery": "Route to /parent"
+   },
+   {
+    "type": "Not found",
+    "message": "সন্তান পাওয়া যায়নি।",
+    "recovery": "Back to /parent"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No completed lessons",
+    "ui": "সন্তান এখনো কিছু শেষ করেনি।"
+   },
+   {
+    "category": "Low sample",
+    "scenario": "Topic with <5 answers",
+    "ui": "নমুনা কম"
+   }
+  ]
+ },
+ "20-parent-analytics.html": {
+  "route": "/parent/analytics",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "chart skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "প্রাক্কলনের জন্য আরও কিছু ডেটা দরকার। + link to /learn",
+    "ui": "প্রাক্কলনের জন্য আরও কিছু ডেটা দরকার।"
+   },
+   "error": {
+    "raw": "প্রাক্কলন লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "প্রাক্কলন লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "প্রাক্কলন তৈরি হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Insufficient data",
+    "message": "প্রাক্কলনের জন্য আরও কিছু ডেটা দরকার।",
+    "recovery": "Link to /learn"
+   },
+   {
+    "type": "Permission denied",
+    "message": "এই সন্তানের তথ্য দেখতে পারবেন না।",
+    "recovery": "Back to /parent"
+   }
+  ],
+  "edges": []
+ },
+ "21-screen-time.html": {
+  "route": "/parent/screen-time",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "slider skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "N/A (control always renders)",
+    "ui": ""
+   },
+   "error": {
+    "raw": "সীমা সেভ হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "সীমা সেভ হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Revert slider"
+   },
+   {
+    "type": "Server error",
+    "message": "সীমা সেভ হয়নি।",
+    "recovery": "Revert + toast"
+   },
+   {
+    "type": "Validation error",
+    "message": "০ থেকে ২৪০ মিনিটের মধ্যে দিন",
+    "recovery": "Clamp slider"
+   },
+   {
+    "type": "Permission denied",
+    "message": "পরিবর্তন করতে পারবেন না।",
+    "recovery": "Revert"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Parent has never set a limit",
+    "ui": "৬০ মিনিট ; ৬০ [📌 : ]"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Slider released offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   },
+   {
+    "category": "Immediate effect",
+    "scenario": "Limit lowered below current usage",
+    "ui": "সময় শেষ"
+   }
+  ]
+ },
+ "22-alerts.html": {
+  "route": "/parent/alerts",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "row skeletons",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "কোনো বার্তা নেই। (filtered: এই ধরনের কোনো বার্তা নেই। + clear-filter CTA)",
+    "ui": "কোনো বার্তা নেই। (filtered: এই ধরনের কোনো বার্তা নেই।"
+   },
+   "error": {
+    "raw": "বার্তা লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "বার্তা লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "বার্তা লোড হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Permission denied",
+    "message": "প্যারেন্ট মোডে ঢুকতে হবে।",
+    "recovery": "/parent/login"
+   },
+   {
+    "type": "Validation error",
+    "message": "পড়া হয়নি। আবার চেষ্টা করুন।",
+    "recovery": "Retry"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No notifications",
+    "ui": "কোনো বার্তা নেই।"
+   },
+   {
+    "category": "Filter empty",
+    "scenario": "Filter with 0 matches",
+    "ui": "এই ধরনের কোনো বার্তা নেই। + ফিল্টার মুছুন"
+   }
+  ]
+ },
+ "23-subscription.html": {
+  "route": "/parent/subscription",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "plan skeleton",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "কোনো পেমেন্ট হিস্ট্রি নেই।",
+    "ui": "কোনো পেমেন্ট হিস্ট্রি নেই।"
+   },
+   "error": {
+    "raw": "পেমেন্ট লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "পেমেন্ট লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Server error",
+    "message": "পেমেন্ট শুরু হয়নি।",
+    "recovery": "Retry"
+   },
+   {
+    "type": "Gateway failure",
+    "message": "পেমেন্ট সম্পন্ন হয়নি। আবার চেষ্টা করুন।",
+    "recovery": "Retry button"
+   },
+   {
+    "type": "Permission denied",
+    "message": "পেমেন্ট করতে পারবেন না।",
+    "recovery": "Contact support"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Max capacity",
+    "scenario": "Existing active plan + new purchase",
+    "ui": "আপনার আগে থেকেই সক্রিয় প্ল্যান আছে"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Return from gateway offline",
+    "ui": "পেমেন্ট যাচাই হচ্ছে"
+   },
+   {
+    "category": "Abandoned",
+    "scenario": "Intent never webhooked",
+    "ui": "পেমেন্ট সম্পন্ন হয়নি।"
+   }
+  ]
+ },
+ "24-parent-settings.html": {
+  "route": "/parent/settings",
+  "kind": "route",
+  "screens": {
+   "loading": {
+    "raw": "row skeletons",
+    "ui": ""
+   },
+   "empty": {
+    "raw": "N/A (settings always render)",
+    "ui": ""
+   },
+   "error": {
+    "raw": "সেটিংস লোড হয়নি। আবার চেষ্টা করো। + retry",
+    "ui": "সেটিংস লোড হয়নি। আবার চেষ্টা করো।"
+   }
+  },
+  "errors": [
+   {
+    "type": "Network error",
+    "message": "ইন্টারনেট সংযোগ নেই।",
+    "recovery": "Revert"
+   },
+   {
+    "type": "Server error",
+    "message": "সেটিংস সেভ হয়নি।",
+    "recovery": "Revert + toast"
+   },
+   {
+    "type": "Validation error",
+    "message": "বর্তমান পিন ভুল হয়েছে।",
+    "recovery": "Clear"
+   },
+   {
+    "type": "Permission denied",
+    "message": "মুছতে পারবেন না।",
+    "recovery": "—"
+   }
+  ],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No children",
+    "ui": "কোনো সন্তান নেই।"
+   },
+   {
+    "category": "Max capacity",
+    "scenario": "3 children linked",
+    "ui": "সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়"
+   },
+   {
+    "category": "Offline",
+    "scenario": "Toggle offline",
+    "ui": "ইন্টারনেট সংযোগ নেই।"
+   }
+  ]
+ },
+ "01-dashboard.html": {
+  "route": "/admin",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Fresh install, no activity",
+    "ui": "০; এখনো কিছু হয়নি"
+   },
+   {
+    "category": "Filter combination",
+    "scenario": "Period আজ + a class with no students",
+    "ui": "০"
+   }
+  ]
+ },
+ "02-students.html": {
+  "route": "/admin/students",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No students",
+    "ui": "কোনো শিক্ষার্থী নেই"
+   },
+   {
+    "category": "Bulk operation",
+    "scenario": "Select 500+, bulk status change",
+    "ui": "৫০০ জনের অবস্থা বদলাবেন?"
+   },
+   {
+    "category": "Concurrent edit",
+    "scenario": "Two admins edit the same student",
+    "ui": "অন্য অ্যাডমিন এটি পরিবর্তন করেছেন। রিফ্রেশ করুন।"
+   },
+   {
+    "category": "Filter combination",
+    "scenario": "Filters yield 0",
+    "ui": "ফিল্টারে মিল পাওয়া যায়নি"
+   },
+   {
+    "category": "FK dependency",
+    "scenario": "Deleting a parent with linked students",
+    "ui": "আগে সংযুক্ত সন্তানগুলো সরান"
+   }
+  ]
+ },
+ "03-parents.html": {
+  "route": "/admin/parents",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Concurrent edit",
+    "scenario": "Two admins edit the same parent",
+    "ui": "অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।"
+   },
+   {
+    "category": "FK dependency",
+    "scenario": "Delete a parent holding an active subscription",
+    "ui": "আগে সাবস্ক্রিপশন বাতিল করুন"
+   }
+  ]
+ },
+ "04-teachers.html": {
+  "route": "/admin/teachers",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Concurrent edit",
+    "scenario": "Two admins edit the same teacher",
+    "ui": "অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।"
+   },
+   {
+    "category": "Self-demotion",
+    "scenario": "Last admin demotes themselves",
+    "ui": "শেষ অ্যাডমিনকে নামানো যায় না"
+   }
+  ]
+ },
+ "05-curriculum.html": {
+  "route": "/admin/curriculum",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No chapters",
+    "ui": "প্রথম অধ্যায় তৈরি করুন"
+   },
+   {
+    "category": "Concurrent edit",
+    "scenario": "Two teachers reorder the same subject",
+    "ui": "অন্য শিক্ষক ক্রম বদলেছেন। রিফ্রেশ করুন।"
+   },
+   {
+    "category": "FK dependency",
+    "scenario": "Archive a chapter with published lessons",
+    "ui": "আগে লেসনগুলো সরান"
+   },
+   {
+    "category": "Order collision",
+    "scenario": "Two chapters given order 3",
+    "ui": "এই ক্রম আগেই ব্যবহৃত হয়েছে"
+   }
+  ]
+ },
+ "06-content.html": {
+  "route": "/admin/content",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No content",
+    "ui": "প্রথম লেসন আপলোড করুন"
+   },
+   {
+    "category": "Oversized upload",
+    "scenario": "700MB video",
+    "ui": "ভিডিও সর্বোচ্চ ৫০০MB"
+   },
+   {
+    "category": "Missing attestation",
+    "scenario": "Publish attempted without attestation",
+    "ui": "অনুমতি নিশ্চিত করতে হবে"
+   },
+   {
+    "category": "Missing VO asset",
+    "scenario": "Published item has no VO",
+    "ui": "ভয়েস ফাইল নেই + ভয়েস যোগ করুন"
+   }
+  ]
+ },
+ "07-questions.html": {
+  "route": "/admin/questions",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Empty bank",
+    "ui": "কোনো প্রশ্ন নেই"
+   },
+   {
+    "category": "Concurrent edit",
+    "scenario": "Two teachers edit the same question",
+    "ui": "অন্য শিক্ষক এটি পরিবর্তন করেছেন।"
+   },
+   {
+    "category": "FK dependency",
+    "scenario": "Retire a question used in a scheduled exam",
+    "ui": "৩টি পরীক্ষায় ব্যবহৃত হচ্ছে"
+   },
+   {
+    "category": "Tier coverage",
+    "scenario": "A chapter has no tier-3 questions",
+    "ui": "৩ নম্বর স্তরের প্রশ্ন নেই"
+   }
+  ]
+ },
+ "08-exams.html": {
+  "route": "/admin/exams",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Concurrent edit",
+    "scenario": "Two teachers edit the same exam",
+    "ui": "অন্য শিক্ষক এটি পরিবর্তন করেছেন।"
+   },
+   {
+    "category": "FK dependency",
+    "scenario": "Delete an exam with attempts",
+    "ui": "শুধু প্রচেষ্টাহীন পরীক্ষা মুছা যায়"
+   },
+   {
+    "category": "Threshold change mid-exam",
+    "scenario": "Threshold edited while attempts are open",
+    "ui": "চলমান পরীক্ষার কাট-অফ বদলানো যায় না"
+   },
+   {
+    "category": "Insufficient questions",
+    "scenario": "Requested 50, bank has 12 for the scope",
+    "ui": "শুধু ১২টি প্রশ্ন পাওয়া গেছে"
+   }
+  ]
+ },
+ "09-remedial.html": {
+  "route": "/admin/remedial",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "No assignments",
+    "ui": "কোনো রিটেক নেই"
+   },
+   {
+    "category": "FK dependency",
+    "scenario": "Reassign to archived content",
+    "ui": "সংরক্ষিত কনটেন্ট বেছে নেওয়া যায় না"
+   },
+   {
+    "category": "Escalation",
+    "scenario": "3rd failure on one chapter",
+    "ui": "উর্ধ্বতনে পাঠানো + ; [📌 : ]"
+   }
+  ]
+ },
+ "10-subscriptions.html": {
+  "route": "/admin/subscriptions",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Concurrent edit",
+    "scenario": "Two admins refund the same payment",
+    "ui": "রিফান্ড আগেই সম্পন্ন হয়েছে"
+   },
+   {
+    "category": "Stuck PENDING",
+    "scenario": "No webhook after 30 min",
+    "ui": "মিল নেই"
+   }
+  ]
+ },
+ "11-notifications.html": {
+  "route": "/admin/notifications",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Concurrent edit",
+    "scenario": "Two admins edit the same template",
+    "ui": "অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।"
+   },
+   {
+    "category": "Variable parity",
+    "scenario": "English body drops a variable used in Bangla",
+    "ui": "বাংলা ও ইংরেজি ভ্যারিয়েবল মিলতে হবে"
+   }
+  ]
+ },
+ "12-audit.html": {
+  "route": "/admin/audit",
+  "kind": "admin",
+  "screens": {},
+  "errors": [],
+  "edges": [
+   {
+    "category": "Zero data",
+    "scenario": "Fresh install",
+    "ui": "কোনো লগ নেই"
+   }
+  ]
+ }
+}

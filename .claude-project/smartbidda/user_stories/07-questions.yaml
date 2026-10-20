@@ -1,0 +1,88 @@
+id: US-07-QUESTIONS
+role: teacher
+feature: "Admin question bank — list, filter, sort and page the NCTB question bank, then author, edit, duplicate and retire questions with topic tags and usage counts"
+page: 07-questions.html
+goal: |
+  As an admin on the প্রশ্নব্যাংক (question bank) page I can list, search, sort and page through every
+  question and create, edit, duplicate or retire one from the shared modal and row menu, so that every
+  quiz and exam draws from a vetted, correctly tagged question set with known usage.
+scenarios_total: 26
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Question bank table loads with heading, total count, topic tags, difficulty and usage columns"
+    ui_route: /admin/questions
+    endpoint: GET /api/admin/questions
+    expected: "200 — heading 'প্রশ্নব্যাংক' (questions-heading) with 'মোট ৩,১৪০ টি প্রশ্ন' (questions-count); table questions-table renders questions-row qu-1 'নিচের কোন অংশটি অর্ধেকের চেয়ে বড়?' · গণিত · ভগ্নাংশ চিহ্নিতকরণ · topics 'ভগ্নাংশ, তুলনা' · difficulty badge ২ · বহুনির্বাচনী · usage ১৪"
+  - id: AC-2
+    description: "Search by question fragment narrows the list server-side"
+    ui_route: /admin/questions
+    endpoint: GET /api/admin/questions
+    expected: "200 — typing 'ভগ্নাংশ' into questions-search (placeholder 'প্রশ্নের অংশ দিয়ে খুঁজুন') requests ?search=ভগ্নাংশ and only matching questions-row entries (qu-1) remain; clearing restores the full list"
+  - id: AC-3
+    description: "Sortable headers re-order the bank via the API"
+    ui_route: /admin/questions
+    endpoint: GET /api/admin/questions
+    expected: "200 — clicking the 'কঠিনতা' header (data-sort=difficulty) requests sort=difficulty and aria-sort flips on that th; difficulty badges render in order ১ → ২ → ৩, and 'বিষয়', 'অধ্যায়', 'ধরন' headers behave the same"
+  - id: AC-4
+    description: "Pagination moves between result pages and reflects the new page number"
+    ui_route: /admin/questions
+    endpoint: GET /api/admin/questions
+    expected: "200 — tapping 'পরের' (questions-page-next) requests page=2 and questions-page-info updates to 'পৃষ্ঠা ২ / ১২৬' while 'আগের' (questions-page-prev) becomes enabled"
+  - id: AC-5
+    description: "Create a new question from the 'নতুন প্রশ্ন' modal"
+    ui_route: /admin/questions
+    endpoint: POST /api/admin/questions
+    expected: "201 — questions-create 'নতুন প্রশ্ন' opens questions-modal titled 'নতুন প্রশ্ন'; after filling questions-f-text, questions-f-type (বহুনির্বাচনী/সত্য/মিথ্যা), questions-f-difficulty (১/২/৩), questions-f-subject and topic tags, 'সংরক্ষণ' (questions-modal-save) closes the modal (questions-modal hidden) and the new questions-row appears with usage ০ and questions-count incremented"
+  - id: AC-6
+    description: "Edit an existing question through the same shared modal, prefilled"
+    ui_route: /admin/questions
+    endpoint: PATCH /api/admin/questions/:id
+    expected: "200 — row menu 'সম্পাদনা' (questions-menu-edit) opens questions-modal with the row's own values prefilled (only values differ from create); 'সংরক্ষণ' closes the modal and the edited cell text updates in-place inside questions-table"
+  - id: AC-7
+    description: "Duplicate a question into a new draft copy"
+    ui_route: /admin/questions
+    endpoint: POST /api/admin/questions/:id/duplicate
+    expected: "201 — 'ডুপ্লিকেট' (questions-menu-duplicate) adds a second questions-row with the same text, topic tags and difficulty in DRAFT (খসড়া) state with usage ০, while the source row keeps its original usage count"
+  - id: AC-8
+    description: "Retire a question (soft delete) from the row menu"
+    ui_route: /admin/questions
+    endpoint: DELETE /api/admin/questions/:id
+    expected: "200 — 'অবসর দিন' (questions-menu-retire) removes the questions-row from the table, questions-count decrements, and the retired question can no longer be selected in a quiz set (record stays soft-deleted, not purged)"
+  - id: AC-9
+    description: "Export the current filtered view from the header action"
+    ui_route: /admin/questions
+    endpoint: none
+    expected: "no HTTP call (endpoint: none) — 'রপ্তানি' (questions-export) downloads the rows currently visible under the active search/sort/page as a client-side CSV; the table stays on screen unchanged"
+
+boundary_cases:
+  - case: "Question text shorter than the 5-char floor (4 characters) — POST /api/admin/questions returns 422, questions-modal stays open with an inline field error under questions-f-text and nothing is added to the table"
+  - case: "Option set out of range — 1 option, 5 options, or 0 options marked correct → 422; also an explanation longer than 500 chars → 422 with the modal still open"
+  - case: "Whitespace-only search ('   ') is treated as an empty query — the request is sent without search and questions-count returns to 'মোট ৩,১৪০ টি প্রশ্ন'; a nonsense query returns zero rows and the empty slot 'কোনো প্রশ্ন নেই'"
+  - case: "Retiring a question already used by exams — linked-record guard blocks the DELETE and shows '৩টি পরীক্ষায় ব্যবহৃত হচ্ছে' instead of removing the row"
+  - case: "Difficulty ৩ filter (or class/subject/chapter combination) matching nothing → zero rows plus the tier edge '৩ নম্বর স্তরের প্রশ্ন নেই'; pagination shows 'পৃষ্ঠা ১ / ১' with both 'আগের' and 'পরের' disabled"
+  - case: "Bulk bar — the hidden questions-bulk-bar only appears after questions-row-select ticks (select-all included) showing '৩ জন নির্বাচিত'; 'সামূহিক কাজ'/'মুছুন' (questions-bulk-action/questions-bulk-delete) stay inert because no bulk spine endpoint exists"
+
+error_scenarios:
+  - scenario: "401 expired admin session on GET /api/admin/questions — the console redirects to /auth/login and returns to /admin/questions after re-login; no partial table is rendered"
+  - scenario: "403 — a non-admin (student/parent) session hitting /admin/questions is bounced out of the admin layout to /auth/login instead of seeing the question bank"
+  - scenario: "500 from GET /api/admin/questions — inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা' retry button (refresh-cw icon); heading and count stay visible"
+  - scenario: "409 stale write — saving an edit another teacher already changed shows the conflict edge 'অন্য শিক্ষক এটি পরিবর্তন করেছেন।' in the modal and offers a reload instead of overwriting"
+  - scenario: "Network offline while saving — 'ইন্টারনেট সংযোগ নেই।' banner; the modal keeps the admin's input and the save button is re-enabled for retry"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton card with three 16px bars at 72% / 100% / 54% (st-frame) and no table rows or CTA until GET /api/admin/questions resolves"
+  - state: empty
+    expected: "Empty slot 'কোনো প্রশ্ন নেই' (st-edge) in place of the tbody with the header CTA 'নতুন প্রশ্ন' (questions-create) as the recovery action"
+  - state: error
+    expected: "Inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with 'আবার চেষ্টা' retry button; search and sort remain disabled until retry succeeds"
+  - state: concurrent-edit
+    expected: "Conflict banner in the open modal 'অন্য শিক্ষক এটি পরিবর্তন করেছেন।' with reload, save blocked"
+  - state: linked-record
+    expected: "Retire attempt on a used question surfaces '৩টি পরীক্ষায় ব্যবহৃত হচ্ছে' and the row stays in the table"
+  - state: tier-empty
+    expected: "Difficulty-৩ view with no matches renders '৩ নম্বর স্তরের প্রশ্ন নেই' instead of a blank table"
+
+fixture_refs:
+  - admin_questions

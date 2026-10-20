@@ -1,0 +1,60 @@
+id: US-15-REWARDS
+role: student
+feature: "Rewards — read-only points balance, 7-day streak, badge collection, recent point ledger and daily quest CTA"
+page: 15-rewards.html
+goal: |
+  As a student on the rewards page I can see my total points, streak, earned and locked badges and my
+  recent point history in one read-only view so that I stay motivated and know exactly what to do
+  next to unlock the next badge.
+scenarios_total: 15
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Balance hero shows total points and links to the leaderboard"
+    ui_route: /rewards
+    endpoint: GET /api/rewards
+    expected: "200 — hero shows 'মোট পয়েন্ট' and '১,২৪০' (rw-balance-label, rw-balance); badge 'লিডারবোর্ডে ৪' (rw-rank) links to /leaderboard"
+  - id: AC-2
+    description: "Streak card renders the 7-day cells and the next-badge hint"
+    ui_route: /rewards
+    endpoint: GET /api/rewards
+    expected: "200 — 'ধারাবাহিকতা' card with flame badge '৫ দিন' (rw-streak-label, rw-streak-count); day cells রবি…আজ with is-done checks on সোম–শুক্র (rw-day); hint 'আর ৫ দিন ধরলে পরের পদক আনলক হবে' (rw-streak-next)"
+  - id: AC-3
+    description: "Badge rail lists earned and locked badges with their progress counts"
+    ui_route: /rewards
+    endpoint: GET /api/rewards
+    expected: "200 — 'পদক' header with '৭ / ১২ অর্জিত' (rw-badges-label, rw-badges-count); tiles (rw-badge): 'প্রথম কুইজ' অর্জিত, '৫ দিন ধারা' অর্জিত, locked 'গণিত বিশারদ' with '৮ / ১০ অধ্যায়' and '১০ দিন ধারা' with '৫ / ১০ দিন' (rw-badge-name, rw-badge-status)"
+  - id: AC-4
+    description: "Recent points ledger lists the latest point-earning events"
+    ui_route: /rewards
+    endpoint: GET /api/rewards
+    expected: "200 — 'সাম্প্রতিক পয়েন্ট' rows: 'কুইজ: ভগ্নাংশ চিহ্নিতকরণ' · 'আজ · ১৭ অক্টোবর ২০২৬' · '+২৫', 'কুইজ: সংখ্যারেখা' · '১৬ অক্টোবর ২০২৬' · '+২৫' (rw-recent-title, rw-recent-date, rw-recent-points)"
+  - id: AC-5
+    description: "Daily quest card routes the student into a quiz; the page stays fully read-only"
+    ui_route: /rewards
+    endpoint: none
+    expected: "Quest card 'আজকের লক্ষ্য' · 'একটি কুইজ দিলে +২৫ পয়েন্ট' (rw-quest-title, rw-quest-body); tapping 'শুরু' (rw-quest-cta) navigates to /learn; no edit/delete controls exist on badges, points or streak"
+
+boundary_cases:
+  - case: "All badges earned — rail stops at 12 tiles and edge '১২ / ১২ পদক অর্জিত — নতুন পদক শীঘ্রই যুক্ত হবে।' renders instead of locked tiles; count shows '১২ / ১২ অর্জিত'"
+  - case: "Brand-new student with ০ points — balance '০', count '০ / ১২ অর্জিত', every badge tile locked, recent ledger empty; the rail and streak card do not collapse"
+
+error_scenarios:
+  - scenario: "GET /api/rewards returns 500 — inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with the 'আবার চেষ্টা করো' retry button (refresh-cw icon)"
+  - scenario: "Points ledger not yet computed — 'পয়েন্টের হিসাব এখনো প্রস্তুত হয়নি।' shows in place of the balance value; badges still render"
+  - scenario: "401 session expired — the app redirects the student to /auth/login; no permission error is rendered on this page"
+  - scenario: "Network offline — 'ইন্টারনেট সংযোগ নেই।'; the 'শুরু' quest CTA stays inert until connectivity returns"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack: 120px balance hero, 56px streak bar, 96px badge rail — quest CTA not tappable until loaded"
+  - state: empty
+    expected: "empty-state 'এখনো কোনো পয়েন্ট অর্জিত হয়নি। প্রথম কুইজ দিয়ে শুরু করো!' with award icon (st-empty)"
+  - state: error
+    expected: "Inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with retry button (st-error)"
+  - state: streak-broken
+    expected: "Edge 'গত দিনে পড়া হয়নি — ধারাবাহিকতা শূন্য থেকে শুরু হবে।'; streak badge shows ০ দিন and all week cells render as not-done"
+
+fixture_refs:
+  - identity.children
+  - rewards_earned

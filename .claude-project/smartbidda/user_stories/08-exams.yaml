@@ -1,0 +1,80 @@
+id: US-08-EXAMS
+role: teacher
+feature: "Admin term-exam management — list, filter and sort term exams, create them with a date window and question set, edit only upcoming exams and close one early"
+page: 08-exams.html
+goal: |
+  As an admin on the পরীক্ষা page I can list, search, sort and page term exams, create a new exam with a
+  class, name, date window, question set and pass threshold, edit an upcoming exam or close a running one
+  early, so that every class sits a fair, correctly timed exam with a known cut-off.
+scenarios_total: 25
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Exam list loads with running/upcoming counts, windows, thresholds and attempt stats"
+    ui_route: /admin/exams
+    endpoint: GET /api/admin/exams
+    expected: "200 — heading 'পরীক্ষা' (exams-heading) with 'মোট ৩৪ টি · ৯ টি চলছে' (exams-count); table exams-table renders exams-row ex-1 '১ম সাময়িক পরীক্ষা' · চতুর্থ · '১০–১৬ অক্টোবর ২০২৬' · ৬০% · ৫০ প্রশ্ন · ১,১৮০ চেষ্টা · ৭২% with badge 'শেষ', ex-2 'অর্ধবার্ষিক পরীক্ষা' with badge 'আসন্ন'"
+  - id: AC-2
+    description: "Search by exam name filters the list server-side"
+    ui_route: /admin/exams
+    endpoint: GET /api/admin/exams
+    expected: "200 — typing 'অর্ধবার্ষিক' into exams-search (placeholder 'পরীক্ষার নাম দিয়ে খুঁজুন') requests ?search=অর্ধবার্ষিক and only that exams-row remains; clearing restores all rows"
+  - id: AC-3
+    description: "Sortable headers re-order exams via the API"
+    ui_route: /admin/exams
+    endpoint: GET /api/admin/exams
+    expected: "200 — clicking 'সময়কাল' (data-sort=windowOpensAt, initially aria-sort=ascending) toggles sort direction; 'পরীক্ষার নাম', 'শ্রেণি', 'উত্তীর্ণ সীমা', 'উত্তীর্ণের হার' and 'অবস্থা' headers send their own sort keys"
+  - id: AC-4
+    description: "Create a term exam from the 'নতুন পরীক্ষা' modal"
+    ui_route: /admin/exams
+    endpoint: POST /api/admin/exams
+    expected: "201 — exams-create 'নতুন পরীক্ষা' opens exams-modal titled 'নতুন পরীক্ষা'; with exams-f-title, exams-f-class (চতুর্থ), exams-f-type (সাময়িক), exams-f-opens 2026-10-10T10:00, exams-f-closes 2026-10-16T17:00, exams-f-pass 60 and exams-f-count 50 filled, 'সংরক্ষণ' (exams-modal-save) closes the modal and the new exams-row appears with badge 'আসন্ন'"
+  - id: AC-5
+    description: "Edit only an upcoming exam's window, question set and pass threshold"
+    ui_route: /admin/exams
+    endpoint: PATCH /api/admin/exams/:id
+    expected: "200 — 'সম্পাদনা' (exams-menu-edit) on the 'আসন্ন' row opens exams-modal prefilled; changing exams-f-closes and exams-f-pass then 'সংরক্ষণ' updates the row's '১২–২০ ডিসেম্বর ২০২৬' window and ৬০% threshold in exams-table"
+  - id: AC-6
+    description: "Close a running exam early from the row menu"
+    ui_route: /admin/exams
+    endpoint: POST /api/admin/exams/:id/close
+    expected: "200 — 'বন্ধ করুন' (exams-menu-close) asks for confirmation then flips the row badge to 'শেষ' (is-ok) and freezes further attempts for that exam id"
+  - id: AC-7
+    description: "Export the current exam view from the header action"
+    ui_route: /admin/exams
+    endpoint: none
+    expected: "no HTTP call (endpoint: none) — 'রপ্তানি' (exams-export) downloads the visible rows under the active search/sort/page as a client-side CSV; the table is untouched"
+
+boundary_cases:
+  - case: "Pass threshold outside 1–100 (0 or 101) — POST/PATCH returns 422 and exams-f-pass keeps the inline help '১-১০০ এর মধ্যে দিন। চলমান পরীক্ষার সীমা বদলানো যাবে না।'"
+  - case: "Close time earlier than open time — save blocked with 422 and the help text 'শেষের সময় শুরুর পরে হতে হবে।' shown under exams-f-closes"
+  - case: "Question set larger than the bank — asking for ১০০ questions when the chapter bank has 12 returns the short-bank edge 'শুধু ১২টি প্রশ্ন পাওয়া গেছে'; exams-f-count outside 10–100 → 422 with '১০-১০০ এর মধ্যে হতে হবে।'"
+  - case: "PATCH on an exam that is not upcoming (running 'চলমান' or already 'শেষ') — 409 with the lock edge 'চলমান পরীক্ষার কাট-অফ বদলানো যায় না'; the modal fields render read-only"
+  - case: "Closing an exam that already has attempts (ex-1 has ১,১৮০) — linked-record guard refuses with 'শুধু প্রচেষ্টাহীন পরীক্ষা মুছা যায়'; an exam with ০ attempts (ex-2/ex-3) closes normally"
+  - case: "Exam name of 2 characters or longer than 120 — 422 from the exams-f-title minlength=3 maxlength=120 constraints, modal stays open with values preserved"
+
+error_scenarios:
+  - scenario: "401 expired admin session on GET /api/admin/exams — redirect to /auth/login and back to /admin/exams after re-login; no half-rendered table"
+  - scenario: "403 — a non-admin session reaching /admin/exams is bounced out of the admin console to /auth/login without seeing exam configuration"
+  - scenario: "422 validation on POST /api/admin/exams (name 'ab') — modal stays open with an inline error under exams-f-title and no row is created"
+  - scenario: "409 concurrent edit — saving while another teacher changed the exam shows 'অন্য শিক্ষক এটি পরিবর্তন করেছেন।' and requires a reload before retrying"
+  - scenario: "500 from GET /api/admin/exams — inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with the 'আবার চেষ্টা' retry button; 'নতুন পরীক্ষা' stays disabled until the list loads"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton card with three 16px bars at 72% / 100% / 54% (st-frame); exams-table, count and CTAs hidden until GET /api/admin/exams resolves"
+  - state: empty
+    expected: "Empty slot 'কোনো পরীক্ষা নেই' in place of the tbody with the recovery CTA 'নতুন পরীক্ষা' (exams-create); exams-count renders 'মোট ০ টি · ০ টি চলছে'"
+  - state: error
+    expected: "Inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with 'আবার চেষ্টা' retry button; sort headers and pagination disabled until retry succeeds"
+  - state: concurrent-edit
+    expected: "Modal conflict edge 'অন্য শিক্ষক এটি পরিবর্তন করেছেন।' with a reload action, save blocked"
+  - state: cutoff-lock
+    expected: "Running exam edit view shows 'চলমান পরীক্ষার কাট-অফ বদলানো যায় না' and read-only pass/window fields"
+  - state: linked-record
+    expected: "Exam with attempts refuses the close/delete action with 'শুধু প্রচেষ্টাহীন পরীক্ষা মুছা যায়'"
+  - state: short-bank
+    expected: "Question-set build shorter than requested renders 'শুধু ১২টি প্রশ্ন পাওয়া গেছে' and asks the admin to lower exams-f-count"
+
+fixture_refs:
+  - admin_exams

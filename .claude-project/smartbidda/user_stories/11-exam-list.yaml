@@ -1,0 +1,59 @@
+id: US-11-EXAM-LIST
+role: student
+feature: "Term exam list — First Term, Half-Yearly and Annual exams with dates, pass line, last attempt and entitlement/start gating"
+page: 11-exam-list.html
+goal: |
+  As a student on the exams page I see my three term exams (১ম সাময়িক, অর্ধবার্ষিক, বার্ষিক) with
+  their date windows, ৬০% pass line, my last attempt and start locks, so that I know exactly which
+  exam I can sit today and which one still needs a retake first.
+scenarios_total: 16
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The exam list loads all entitled term exams for the class"
+    ui_route: /exams
+    endpoint: GET /api/exams
+    expected: "200 — heading 'পরীক্ষা' (exams-heading), sub 'চতুর্থ শ্রেণি · ২০২৬ সাল' (exams-sub) and three cards (exams-item): '১ম সাময়িক পরীক্ষা', 'অর্ধবার্ষিক পরীক্ষা', 'বার্ষিক পরীক্ষা'; list is entitlement-gated"
+  - id: AC-2
+    description: "Completed exam card shows result, window and progress with a result CTA"
+    ui_route: /exams
+    endpoint: GET /api/exams
+    expected: "200 — card status 'উত্তীর্ণ' (exams-item-status), chips '১০–১৬ অক্টোবর ২০২৬', 'উত্তীর্ণ ৬০%', '১ ঘণ্টা' (exams-item-date / -pass / -time), 'ফলাফল প্রকাশিত হয়েছে' with '· সর্বশেষ ফলাফল ৬৯%' (exams-item-window / -score), progress 100% and '৩ / ৩ বিষয় দেওয়া হয়েছে' (exams-item-progress-label); CTA 'ফলাফল দেখুন' (exams-item-cta) → /exams/:examId/result"
+  - id: AC-3
+    description: "Upcoming exams are listed with dates and a locked start button"
+    ui_route: /exams
+    endpoint: GET /api/exams
+    expected: "200 — status 'আসন্ন' (exams-item-status), chips '১২–২০ ডিসেম্বর ২০২৬' / '০৫–১৫ মে ২০২৭', countdowns '৫৬ দিন পরে শুরু' / '২০০ দিন পরে শুরু' (exams-item-window), prep note 'শুরুর আগে প্রস্তুতির পাঠ দেখা যাবে' (exams-item-locked) and 'শুরু করো' (exams-item-start) rendered aria-disabled"
+  - id: AC-4
+    description: "Start an exam that is open right now"
+    ui_route: /exams
+    endpoint: none
+    expected: "Tapping 'শুরু করো' on an in-window, entitled exam navigates to the paper at /exams/:examId (attempt start happens there); tab 'পরীক্ষা' (nav-exams) keeps aria-current=page"
+  - id: AC-5
+    description: "Bottom tab bar keeps the student oriented across the app"
+    ui_route: /exams
+    endpoint: none
+    expected: "Tabs 'হোম' (nav-home), 'পড়াশোনা' (nav-learn), 'লিডারবোর্ড' (nav-leaderboard), 'পুরস্কার' (nav-rewards) each navigate to their route; 'পরীক্ষা' stays highlighted"
+
+boundary_cases:
+  - case: "Exam inside its date window but blocked by RETAKE_REQUIRED from the previous attempt — start stays disabled and the card surfaces the 'রিটেক প্রয়োজন' badge with the route to /retake/:retakeId until the remedial is completed"
+  - case: "Exam window not yet open — edge copy 'পরীক্ষা শুরুর সময় এখনো আসেনি — শুরু করো বোতামটি বন্ধ থাকবে।' (st-edge) and 'শুরু করো' remains aria-disabled"
+  - case: "Exam window already closed — error row 'পরীক্ষার সময়সীমা শেষ হয়ে গেছে।' (st-err-msg) replaces the start affordance for that card"
+error_scenarios:
+  - scenario: "401 session expired on GET /api/exams — redirect to /auth/login for the 4-digit PIN; the list is not shown with stale entitlements"
+  - scenario: "GET /api/exams returns 500 — 'কিছু লোড হয়নি। আবার চেষ্টা করো।' (st-error) with an 'আবার চেষ্টা করো' refresh button (refresh-cw icon)"
+  - scenario: "Network offline — 'ইন্টারনেট সংযোগ নেই।' (st-err-msg) shows; exam cards and CTAs are inert until connectivity returns"
+state_transitions:
+  - state: loading
+    expected: "Skeletons: 44% header bar plus two 120px card blocks under 'লোড হচ্ছে' (st-label); no CTA tappable"
+  - state: empty
+    expected: "empty-state with clipboard icon and 'এই বছর কোনো পরীক্ষা এখনো নির্ধারিত হয়নি।' (st-empty)"
+  - state: error
+    expected: "inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' (st-error) with the 'আবার চেষ্টা করো' retry button"
+  - state: result-not-published
+    expected: "edge copy 'পরীক্ষা শেষ হয়েছে — ফলাফল এখনো প্রকাশিত হয়নি।' (st-edge) on the finished card instead of a result CTA"
+  - state: start-locked
+    expected: "edge copy 'পরীক্ষা শুরুর সময় এখনো আসেনি — শুরু করো বোতামটি বন্ধ থাকবে।' (st-edge) with 'শুরু করো' disabled"
+
+fixture_refs:
+  - exam_list

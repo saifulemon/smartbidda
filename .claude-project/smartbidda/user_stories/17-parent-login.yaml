@@ -1,0 +1,60 @@
+id: US-17-PARENT-LOGIN
+role: all
+feature: "Parent PIN gate — 6-digit Bangla keypad verification into proxy mode, with wrong-PIN validation, 10-minute lockout and an email/password fallback"
+page: 17-parent-login.html
+goal: |
+  As a parent on the parent login page I can enter my 6-digit PIN on a Bangla keypad (or fall back to
+  email/password) so that I get a fresh proxy-mode session and can supervise my children's progress,
+  even when a parent session is already live.
+scenarios_total: 15
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Enter the full 6-digit PIN on the Bangla keypad and submit into proxy mode"
+    ui_route: /parent/login
+    endpoint: POST /api/parent/verify-pin
+    expected: "200 — each key press (plogin-key) fills the next dot (plogin-dot is-filled); on the 6th digit POST /api/parent/verify-pin { pin } returns a proxy-mode session token and 'প্যারেন্ট মোডে ঢোকো' (plogin-submit) navigates to /parent"
+  - id: AC-2
+    description: "Wrong PIN — inline validation copy, dots cleared, retry allowed"
+    ui_route: /parent/login
+    endpoint: POST /api/parent/verify-pin
+    expected: "400 — 'পিন ভুল হয়েছে। আবার চেষ্টা করুন।' shows inline, all 6 dots reset to empty, keypad and submit stay enabled; hint 'ভুল হলে আবার দিতে পারবেন — ৩ বার ভুল হলে ১০ মিনিট বন্ধ থাকবে' (plogin-hint) remains visible"
+  - id: AC-3
+    description: "Delete key removes the last digit; keypad only accepts Bangla digits ০–৯"
+    ui_route: /parent/login
+    endpoint: none
+    expected: "Tapping 'মুছুন' (plogin-key-delete) unfills the last dot one press at a time; the centre key is a disabled ghost (plogin-key-blank, aria-hidden) and can never be tapped"
+  - id: AC-4
+    description: "'পিন মনে নেই?' expander toggles the email/password fallback form"
+    ui_route: /parent/login
+    endpoint: none
+    expected: "Tapping plogin-fallback-toggle flips aria-expanded and shows/collapses 'ইমেইল' (plogin-email-input) and 'পাসওয়ার্ড' (plogin-pass-input) fields; collapsing clears the inline error slot"
+  - id: AC-5
+    description: "Re-verification on a live parent session — the PIN is checked again and the token rotated"
+    ui_route: /parent/login
+    endpoint: POST /api/parent/verify-pin
+    expected: "200 — even with an active proxy session the page re-submits the 6-digit PIN, receives a new proxy-mode session token (old token invalidated) and lands on /parent"
+
+boundary_cases:
+  - case: "Submit with fewer than 6 digits (e.g. 3 filled dots) — the POST is not fired; the hint '৬ সংখ্যার পিন দিয়ে ঢুকুন' (plogin-sub) stays and focus remains on the keypad"
+  - case: "Submit with zero digits — same blocked behaviour: no network call, no error text, dots untouched"
+  - case: "Seventh key press after 6 filled dots — ignored: the dot group caps at 6 (plogin-dot) and no extra digit is appended to the payload"
+
+error_scenarios:
+  - scenario: "Server 500 on verify — 'সাময়িক সমস্যা।' shows inline; the entered dots are kept so the parent can retry the same PIN immediately"
+  - scenario: "Network offline — 'ইন্টারনেট সংযোগ নেই।' (st-edge); the submit button is inert until connectivity returns"
+  - scenario: "3rd consecutive wrong PIN — 429 lockout: 'পিন ভুল হয়েছে। ১০ মিনিট পরে চেষ্টা করুন।' shows and keypad + submit are disabled for ১০ মিনিট"
+
+state_transitions:
+  - state: loading
+    expected: "Three 16px skeleton lines (72% / 100% / 54%) while the gate hydrates; keypad not rendered tappable until loaded"
+  - state: empty
+    expected: "Six empty dots with heading 'অভিভাবক প্রবেশ' and sub '৬ সংখ্যার পিন দিয়ে ঢুকুন' (plogin-heading, plogin-sub); submit blocked until the 6th digit"
+  - state: error
+    expected: "Wrong PIN — 'পিন ভুল হয়েছে। আবার চেষ্টা করুন।'; server — 'সাময়িক সমস্যা।'; offline — 'ইন্টারনেট সংযোগ নেই।'"
+  - state: lockout
+    expected: "Edge 'পিন ভুল হয়েছে। ১০ মিনিট পরে চেষ্টা করুন।' (st-edge); keypad and 'প্যারেন্ট মোডে ঢোকো' disabled until the window expires"
+
+fixture_refs:
+  - identity.parent
+  - parent_login

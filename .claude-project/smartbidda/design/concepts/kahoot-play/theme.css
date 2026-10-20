@@ -1,0 +1,52 @@
+/* concepts/kahoot-play/theme.css — token overrides (contrast-gated).
+   DNA: Kahoot! — violet field, sunflower-yellow CTA, heavy rounded display,
+   answer tiles with a hard offset edge. Plain hex only (the gate skips color-mix). */
+:root {
+  /* colour */
+  --c-primary: #46178F;
+  --c-primary-active: #34106B;
+  --c-primary-soft: #EFE3FF;
+  --c-on-primary: #FFFFFF;
+  --c-canvas: #F6F1FD;
+  --c-surface: #FFFFFF;
+  --c-surface-soft: #EFE6FC;
+  --c-ink: #1B0B36;
+  --c-body: #332153;
+  --c-muted: #6A5790;
+  --c-link: #46178F;
+  --c-hairline: #E4D8F8;
+  --c-hairline-strong: #C9B7EF;
+  --c-success: #1E7A19;
+  --c-warning: #A66A00;
+  --c-error: #C41430;
+  --c-focus-ring: #FFC800;
+  --hero-bg: linear-gradient(135deg, #46178F, #7A3BE0);
+  --overlay-scrim: rgba(27, 11, 54, 0.62);
+
+  /* type */
+  --font-display: 'Baloo Da 2', 'Hind Siliguri', system-ui, sans-serif;
+  --font-body: 'Hind Siliguri', system-ui, sans-serif;
+  --font-mono: 'Baloo Da 2', ui-monospace, monospace;
+  --t-display-xl-size: 44px;  --t-display-xl-weight: 800; --t-display-xl-ls: 0;
+  --t-display-lg-size: 34px;  --t-display-lg-weight: 800; --t-display-lg-ls: 0;
+  --t-display-md-size: 26px;  --t-display-md-weight: 700; --t-display-md-ls: 0;
+  --t-title-lg-size: 21px;    --t-title-lg-weight: 700;   --t-title-lg-ls: 0;
+  --t-title-md-size: 18px;    --t-title-md-weight: 700;   --t-title-md-ls: 0;
+  --t-body-lg-size: 17px;
+  --t-body-md-size: 16px;     --t-body-md-weight: 500;
+  --t-body-sm-size: 14.5px;
+  --t-caption-size: 13px;     --t-caption-weight: 600;    --t-caption-ls: 0.01em;
+  --t-button-size: 17px;      --t-button-weight: 700;
+  --t-weight-bold: 800; --t-weight-semibold: 700; --t-weight-medium: 500; --t-weight-regular: 400;
+
+  /* shape — round and chunky */
+  --radius-xs: 4px; --radius-sm: 9px; --radius-md: 14px;
+  --radius-lg: 20px; --radius-xl: 28px; --radius-pill: 999px;
+
+  /* elevation — hard offset edges, not soft blur */
+  --shadow-0: none;
+  --shadow-1: 0 4px 0 rgba(27, 11, 54, 0.16);
+  --shadow-2: 0 6px 0 rgba(27, 11, 54, 0.2);
+  --shadow-3: 0 8px 0 rgba(27, 11, 54, 0.24);
+  --shadow-hover: 0 6px 0 rgba(27, 11, 54, 0.2);
+}

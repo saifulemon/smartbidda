@@ -1,0 +1,69 @@
+id: US-04-ONBOARDING
+role: parent
+feature: "Child setup wizard — name + class, avatar picker, 4-digit PIN with confirm, step progress bar, and saved locale/voice preferences (max 3 children per family)"
+page: 04-onboarding.html
+goal: |
+  As a newly signed-up parent/student on the setup page I create my child's profile — name, class,
+  avatar and login PIN — and save language/voice preferences so that the child can log in with the
+  PIN and start learning on the home page.
+scenarios_total: 19
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Setup page renders its appbar, hero and step progress"
+    ui_route: /onboarding
+    endpoint: GET /api/onboarding
+    expected: "Appbar back link 'ফিরে যান' (data-testid sub-back → /auth/signup) and title 'সেটআপ' (sub-title) render; heading 'সেটআপ' (onboarding-heading), step counter '১ / ৩ ধাপ' (onboarding-step-count) and progress bar at 33% with progress-fill (onboarding-progress-fill, aria-label 'সেটআপের অগ্রগতি')"
+  - id: AC-2
+    description: "Step 1 — enter child name and pick class"
+    ui_route: /onboarding
+    endpoint: none
+    expected: "Name input (onboarding-name-input, placeholder 'যেমন: রাফিদ হাসান') accepts 2–30 chars per help '২ থেকে ৩০ অক্ষর · এটি শুধু প্রদর্শনের নাম, পরে বদলানো যায়'; class tiles 'প্রথম শ্রেণি'…'পঞ্চম শ্রেণি' render with 'চতুর্থ শ্রেণি' (onboarding-class-4) preselected (radio checked) under question 'কোন শ্রেণিতে পড়ো?'"
+  - id: AC-3
+    description: "Step 2 — avatar picker with 8 Bangla-marked avatars"
+    ui_route: /onboarding
+    endpoint: none
+    expected: "Eight avatar tiles 'উল্লুখ' (mark উ), 'তারা', 'ফুল', 'রকেট', 'মাছ', 'পাখি', 'নদী', 'সূর্য' (onboarding-avatar-1..8) render under 'ধাপ ২ — অ্যাভাটার বাছুন'; 'উল্লুখ' is preselected and selecting another tile moves the checked radio"
+  - id: AC-4
+    description: "Step 3 — 4-digit PIN entered twice via the Bangla keypad"
+    ui_route: /onboarding
+    endpoint: none
+    expected: "Keypad (onboarding-keypad, keys ১–৯ ০ + back) fills the four PIN dots (onboarding-pin-dot-1..4) then the four confirm dots (onboarding-pin-confirm-dot-1..4); help copy 'শিশু এই পিন দিয়েই লগ ইন করবে। দুইবার একই পিন দিতে হবে — কেউ জানে না।' (onboarding-pin-help) renders; mismatch shows 'পিন দুইবার মিলতে হবে' (onboarding-pin-error)"
+  - id: AC-5
+    description: "Submit 'শুরু করো' creates the child profile"
+    ui_route: /onboarding
+    endpoint: POST /api/students
+    expected: "With name, class, avatar and matching PIN complete, the 'শুরু করো' CTA (onboarding-start, rocket icon) enables (aria-disabled=false) and fires POST /api/students with displayName, class, avatar, pin; 200 — created student profile (max 3 per family) and the student is routed to '/' home"
+  - id: AC-6
+    description: "Final setup step persists language and voice preferences with the child profile"
+    ui_route: /onboarding
+    endpoint: POST /api/students
+    expected: "200 — the create payload carries locale (bn/en) and voice mute along with name, class and avatar; the parent sees 'শুরু করো' complete and the child home opens with the chosen language and voice setting"
+
+boundary_cases:
+  - case: "Family already has 3 children — POST /api/students is refused and edge copy 'সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়' (state sheet kind 'সীমা পূর্ণ') replaces the form action"
+  - case: "Name under 2 or over 30 characters — step 1 stays incomplete, help '২ থেকে ৩০ অক্ষর · এটি শুধু প্রদর্শনের নাম, পরে বদলানো যায়' shown and 'শুরু করো' remains aria-disabled=true"
+  - case: "PIN confirm does not match the first PIN — 'পিন দুইবার মিলতে হবে' (onboarding-pin-error) shows, confirm dots reset, and the CTA stays disabled"
+  - case: "Re-entering /onboarding after a crash mid-setup — previously entered name/class/avatar/PIN-step values are restored and the step counter resumes at the right step instead of restarting"
+
+error_scenarios:
+  - scenario: "POST /api/students fails (server error) — inline 'সন্তান যোগ করা যায়নি।' (state sheet kind 'সার্ভার ত্রুটি'); form values kept, retry allowed"
+  - scenario: "Server enforces the family cap — refusal body renders 'সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়' with the CTA disabled"
+  - scenario: "Offline — 'ইন্টারনেট সংযোগ নেই।' (state sheet edge) shown; 'শুরু করো' blocked until connectivity returns"
+  - scenario: "Session expired mid-setup — the student is redirected to /auth/login (no authed write is allowed without a live session)"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack (16px lines at 72%/100%/54%) while the wizard hydrates; 'শুরু করো' disabled until ready"
+  - state: empty
+    expected: "First-run family with no children yet — edge copy 'তোমার প্রথম সন্তানকে যোগ করো' (data-testid st-edge) greets the empty profile slot"
+  - state: error
+    expected: "'সন্তান যোগ করা যায়নি।' (state sheet kind 'সার্ভার ত্রুটি') inline under the failing step"
+  - state: limit
+    expected: "Edge 'সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়' (data-testid st-edge) — submit disabled"
+  - state: offline
+    expected: "Edge 'ইন্টারনেট সংযোগ নেই।' (data-testid st-edge) — keypad still usable locally, submit blocked"
+
+fixture_refs:
+  - onboarding
+  - identity.children

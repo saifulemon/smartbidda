@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>কুইজ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-strava-streak.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local selectors only — every colour / size / radius / shadow is a token */
+  .qz-timer { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .qz-timer-row { display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--space-md); min-width: 0; }
+  .qz-timer-track { display: block; width: 100%; height: 4px; background: var(--c-surface-soft);
+    border-radius: var(--radius-pill); overflow: hidden; }
+  .qz-timer-track > span { display: block; height: 100%; background: var(--ks-fire); }
+  .qz-count { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+  .qz-frac { display: flex; gap: var(--space-xs); align-items: stretch; }
+  .qz-frac-cell { flex: 1; min-width: 0; height: 52px; background: var(--c-surface);
+    border: 1px solid var(--c-hairline-strong); border-radius: var(--radius-xs); }
+  .qz-frac-cell.is-in { background: var(--ks-fire); border-color: var(--ks-fire); }
+  .qz-opts { display: flex; flex-direction: column; min-width: 0;
+    border-top: 1px solid var(--c-hairline); }
+  .qz-opt { display: flex; align-items: center; gap: var(--space-md); width: 100%; min-width: 0;
+    padding: var(--space-md) var(--space-sm); text-align: left; cursor: pointer;
+    background: transparent; border: 0; border-bottom: 1px solid var(--c-hairline);
+    color: var(--c-body); font-family: var(--t-body-md-family); font-size: var(--t-body-lg-size);
+    font-weight: var(--t-body-md-weight); }
+  .qz-opt:hover { background: var(--c-surface-soft); color: var(--c-ink); }
+  .qz-opt[aria-pressed="true"] { color: var(--c-ink); box-shadow: inset 3px 0 0 var(--ks-fire);
+    padding-left: var(--space-md); }
+  .qz-opt-n { min-width: 26px; text-align: center; color: var(--c-muted);
+    font-family: var(--font-display); font-stretch: 82%; font-weight: 800;
+    font-variant-numeric: tabular-nums; }
+  .qz-opt-ans { margin-left: auto; font-family: var(--font-display); font-stretch: 88%;
+    font-weight: 700; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="kss-app" data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="kss-appbar" data-shell="topbar">
+    <a class="kss-wordmark" href="01-home.html" data-testid="appbar-brand">স্মার্টবিদ্যা</a>
+    <span class="kss-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="kss-iconbtn" type="button" aria-label="নোটিফিকেশন" data-testid="appbar-notifications">
+        <i data-lucide="bell" class="icon-md" aria-hidden="true"></i>
+      </button>
+      <button class="kss-iconbtn" type="button" aria-label="প্রোফাইল" data-testid="appbar-profile">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="kss-page" data-shell="content">
+
+    <a class="kss-link" href="../../base/frontend/07-lesson.html" data-testid="quiz-back">
+      <i data-lucide="arrow-left" class="icon-sm" aria-hidden="true"></i>
+      ফিরে যান
+    </a>
+
+    <!-- 1 · timer track + counters -->
+    <section class="qz-timer" aria-label="কুইজের সময় ও অগ্রগতি">
+      <div class="qz-timer-row">
+        <span class="qz-count" role="timer" data-testid="quiz-timer">
+          <span class="t-display-md kss-num">৪৮</span>
+          <span class="t-body-sm t-semibold">সেকেন্ড বাকি</span>
+        </span>
+        <span class="t-display-md kss-num" data-testid="quiz-counter">৪ / ২০</span>
+      </div>
+      <span class="qz-timer-track" role="progressbar" aria-valuenow="48" aria-valuemin="0"
+            aria-valuemax="60" aria-label="বাকি থাকা সময়">
+        <span style="width:80%"></span>
+      </span>
+    </section>
+
+    <!-- 2 · question + fraction visual -->
+    <section class="kss-sec" aria-labelledby="quiz-question">
+      <p class="kss-eyebrow" data-testid="quiz-subject">গণিত · অধ্যায় ৪</p>
+      <h1 class="t-display-md" id="quiz-question" data-testid="quiz-question">নিচের কোন অংশটি অর্ধেকের চেয়ে বড়?</h1>
+      <div class="qz-frac" role="img" aria-label="ছবি: ভগ্নাংশের চিত্র" data-testid="quiz-stimulus">
+        <span class="qz-frac-cell is-in"></span>
+        <span class="qz-frac-cell is-in"></span>
+        <span class="qz-frac-cell"></span>
+        <span class="qz-frac-cell"></span>
+      </div>
+      <p class="t-caption" data-testid="quiz-stimulus-caption">ছবি: ভগ্নাংশের চিত্র</p>
+    </section>
+
+    <!-- 3 · four flat option rows -->
+    <section class="kss-sec" aria-labelledby="quiz-options-heading">
+      <div class="kss-hdrow">
+        <h2 class="kss-hd" id="quiz-options-heading" data-testid="quiz-options-heading">উত্তর বেছে নিন</h2>
+        <p class="t-caption" data-testid="quiz-auto-note-short">উত্তর দিলেই পরের প্রশ্ন আসবে</p>
+      </div>
+      <div class="qz-opts" role="group" aria-label="উত্তরের বিকল্প" data-testid="quiz-options">
+        <button class="qz-opt" type="button" aria-pressed="false" data-testid="quiz-option">
+          <span class="qz-opt-n" aria-hidden="true">১</span>
+          <i data-lucide="circle" class="icon-sm" aria-hidden="true"></i>
+          <span class="qz-opt-ans" data-testid="quiz-option-label">১ / ৪</span>
+        </button>
+        <button class="qz-opt" type="button" aria-pressed="true" data-testid="quiz-option" data-id="q3-b">
+          <span class="qz-opt-n" aria-hidden="true">২</span>
+          <i data-lucide="check-circle-2" class="icon-sm" aria-hidden="true"></i>
+          <span class="qz-opt-ans" data-testid="quiz-option-label">৩ / ৪</span>
+        </button>
+        <button class="qz-opt" type="button" aria-pressed="false" data-testid="quiz-option">
+          <span class="qz-opt-n" aria-hidden="true">৩</span>
+          <i data-lucide="circle" class="icon-sm" aria-hidden="true"></i>
+          <span class="qz-opt-ans" data-testid="quiz-option-label">১ / ৫</span>
+        </button>
+        <button class="qz-opt" type="button" aria-pressed="false" data-testid="quiz-option">
+          <span class="qz-opt-n" aria-hidden="true">৪</span>
+          <i data-lucide="circle" class="icon-sm" aria-hidden="true"></i>
+          <span class="qz-opt-ans" data-testid="quiz-option-label">২ / ৩</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 4 · voice -->
+    <section class="kss-block" data-component="card" aria-labelledby="quiz-voice-label" data-testid="quiz-voice-panel">
+      <div class="row">
+        <i data-lucide="volume-2" class="icon-md" aria-hidden="true"></i>
+        <span class="t-body-sm t-semibold" id="quiz-voice-label" data-testid="quiz-voice-label">প্রশ্নটি শুনে নিন</span>
+        <button class="kss-btn is-quiet" type="button" style="margin-left:auto" data-testid="quiz-voice-play">
+          <i data-lucide="play" class="icon-sm" aria-hidden="true"></i>
+          শুনুন
+        </button>
+      </div>
+    </section>
+
+    <p class="t-caption" data-testid="quiz-auto-note">
+      উত্তর দিলেই ০.৪ সেকেন্ড পরে পরের প্রশ্ন আসবে। শেষ প্রশ্নের উত্তর দেওয়া মাত্রই
+      নিজে থেকেই জমা হয়ে যাবে — আলাদা করে জমা দিতে হবে না।
+    </p>
+
+  </main>
+
+  <nav class="kss-tabbar" data-shell="bottomnav" aria-label="প্রধান নেভিগেশন">
+    <a class="kss-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="kss-tab is-on" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn" aria-current="page">
+      <i data-lucide="book-open" class="icon-md" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="kss-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="kss-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="icon-md" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="kss-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

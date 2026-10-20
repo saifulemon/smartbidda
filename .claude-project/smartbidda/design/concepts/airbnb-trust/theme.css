@@ -1,0 +1,56 @@
+/* concepts/airbnb-trust/theme.css — token overrides (contrast-gated).
+   DNA: Airbnb — warm marketplace trust: photo-led cards with soft elevation,
+   serif display, coral single accent, pill search + filter chips. Brand coral
+   #FF5A5F is too light for white text, so buttons use #C1352B (≥ 4.5:1) and
+   #FF5A5F survives as a decorative accent (--at-accent). Plain hex only. */
+:root {
+  /* colour */
+  --c-primary: #C1352B;
+  --c-primary-active: #9E2B23;
+  --c-primary-soft: #FDEDEB;
+  --c-on-primary: #FFFFFF;
+  --c-canvas: #FFFFFF;
+  --c-surface: #FFFFFF;
+  --c-surface-soft: #F7F4F1;
+  --c-ink: #222222;
+  --c-body: #3A3632;
+  --c-muted: #6B6560;
+  --c-link: #C1352B;
+  --c-hairline: #E8E3DE;
+  --c-hairline-strong: #D5CEC7;
+  --c-success: #0E7A45;
+  --c-warning: #A66A00;
+  --c-error: #C41430;
+  --c-focus-ring: #FF5A5F;
+  --hero-bg: linear-gradient(160deg, #C1352B, #E0554B);
+  --overlay-scrim: rgba(34, 34, 34, 0.5);
+  --at-accent: #FF5A5F;        /* Rausch — decorative only, never text */
+  --at-warm: #FBF7F4;
+
+  /* type — editorial serif display over a humanist body */
+  --font-display: 'Noto Serif Bengali', 'Hind Siliguri', serif;
+  --font-body: 'Hind Siliguri', system-ui, sans-serif;
+  --font-mono: 'Noto Serif Bengali', ui-monospace, monospace;
+  --t-display-xl-size: 40px;  --t-display-xl-weight: 700; --t-display-xl-ls: 0;
+  --t-display-lg-size: 32px;  --t-display-lg-weight: 700; --t-display-lg-ls: 0;
+  --t-display-md-size: 25px;  --t-display-md-weight: 600;
+  --t-title-lg-size: 20.5px;  --t-title-lg-weight: 600;
+  --t-title-md-size: 17.5px;  --t-title-md-weight: 600;
+  --t-body-lg-size: 16.5px;
+  --t-body-md-size: 16px;
+  --t-body-sm-size: 14.5px;
+  --t-caption-size: 13px;     --t-caption-weight: 600;
+  --t-button-size: 16px;      --t-button-weight: 600;
+  --t-weight-bold: 700; --t-weight-semibold: 600; --t-weight-medium: 500; --t-weight-regular: 400;
+
+  /* shape — soft, generous */
+  --radius-xs: 6px; --radius-sm: 10px; --radius-md: 14px;
+  --radius-lg: 18px; --radius-xl: 26px; --radius-pill: 999px;
+
+  /* elevation — warm soft shadows */
+  --shadow-0: none;
+  --shadow-1: 0 4px 16px rgba(34, 34, 34, 0.1);
+  --shadow-2: 0 8px 28px rgba(34, 34, 34, 0.13);
+  --shadow-3: 0 14px 40px rgba(34, 34, 34, 0.16);
+  --shadow-hover: 0 10px 30px rgba(34, 34, 34, 0.15);
+}

@@ -1,0 +1,69 @@
+id: US-02-LOGIN
+role: all
+feature: "Student login — pick a linked child avatar, enter a 4-digit Bangla PIN on the keypad, auto-submit on the 4th digit, with wrong-PIN shake and lockout"
+page: 02-login.html
+goal: |
+  As a child of a registered family on the শিক্ষার্থী লগ ইন page I pick my avatar and tap my
+  4-digit PIN so that I get a session cookie and land on my own home page without typing an
+  email or password.
+scenarios_total: 19
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Linked children load into the child selector with one child pre-selected"
+    ui_route: /auth/login
+    endpoint: GET /api/auth/prefill
+    expected: "200 — selector label 'সন্তান বাছুন' (data-testid login-children-label) renders cards for রাফিদ (চতুর্থ শ্রেণি, avatar 'র') and মাহিন (দ্বিতীয় শ্রেণি, avatar 'ম') via data-testid login-child / login-child-name / login-child-class; first card aria-pressed=true, second false"
+  - id: AC-2
+    description: "Tap a child card to switch the active child"
+    ui_route: /auth/login
+    endpoint: none
+    expected: "Tapping মাহিন's card flips aria-pressed states — মাহিন becomes aria-pressed=true with the primary ring/background (.au-child[aria-pressed=true]) and রাফিদ reverts to false; only one card is pressed at a time and any partially entered PIN is cleared"
+  - id: AC-3
+    description: "Enter a 4-digit PIN on the Bangla keypad — login auto-submits on the 4th digit"
+    ui_route: /auth/login
+    endpoint: POST /api/auth/student-login
+    expected: "4th keypad tap fires POST /api/auth/student-login with childId + 4-digit pin; 200 — httpOnly session cookie set and the student is routed to '/' home; note copy 'চতুর্থ সংখ্যাটি দিলেই নিজে থেকেই প্রবেশ হবে — আলাদা করে বাটন চাপতে হবে না।' (data-testid login-pin-note) renders under the keypad"
+  - id: AC-4
+    description: "PIN dots fill progressively and backspace removes the last digit"
+    ui_route: /auth/login
+    endpoint: none
+    expected: "Each login-key tap fills the next login-dot (.is-filled); the seeded state shows 3 filled + 1 empty; login-key-backspace (aria-label 'শেষ সংখ্যাটি মুছুন') unfills the last dot and no request is sent while fewer than 4 digits are entered"
+  - id: AC-5
+    description: "Voice prompt chip reads the login instructions aloud in Bangla"
+    ui_route: /auth/login
+    endpoint: none
+    expected: "login-voice chip shows 'কণ্ঠস্বর চালু' with aria-pressed=true and the volume-2 icon; the Bangla voice-over prompt auto-plays on mount; tapping the chip flips aria-pressed to false and stops the prompt"
+  - id: AC-6
+    description: "Guest links route to parent login and signup"
+    ui_route: /auth/login
+    endpoint: none
+    expected: "'প্যারেন্ট হিসেবে লগ ইন' (data-testid login-parent-link) navigates to /parent/login; 'অ্যাকাউন্ট বানাও' (data-testid login-signup-link, under hint 'নতুন পরিবার?') navigates to /auth/signup — both without any API call"
+
+boundary_cases:
+  - case: "Wrong PIN — after the 4th digit the four dots shake red and all reset to empty; the whole PIN must be re-entered (hint data-testid login-children-hint: 'পিন ভুল হলে পুরো পিন আবার দিতে হবে — পরপর ভুল হলে কিপ্যাড কিছুক্ষণ বন্ধ থাকবে।')"
+  - case: "Repeated wrong PINs — keypad locks: every au-key renders disabled/greyed and lockout copy 'অনেকবার ভুল হয়েছে। ৫ মিনিট পরে চেষ্টা করো।' replaces the PIN note"
+  - case: "Suspended child (status suspended) — that child card renders greyed and disabled; tapping it does not change the selection nor enable the PIN pad"
+  - case: "Fewer than 4 digits — no POST fires however many times other keys are tapped; backspace on an empty PIN is a no-op"
+
+error_scenarios:
+  - scenario: "PIN rejected by POST /api/auth/student-login (wrong-PIN validation response) — copy 'ভুল পিন! আবার চেষ্টা করো।' (state sheet kind 'ভ্যালিডেশন') appears, dots shake red and reset, full PIN must be re-entered"
+  - scenario: "Too many failed attempts — the login is rate-limited; copy 'অনেকবার ভুল হয়েছে। ৫ মিনিট পরে চেষ্টা করো।' (state sheet kind 'সীমা ছাড়িয়েছে') shows and all keys are disabled"
+  - scenario: "GET /api/auth/children or the login call fails server-side — 'লগ ইন করা যায়নি। আবার চেষ্টা করো।' (data-testid st-error) with retry; the PIN is never echoed back"
+  - scenario: "No connectivity — 'ইন্টারনেট সংযোগ নেই।' (state sheet kind 'ইন্টারনেট সংযোগ') shown in the child panel; no request is attempted until connectivity returns"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack of three 16px lines (72% / 100% / 54%); child cards and keypad disabled until GET /api/auth/children resolves; title 'শিক্ষার্থী লগ ইন' and caption 'শেখা হোক প্রতিদিন মজার' already visible"
+  - state: empty
+    expected: "Empty state 'তোমার কোনো প্রোফাইল নেই। তোমার মা বা বাবাকে বলো অ্যাকাউন্ট বানাতে!' (data-testid st-empty) with an 'অ্যাকাউন্ট বানাও' link to /auth/signup (edge copy: 'তোমার কোনো প্রোফাইল নেই। + অ্যাকাউন্ট বানাও'); keypad disabled"
+  - state: error
+    expected: "'লগ ইন করা যায়নি। আবার চেষ্টা করো।' (data-testid st-error) replaces the child grid with a retry that re-issues GET /api/auth/children"
+  - state: lockout
+    expected: "Edge 'অনেকবার ভুল হয়েছে। ৫ মিনিট পরে চেষ্টা করো।' (data-testid st-edge, kind 'লকআউট') — all keys non-interactive, dots cleared"
+  - state: offline
+    expected: "Edge 'ইন্টারনেট সংযোগ নেই।' (data-testid st-edge) in place of the child grid; keypad inert"
+
+fixture_refs:
+  - auth_login
+  - identity.children

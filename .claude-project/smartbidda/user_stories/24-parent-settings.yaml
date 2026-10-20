@@ -1,0 +1,88 @@
+id: US-24-PARENT-SETTINGS
+role: parent
+feature: "Parent settings — account identity, linked children with add/remove, PIN change, per-child leaderboard visibility, alert categories, app language and logout"
+page: 24-parent-settings.html
+goal: |
+  As a parent on the সেটিংস page I can confirm my account, manage up to three linked children, change
+  my six-digit PIN, choose which child appears on the leaderboard, control which alerts I receive and
+  set the app language, so that the account stays mine, my children's privacy is respected and I am
+  only contacted about things that matter.
+scenarios_total: 23
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The account panel identifies the signed-in parent and links to editing"
+    ui_route: /parent/settings
+    endpoint: GET /api/parent/settings
+    expected: "200 — pset-account-name 'আবিদা বেগম', pset-account-email 'SB-FAM-20260902-1041 · abida.begum@example.com', pset-account-edit 'সম্পাদনা' opens the account editor; the avatar uses the parent's initial আ"
+  - id: AC-2
+    description: "The linked-children list shows both children, their classes, removal actions and the seat quota"
+    ui_route: /parent/settings
+    endpoint: GET /api/parent/settings
+    expected: "pset-children-label 'যুক্ত সন্তান'; rows 'রাফিদ হাসান · চতুর্থ শ্রেণি' and 'মাহিন হাসান · দ্বিতীয় শ্রেণি', each with a labelled remove button ('রাফিদ হাসানকে মুছুন' / 'মাহিন হাসানকে মুছুন'); pset-child-add 'সন্তান যোগ করো' is enabled and pset-child-quota reads '২ / ৩ ব্যবহৃত · সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়'"
+  - id: AC-3
+    description: "Mandatory alert categories cannot be switched off while optional ones can"
+    ui_route: /parent/settings
+    endpoint: GET /api/parent/settings
+    expected: "pset-notif-label 'কোন বার্তা পাবেন' with help 'বাধ্যতামূলকগুলো বন্ধ করা যায় না — দুর্বলতা না জানালে এই অ্যাপটি কেন কিনেছেন তা কেউ জানতে পারবে না। রাত ১০টা থেকে সকাল ৬টার মধ্যে ইমেইল বা পুশ যায় না।'; পরীক্ষার ফলাফল, দুর্বলতা ও রিটেক, পেমেন্ট ও সাবস্ক্রিপশন are চালু and disabled with help 'বাধ্যতামূলক · অ্যাপ ও ইমেইল'; অনুশীলনের স্মারক toggleable and চালু; প্রচারণা toggleable and বন্ধ by default"
+  - id: AC-4
+    description: "Toggling an optional alert category saves through the settings patch"
+    ui_route: /parent/settings
+    endpoint: PATCH /api/parent/settings
+    expected: "200 — turning অনুশীলনের স্মারক off flips aria-pressed to false and the chip to বন্ধ, sends {notifications:{reminder:false}}, and shows inline 'সেটিংস সংরক্ষিত'; a failed save restores চালু and shows 'সেটিংস সংরক্ষণ করা যায়নি'"
+  - id: AC-5
+    description: "The language segment switches the app language while lesson explanations stay Bangla"
+    ui_route: /parent/settings
+    endpoint: PATCH /api/parent/settings
+    expected: "pset-lang-label 'ভাষা' with pset-lang-help 'পাঠের ব্যাখ্যা সবসময় বাংলায় থাকবে'; বাংলা is pressed on load; choosing English sends the locale change, shows 'সেটিংস সংরক্ষিত', and the help line stays Bangla regardless of the UI locale"
+  - id: AC-6
+    description: "The security card exposes the three-step six-digit PIN change"
+    ui_route: /parent/settings
+    endpoint: none
+    expected: "pset-pin-title '৬ সংখ্যার পিন', pset-pin-help '৩ ধাপ: বর্তমান → নতুন → নিশ্চিত', pset-pin-change 'বদলান' opens the flow; the confirm step stays disabled until the new six digits match, and no settings write is sent for a mismatched confirmation"
+  - id: AC-7
+    description: "Leaderboard visibility is set per child and defaults to hiding the name"
+    ui_route: /parent/settings
+    endpoint: PATCH /api/parent/settings
+    expected: "pset-privacy-label 'লিডারবোর্ড প্রদর্শন' and help 'প্রতি সন্তান আলাদাকরে · ডিফল্টে নাম লুকানো থাকে'; pset-board-child 'রাফিদ হাসান' starts aria-pressed=false / 'বন্ধ', মাহিন starts aria-pressed=true / 'চালু'; toggling রাফিদ sends the per-child flag, persists 'সেটিংস সংরক্ষিত', and leaves মাহিন unchanged"
+  - id: AC-8
+    description: "Removing a child requires the confirmation dialog and updates the linked-children list"
+    ui_route: /parent/settings
+    endpoint: PATCH /api/parent/settings
+    expected: "Tapping রাফিদ's remove icon opens pset-remove-modal with title 'সন্তান মুছে দেবেন?' and body 'রাফিদ হাসান · চতুর্থ শ্রেণি'; 'না' closes it with the row intact; 'মুছে ফেলুন' sends the linked-child change, removes the row, updates pset-child-quota to '১ / ৩ ব্যবহৃত', and shows 'সেটিংস সংরক্ষিত'"
+  - id: AC-9
+    description: "Logout ends parent mode and returns to the PIN screen"
+    ui_route: /parent/settings
+    endpoint: none
+    expected: "pset-logout 'লগ আউট' clears the parent-proxy session and lands on /parent/login with the PIN pad (fixture parent_login); pressing back does not restore the settings screen from cache"
+
+boundary_cases:
+  - case: "Three children already linked — pset-child-add is disabled, the quota reads '৩ / ৩ ব্যবহৃত', and the disabled-state note '৩ জন সন্তান যোগ হলে বোতামটি এভাবেই নিষ্ক্রিয় থাকে' is shown instead of opening a fourth-seat form"
+  - case: "The last child is removed — the list shows 'কোনো সন্তান নেই।' and the add button becomes enabled; the dashboard quota reads '০ / ৩' rather than breaking on an empty child array"
+  - case: "Mandatory alert rows are tapped — ফলাফল, দুর্বলতা ও রিটেক and পেমেন্ট ও সাবস্ক্রিপশন stay চালু with the toggle disabled; the parent cannot silence the weakness alert that is the product's core promise"
+  - case: "The prototype ships placeholder account data ('ফারহানা রহমান' / farhana@example.com) while the fixture parent is আবিদা বেগম / abida.begum@example.com — production renders the session parent and never the placeholder; the family id SB-FAM-20260902-1041 is the only fixed value"
+  - case: "Leaderboard visibility toggled twice quickly — the second request carries the latest value, the chip ends in the final state, and no stale response flips it back"
+
+error_scenarios:
+  - scenario: "PATCH /api/parent/settings returns 500 — 'সেটিংস সেভ হয়নি।' inline, the toggle rolls back to its previous aria-pressed value, and no success toast is shown"
+  - scenario: "The current PIN is wrong during the change flow — 'বর্তমান পিন ভুল হয়েছে।' under the first step, the new-PIN fields are cleared, and the flow does not advance to confirm"
+  - scenario: "Removing a child is forbidden (403) — the dialog closes with 'মুছতে পারবেন না।', the child row stays, and the quota remains '২ / ৩'"
+  - scenario: "Offline while saving a toggle — 'ইন্টারনেট সংযোগ নেই।' banner, the control reverts to its saved value, and the change is retried on reconnect rather than reported as saved"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton bars (72% / 100% / 54%) replace the account, children, notification and language panels; toggles and the remove icons are not tappable"
+  - state: empty
+    expected: "No linked children — the section shows 'কোনো সন্তান নেই।', the quota reads '০ / ৩ ব্যবহৃত', and pset-child-add stays enabled"
+  - state: error
+    expected: "st-error 'সেটিংস লোড হয়নি। আবার চেষ্টা করো।' with a refresh-cw retry button; logout remains reachable"
+  - state: max-children
+    expected: "pset-child-add disabled with 'সর্বোচ্চ ৩ জন সন্তান যোগ করা যায়' as its help text and the quota at '৩ / ৩ ব্যবহৃত'"
+  - state: offline
+    expected: "Banner 'ইন্টারনেট সংযোগ নেই।'; all toggles, language choices and remove actions are disabled while the saved values stay readable"
+
+fixture_refs:
+  - parent_settings
+  - identity.parent
+  - identity.children
+  - identity.familyId

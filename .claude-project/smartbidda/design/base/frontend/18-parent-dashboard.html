@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>অভিভাবক ড্যাশবোর্ড — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .pd-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .pd-switch { display: flex; gap: var(--space-sm); overflow-x: auto; padding-bottom: var(--space-xxs); }
+  .pd-summary { display: flex; flex-direction: column; gap: var(--space-md); }
+  .pd-summary-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .pd-child { display: flex; flex-direction: column; gap: var(--space-md); }
+  .pd-child-head { display: flex; align-items: center; gap: var(--space-md); }
+  .pd-child-id { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; }
+  .pd-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+  .pd-stat { text-align: center; padding: var(--space-sm); background: var(--c-surface-soft); border-radius: var(--radius-md); }
+  .pd-actions { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-md"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="pd-wrap">
+
+        <div class="pd-switch" role="group" aria-label="সন্তান নির্বাচন">
+          <button class="chip" aria-pressed="true" data-testid="pd-switch-rafid">রাফিদ</button>
+          <button class="chip" aria-pressed="false" data-testid="pd-switch-mahin">মাহিন</button>
+          <button class="chip" data-testid="pd-switch-add"><i data-lucide="plus" class="icon-sm"></i> যোগ করুন</button>
+        </div>
+
+        <div class="card" data-component="card">
+          <div class="pd-child-head">
+            <span class="avatar avatar-lg" aria-hidden="true">র</span>
+            <div class="pd-child-id">
+              <p class="t-title-md" data-testid="pd-child-name">রাফিদ হাসান</p>
+              <p class="t-caption" data-testid="pd-child-class">চতুর্থ শ্রেণি · SB-FAM-20260902-1041</p>
+            </div>
+            <span class="badge badge-success" style="margin-left:auto" data-testid="pd-child-status">সক্রিয়</span>
+          </div>
+
+          <div class="pd-stats" style="margin-top:var(--space-md)">
+            <div class="pd-stat">
+              <p class="t-caption" data-testid="pd-stat-lessons-label">পাঠ</p>
+              <p class="t-title-md" data-testid="pd-stat-lessons">১২</p>
+            </div>
+            <div class="pd-stat">
+              <p class="t-caption" data-testid="pd-stat-score-label">গড়</p>
+              <p class="t-title-md" data-testid="pd-stat-score">৭২%</p>
+            </div>
+            <div class="pd-stat">
+              <p class="t-caption" data-testid="pd-stat-streak-label">ধারা</p>
+              <p class="t-title-md" data-testid="pd-stat-streak">৫ দিন</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRD L2345: Subject score grid | per-subject latest % | tap → /parent/progress -->
+        <section class="card" data-component="kpi" aria-labelledby="pd-scores-label">
+          <div class="pd-summary-row">
+            <p class="t-body t-semibold" id="pd-scores-label" data-testid="pd-scores-label">বিষয়ভিত্তিক নম্বর</p>
+            <a class="t-caption" href="19-parent-progress.html" data-testid="pd-scores-all">সব দেখুন</a>
+          </div>
+          <div class="pd-stats" style="margin-top:var(--space-md)">
+            <div class="pd-stat">
+              <p class="t-caption" data-testid="pd-score-subject">গণিত</p>
+              <p class="t-title-md" data-testid="pd-score-v">৭৮%</p>
+            </div>
+            <div class="pd-stat">
+              <p class="t-caption" data-testid="pd-score-subject">বাংলা</p>
+              <p class="t-title-md" data-testid="pd-score-v">৭২%</p>
+            </div>
+            <div class="pd-stat">
+              <p class="t-caption" data-testid="pd-score-subject">ইংরেজি</p>
+              <p class="t-title-md" data-testid="pd-score-v">৫৮%</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- PRD L2347: Nudge button | মনে করিয়ে দাও | disabled after 5/day (L2394) -->
+        <button class="btn btn-primary" style="width:100%" data-testid="pd-nudge">
+          <i data-lucide="bell-ring"></i>
+          মনে করিয়ে দাও
+        </button>
+
+        <section class="card" data-component="card" aria-labelledby="pd-time-label">
+          <div class="pd-summary-row">
+            <p class="t-body t-semibold" id="pd-time-label" data-testid="pd-time-label">আজকের স্ক্রিন টাইম</p>
+            <p class="t-body-sm t-bold" data-testid="pd-time-value">২৪ / ৬০ মিনিট</p>
+          </div>
+          <div class="progress" style="margin-top:var(--space-sm)" role="progressbar"
+               aria-valuenow="24" aria-valuemin="0" aria-valuemax="60" aria-label="আজকের স্ক্রিন টাইম">
+            <div class="progress-fill" style="width:40%" data-testid="pd-time-bar"></div>
+          </div>
+          <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="pd-time-note">
+            আরও ৩৬ মিনিট বাকি · সীমা পরিবর্তন করা যাবে
+          </p>
+          <a class="btn btn-secondary" href="21-screen-time.html" style="width:100%;margin-top:var(--space-md)" data-testid="pd-time-cta">
+            <i data-lucide="timer"></i>
+            স্ক্রিন টাইম নিয়ন্ত্রণ
+          </a>
+        </section>
+
+        <!-- PRD L2346: Forecast card | প্রাক্কলন: {band} + revision chapters | tap → /parent/analytics -->
+        <section class="card" data-component="card" aria-labelledby="pd-forecast-label">
+          <div class="pd-summary-row">
+            <p class="t-body t-semibold" id="pd-forecast-label" data-testid="pd-forecast-label">প্রাক্কলন: মাঝারি</p>
+            <span class="badge badge-warning" data-testid="pd-forecast-badge">৬৮%</span>
+          </div>
+          <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="pd-forecast-revision">
+            পুনরাবৃত্তির অধ্যায়: ভগ্নাংশের তুলনা, বাক্য গঠন
+          </p>
+          <a class="btn btn-secondary" href="20-parent-analytics.html" style="width:100%;margin-top:var(--space-md)" data-testid="pd-forecast-cta">
+            <i data-lucide="sparkles"></i>
+            বিশ্লেষণ দেখুন
+          </a>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pd-alerts-label">
+          <div class="pd-summary-row">
+            <p class="t-body t-semibold" id="pd-alerts-label" data-testid="pd-alerts-label">সাম্প্রতিক সতর্কতা</p>
+            <a class="t-caption" href="22-alerts.html" data-testid="pd-alerts-all">সব দেখুন</a>
+          </div>
+          <div class="pd-summary" style="margin-top:var(--space-md)">
+            <div class="pd-summary-row">
+              <div class="pd-child-id">
+                <p class="t-body-sm" data-testid="pd-alert-title">ইংরেজিতে দুর্বলতা</p>
+                <p class="t-caption" data-testid="pd-alert-meta">আজ · রিমিডিয়াল পাঠ সুপারিশ করা হয়েছে</p>
+              </div>
+              <span class="badge badge-warning" data-testid="pd-alert-badge">মনোযোগ</span>
+            </div>
+            <div class="pd-summary-row">
+              <div class="pd-child-id">
+                <p class="t-body-sm" data-testid="pd-alert-title">১ম সাময়িকের ফলাফল</p>
+                <p class="t-caption" data-testid="pd-alert-meta">১৬ অক্টোবর · প্রকাশিত হয়েছে</p>
+              </div>
+              <span class="badge badge-primary" data-testid="pd-alert-badge">পরীক্ষা</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pd-actions">
+          <a class="btn btn-primary" href="19-parent-progress.html" style="flex:1;min-width:140px" data-testid="pd-action-progress">
+            <i data-lucide="trending-up"></i>
+            অগ্রগতি দেখুন
+          </a>
+          <a class="btn btn-secondary" href="20-parent-analytics.html" style="flex:1;min-width:140px" data-testid="pd-action-analytics">
+            <i data-lucide="sparkles"></i>
+            বিশ্লেষণ
+          </a>
+          <a class="btn btn-secondary" href="23-subscription.html" style="flex:1;min-width:140px" data-testid="pd-action-subscription">
+            <i data-lucide="credit-card"></i>
+            সাবস্ক্রিপশন
+          </a>
+        </div>
+
+        <p class="t-caption" data-testid="pd-quota">পরিবারে যুক্ত ২ / ৩ সন্তান</p>
+
+      </div>
+  </main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="18-parent-dashboard.html" data-testid="nav-dashboard" aria-current="page">
+      <i data-lucide="layout-dashboard" class="icon-md"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="tabbar-item" href="19-parent-progress.html" data-testid="nav-progress">
+      <i data-lucide="trending-up" class="icon-md"></i>
+      অগ্রগতি
+    </a>
+    <a class="tabbar-item" href="21-screen-time.html" data-testid="nav-screentime">
+      <i data-lucide="timer" class="icon-md"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="tabbar-item" href="22-alerts.html" data-testid="nav-alerts">
+      <i data-lucide="bell" class="icon-md"></i>
+      অ্যালার্ট
+    </a>
+    <a class="tabbar-item" href="24-parent-settings.html" data-testid="nav-settings">
+      <i data-lucide="settings" class="icon-md"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

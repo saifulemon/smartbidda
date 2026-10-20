@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>আবার দেখুন — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .retake-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .retake-top { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .retake-count { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); }
+  .retake-card { display: flex; gap: var(--space-md); align-items: flex-start; }
+  .retake-card-text { display: flex; flex-direction: column; gap: var(--space-xs); }
+  .retake-actions { display: flex; flex-direction: column; gap: var(--space-md); }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <a class="back" href="09-quiz-result.html" aria-label="ফিরে যান" data-testid="retake-back-appbar">
+      <i data-lucide="arrow-left" class="icon-md"></i>
+    </a>
+    <span class="appbar-title" data-slot="title" data-testid="retake-title">আবার দেখুন</span>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="retake-wrap">
+
+        <div class="retake-top">
+          <span class="badge badge-primary" data-testid="retake-status">চলছে</span>
+          <p class="t-title-lg" data-testid="retake-heading">ভগ্নাংশের তুলনা — আবার শিখি</p>
+          <p class="t-body-sm t-muted" data-testid="retake-desc">
+            এই পাঠে দুটো পরীক্ষায় ভগ্নাংশ নিয়ে ভুল হয়েছে, তাই আবার দেখে বোঝা দরকার।
+          </p>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="retake-cap-label">
+          <div class="retake-count">
+            <span class="t-body t-semibold" id="retake-cap-label" data-testid="retake-cap-label">অগ্রগতি</span>
+            <span class="t-body-sm t-bold" data-testid="retake-cap-value">১ / ২ রিটেক শেষ</span>
+          </div>
+          <div class="progress" style="margin-top:var(--space-sm)" role="progressbar"
+               aria-valuenow="1" aria-valuemin="0" aria-valuemax="2" aria-label="রিটেকের অগ্রগতি">
+            <div class="progress-fill" style="width:50%" data-testid="retake-cap-bar"></div>
+          </div>
+          <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="retake-cap-note">
+            দুটির একটি শেষ হয়েছে — বাকিটা শেষ হলে রি-এক্সাম খুলবে।
+          </p>
+        </section>
+
+        <div class="card" data-component="media">
+          <div class="retake-card">
+            <div class="media-placeholder" data-component="media" role="img" aria-label="রিমিডিয়াল ভিডিও এলাকা">
+              <i data-lucide="video" class="icon-md" aria-hidden="true"></i>
+              <p class="t-caption" data-testid="retake-media-caption">ভিডিও এলাকা</p>
+            </div>
+            <div class="retake-card-text">
+              <span class="badge badge-primary" data-testid="retake-source">শিক্ষকের লাইব্রেরি</span>
+              <p class="t-body t-semibold" data-testid="retake-title-text">ভগ্নাংশের তুলনা — সহজ ব্যাখ্যা</p>
+              <p class="t-caption" data-testid="retake-meta">৪ মিনিট · বাংলা ভয়েস সহ</p>
+            </div>
+          </div>
+        </div>
+
+        <section class="card" data-component="media" aria-labelledby="retake-pdf-title">
+          <div class="lesson-pdf">
+            <div class="lesson-pdf-thumb" role="img" aria-label="রিটেকের পিডিএফ">
+              <i data-lucide="file-text" class="icon-md" aria-hidden="true"></i>
+            </div>
+            <div class="lesson-pdf-body">
+              <p class="t-body t-semibold" id="retake-pdf-title" data-testid="retake-pdf-title">রিটেক নোট</p>
+              <p class="t-caption" data-testid="retake-pdf-meta">১ পৃষ্ঠা · বাংলা</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" data-testid="retake-pdf-open">পড়ো</button>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="retake-check-label">
+          <div class="retake-count">
+            <span class="t-body t-semibold" id="retake-check-label" data-testid="retake-check-label">বোঝাপড়া যাচাই</span>
+            <span class="t-body-sm t-bold" data-testid="retake-check-count">১ / ৩</span>
+          </div>
+          <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="retake-check-q1">
+            ১। ৩/৪ এর সমান কোনটি?
+          </p>
+          <div class="quiz-options" style="margin-top:var(--space-sm)">
+            <button class="quiz-option" aria-pressed="true" data-testid="retake-check-option">
+              <span class="quiz-marker"><i data-lucide="check-circle-2" class="icon-sm" aria-hidden="true"></i></span>
+              ৬/৮
+            </button>
+            <button class="quiz-option" aria-pressed="false" data-testid="retake-check-option">
+              <span class="quiz-marker"><i data-lucide="circle" class="icon-sm" aria-hidden="true"></i></span>
+              ২/৩
+            </button>
+          </div>
+          <p class="t-caption" style="margin-top:var(--space-sm)" data-testid="retake-check-note">
+            সবগুলো প্রশ্নের উত্তর দিতে হবে — নইলে সম্পন্ন করা যাবে না।
+          </p>
+        </section>
+
+        <div class="retake-actions">
+          <!-- PRD L1734 Complete button: hidden until content consumed, disabled before
+               threshold. The child is on question 1 of 3, so it is disabled. -->
+          <button class="btn btn-primary" aria-disabled="true" style="width:100%" data-testid="retake-complete">
+            <i data-lucide="check"></i>
+            সম্পন্ন করুন
+          </button>
+          <!-- PRD L1815 Re-exam button: disabled until the retake is completed -->
+          <a class="btn btn-secondary" href="11-exam-list.html" aria-disabled="true" style="width:100%" data-testid="retake-reexam">
+            রি-এক্সাম
+          </a>
+          <a class="btn btn-ghost" href="01-home.html" style="width:100%" data-testid="retake-skip">হোমে ফিরে যান</a>
+        </div>
+
+      </div>
+  </main>
+
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+/* kit-strava-streak.css — Strava DNA: stat-first hierarchy, condensed Anek
+   numerals, vivid orange graphics on charcoal/white, sharp 4-6px corners,
+   hairlines instead of shadows. SEED only — structure is authored per screen. */
+
+@import url('https://fonts.googleapis.com/css2?family=Anek+Bangla:wdth,wght@75..125,400..800&family=Hind+Siliguri:wght@400;600;700&display=swap');
+
+:root {
+  --kss-bar-track: #E6E6E8;
+  --ks-ink-deep: #1D1E20;        /* charcoal field — bands + console rail */
+  --ks-ink-mid: #2A2B2E;         /* raised row on charcoal */
+  --ks-on-dark: #FFFFFF;         /* primary text on charcoal */
+  --ks-on-dark-muted: #B9BABE;   /* caption text on charcoal (AA on --ks-ink-deep) */
+  --ks-hairline-dark: #3A3B3F;   /* hairline on charcoal */
+}
+
+/* — atoms — */
+.pimg { object-fit: cover; display: block; width: 100%; height: 100%; }
+
+/* — chrome (frontend): white bar, hairline rules, orange active marker — */
+.kss-appbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: var(--space-md);
+  background: var(--c-surface); border-bottom: 1px solid var(--c-hairline);
+  padding: calc(var(--space-md) + env(safe-area-inset-top)) var(--space-lg) var(--space-md);
+}
+.kss-wordmark { font-family: var(--font-display); font-weight: 800; font-stretch: 82%;
+  font-size: 21px; letter-spacing: 0.01em; color: var(--c-ink); }
+.kss-wordmark::after { content: ''; display: block; height: 3px; background: var(--ks-fire); }
+.kss-appbar-title { font-size: 15px; font-weight: 700; color: var(--c-ink); }
+
+.kss-tabbar {
+  position: sticky; bottom: 0; z-index: 20;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  background: var(--c-surface); border-top: 1px solid var(--c-hairline);
+  padding: var(--space-xs) var(--space-xs) calc(var(--space-xs) + env(safe-area-inset-bottom));
+}
+.kss-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: var(--space-xs) 2px; color: var(--c-muted); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.02em; text-decoration: none; border-top: 3px solid transparent;
+}
+.kss-tab.is-on { color: var(--c-ink); border-top-color: var(--ks-fire); }
+.kss-tab.is-on .kss-tab-ico { color: var(--ks-fire); }
+
+/* — chrome (console): dark rail, orange active row — */
+.kss-side { width: 232px; flex: 0 0 232px; background: #1D1E20; color: #fff;
+  padding: var(--space-lg) var(--space-md); display: flex; flex-direction: column; gap: 2px; }
+.kss-side-item { display: flex; align-items: center; gap: var(--space-sm); padding: 9px var(--space-md);
+  border-radius: var(--radius-sm); color: #E7E7E9; text-decoration: none; font-size: 14px; font-weight: 600;
+  border-left: 3px solid transparent; }
+.kss-side-item.is-on { background: #2A2B2E; border-left-color: var(--ks-fire); color: #fff; }
+.kss-console { display: flex; min-height: 100vh; }
+
+/* — shared forms — */
+.kss-block { background: var(--c-surface); border: 1px solid var(--c-hairline);
+  border-radius: var(--radius-sm); padding: var(--space-lg); }
+.kss-hd { font-size: 17px; font-weight: 700; color: var(--c-ink); }
+.kss-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.03em; color: var(--c-muted); }
+.kss-stack { display: flex; flex-direction: column; gap: var(--space-md); min-width: 0; }
+
+.kss-stat { font-family: var(--font-display); font-weight: 800; font-stretch: 78%;
+  font-variant-numeric: tabular-nums; font-size: 44px; line-height: 1; color: var(--c-ink);
+  letter-spacing: -0.02em; }
+.kss-stat-unit { font-size: 16px; font-weight: 600; font-stretch: 100%; color: var(--c-muted);
+  letter-spacing: 0; margin-left: 4px; }
+
+.kss-track { height: 8px; background: var(--kss-bar-track); border-radius: var(--radius-pill); overflow: hidden; }
+.kss-fill { height: 100%; background: var(--ks-fire); border-radius: var(--radius-pill); }
+.kss-fill.is-dark { background: var(--c-ink); }
+
+.kss-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm);
+  font-size: 15.5px; font-weight: 700; padding: 12px 20px; border-radius: var(--radius-sm);
+  border: 0; cursor: pointer; background: var(--c-primary); color: var(--c-on-primary);
+  text-decoration: none; min-width: 0;
+}
+.kss-btn.is-dark { background: var(--c-ink); color: var(--c-surface); }
+.kss-btn.is-quiet { background: var(--c-surface); color: var(--c-ink); border: 1px solid var(--c-hairline-strong); }
+.kss-btn.is-block { display: flex; width: 100%; }
+
+.kss-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+  border: 1px solid var(--c-hairline-strong); border-radius: var(--radius-sm);
+  background: var(--c-surface); color: var(--c-ink); font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.kss-chip.is-on { background: var(--c-ink); color: #fff; border-color: var(--c-ink); }
+
+.kss-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
+  border-radius: var(--radius-xs); background: var(--c-primary-soft); color: var(--c-primary);
+  font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em; }
+.kss-badge.is-ok { background: #DCF2E1; color: var(--c-success); }
+.kss-badge.is-bad { background: #FBE3E7; color: var(--c-error); }
+
+.kss-row { display: flex; align-items: center; gap: var(--space-md); min-width: 0;
+  padding: var(--space-md) 0; border-bottom: 1px solid var(--c-hairline); }
+.kss-row:last-child { border-bottom: 0; }
+
+/* — shell (frontend): one byte-identical chrome block across the 5 screens — */
+.kss-app { display: flex; flex-direction: column; min-height: 100dvh; }
+.kss-page {
+  display: flex; flex-direction: column; gap: var(--space-xl);
+  width: 100%; max-width: var(--container-max); margin: 0 auto;
+  padding: var(--space-lg) var(--space-lg) calc(var(--space-xxl) + env(safe-area-inset-bottom));
+  min-width: 0;
+}
+.kss-iconbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm);
+  padding: 6px; background: transparent; color: var(--c-ink); cursor: pointer;
+  border: 1px solid var(--c-hairline); border-radius: var(--radius-sm);
+}
+.kss-iconbtn:hover { background: var(--c-surface-soft); }
+
+/* — section scaffolding — */
+.kss-sec { display: flex; flex-direction: column; gap: var(--space-md); min-width: 0; }
+.kss-hdrow { display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--space-md); min-width: 0; }
+.kss-link { color: var(--c-link); font-size: var(--t-body-sm-size);
+  font-weight: var(--t-weight-semibold, 600); text-decoration: none; white-space: nowrap; }
+.kss-link:hover { text-decoration: underline; }
+
+/* — condensed tabular numerals (Anek Bangla, stretched narrow) —
+   compose: class="t-display-lg kss-num" — the type-role class owns size,
+   this one owns stretch / tabular figures / weight. */
+.kss-num {
+  font-family: var(--font-display); font-stretch: 78%; font-weight: 800;
+  font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.01em;
+  color: var(--c-ink); min-width: 0;
+}
+.kss-unit { font-family: var(--font-body); font-stretch: normal; font-weight: 600;
+  font-size: var(--t-body-sm-size); font-variant-numeric: normal; letter-spacing: 0;
+  color: var(--c-muted); margin-left: 3px; }
+
+/* — the stat band: the concept's signature block (01 · 18 · 02) — */
+.kss-band {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md); padding: var(--space-lg);
+  background: var(--ks-ink-deep); color: var(--ks-on-dark);
+  border-radius: var(--radius-md); border: 1px solid transparent;
+}
+.kss-band.is-light { background: var(--c-surface); color: var(--c-ink);
+  border-color: var(--c-hairline); }
+.kss-band-cell { display: flex; flex-direction: column; gap: var(--space-xs);
+  min-width: 0; color: inherit; text-decoration: none; }
+.kss-band-cell .kss-num { color: var(--ks-on-dark); }
+.kss-band.is-light .kss-band-cell .kss-num { color: var(--c-ink); }
+.kss-band-lab { font-size: var(--t-caption-size); font-weight: var(--t-caption-weight);
+  letter-spacing: var(--t-caption-ls); color: var(--ks-on-dark-muted); }
+.kss-band.is-light .kss-band-lab { color: var(--c-muted); }
+.kss-band .kss-micro { background: var(--ks-ink-mid); }
+.kss-band .kss-micro > span { background: var(--ks-fire); }
+.kss-band-cell .kss-micro { flex: 0 0 auto; width: 100%; }
+.kss-band-note { font-size: var(--t-caption-size); font-weight: var(--t-caption-weight);
+  letter-spacing: var(--t-caption-ls); color: var(--ks-on-dark-muted); }
+.kss-band.is-light .kss-band-note { color: var(--c-muted); }
+
+/* — ledger: hairline rules instead of cards, the Strava list — */
+.kss-ledger { display: flex; flex-direction: column; min-width: 0; }
+.kss-lrow { display: flex; align-items: center; gap: var(--space-md); min-width: 0;
+  padding: var(--space-md) var(--space-sm);
+  border-bottom: 1px solid var(--c-hairline); color: var(--c-body); text-decoration: none; }
+.kss-lrow:first-child { border-top: 1px solid var(--c-hairline); }
+.kss-lrow:last-child { border-bottom: 1px solid var(--c-hairline); }
+.kss-lrow.is-marked { box-shadow: inset 3px 0 0 var(--ks-fire); padding-left: var(--space-md); }
+.kss-lrow.is-dim { color: var(--c-muted); }
+.kss-lrow.is-dim .kss-num { color: var(--c-muted); }
+.kss-lrow-body { display: flex; flex-direction: column; gap: var(--space-xxs);
+  min-width: 0; flex: 1; }
+.kss-lrow-end { display: flex; flex-direction: column; align-items: flex-end;
+  gap: 6px; flex-shrink: 0; min-width: 64px; }
+
+/* — micro track: inline proportional bar (mastery · points · score) — */
+.kss-micro { height: 5px; flex: 1; min-width: 56px; background: var(--kss-bar-track);
+  border-radius: var(--radius-pill); overflow: hidden; }
+.kss-micro > span { display: block; height: 100%; background: var(--ks-fire);
+  border-radius: var(--radius-pill); }
+.kss-micro.is-dark > span { background: var(--c-ink); }
+.kss-micro.is-fixed { flex: 0 0 auto; }
+
+/* — square chips (class switcher · child switcher) — */
+.kss-chipsq {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 40px; padding: 8px 12px; cursor: pointer;
+  border: 1px solid var(--c-hairline-strong); border-radius: var(--radius-sm);
+  background: var(--c-surface); color: var(--c-ink);
+  font-family: var(--font-body); font-size: 14px; font-weight: 700; line-height: 1.2;
+}
+.kss-chipsq.is-on { background: var(--c-ink); border-color: var(--c-ink);
+  color: var(--ks-on-dark); }
+
+/* — square fire marker (due · current · rank) — */
+.kss-sq { width: 10px; height: 10px; flex-shrink: 0;
+  border-radius: var(--radius-xs); background: var(--ks-fire); }
+.kss-sq.is-dark { background: var(--c-ink); }
+.kss-sq.is-soft { background: var(--c-hairline-strong); }
+
+/* — dark chrome (console rail) — */
+.kss-side-item.is-on .kss-side-ico { color: var(--ks-fire); }
+.kss-side-head { display: flex; align-items: center; gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md) var(--space-lg); }
+.kss-wordmark-dark { font-family: var(--font-display); font-weight: 800; font-stretch: 82%;
+  font-size: 21px; letter-spacing: 0.01em; color: var(--ks-on-dark); }
+.kss-wordmark-dark::after { content: ''; display: block; height: 3px; background: var(--ks-fire); }
+.kss-side-foot { margin-top: auto; padding-top: var(--space-lg);
+  border-top: 1px solid var(--ks-hairline-dark); }
+.kss-side-foot .kss-side-item { color: var(--ks-on-dark-muted); }
+
+@media (max-width: 900px) {
+  .kss-side { display: none; }
+  .kss-console.is-nav-open .kss-side { display: flex; position: fixed; inset: 0 auto 0 0;
+    z-index: 40; max-width: 82%; }
+}

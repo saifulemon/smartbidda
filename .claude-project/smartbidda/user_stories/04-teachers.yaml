@@ -1,0 +1,67 @@
+id: US-04-TEACHERS
+role: admin
+feature: "Teacher registry — teacher table with role, content counts, status, last login, search/sort/pagination, role-change menu and the create-teacher modal"
+page: 04-teachers.html
+goal: |
+  As an admin on the teachers page I can review every teacher's role, content counts, approval status and
+  last login, trigger a role change from the row menu, and open the create-teacher modal, so that I control
+  who authors NCTB content and which accounts hold admin authority.
+scenarios_total: 18
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The teacher table loads with email, role, content count, status and last-login columns"
+    ui_route: /admin/teachers
+    endpoint: GET /api/admin/teachers
+    expected: "200 — 'শিক্ষক' heading (teachers-heading) with 'মোট ৪৬ জন' (teachers-count); rows (teachers-row) render e.g. রুবেল মিয়া · rubel@example.com · শিক্ষক · ২৮ · badge 'সক্রিয়' · '২ ঘণ্টা আগে', and তারেক হোসেন with content count '০' and badge 'অনুমোদন অপেক্ষা'"
+  - id: AC-2
+    description: "Search by name or subject narrows the teacher list"
+    ui_route: /admin/teachers
+    endpoint: GET /api/admin/teachers
+    expected: "200 — typing 'গণিত' or a teacher name in teachers-search (placeholder 'নাম বা বিষয় দিয়ে খুঁজুন') filters the rows server-side; empty input restores the full ৪৬-teacher list"
+  - id: AC-3
+    description: "Sortable headers and pagination drive the list query"
+    ui_route: /admin/teachers
+    endpoint: GET /api/admin/teachers
+    expected: "200 — 'সর্বশেষ লগইন' ships aria-sort=ascending; tapping নাম, ইমেইল, ভূমিকা or অবস্থা toggles asc/desc; 'পৃষ্ঠা ১ / ২' (teachers-page-info) with teachers-page-prev disabled and 'পরের' (teachers-page-next) advancing to page 2"
+  - id: AC-4
+    description: "Row menu offers বিস্তারিত, সম্পাদনা and ভূমিকা বদল, with the last-admin guard on demotion"
+    ui_route: /admin/teachers
+    endpoint: none
+    expected: "teachers-row-actions-trigger opens the menu with teachers-menu-view 'বিস্তারিত', teachers-menu-edit 'সম্পাদনা' and teachers-menu-change-role 'ভূমিকা বদল'; demoting the final admin is refused with 'শেষ অ্যাডমিনকে নামানো যায় না' — no role-change endpoint exists in the spine, so no write is issued"
+  - id: AC-5
+    description: "The create-teacher modal validates fields client-side and save creates the teacher row"
+    ui_route: /admin/teachers
+    endpoint: POST /api/admin/teachers
+    expected: "'নতুন শিক্ষক' (teachers-create) opens teachers-modal titled 'নতুন শিক্ষক' with 'ইমেইল' (help 'সঠিক ও অনন্য ইমেইল চাই।'), 'নাম' (help 'নাম ২-৫০ অক্ষর হতে হবে।'), 'ভূমিকা' (শিক্ষক / অ্যাডমিন, help 'ভূমিকা বাছাই ছাড়া খালি রাখা যাবে না।') and 'অস্থায়ী পাসওয়ার্ড' (minlength 8, help 'সর্বনিম্ন ৮ অক্ষর ও কমপক্ষে ১টি সংখ্যা।'); 'সংরক্ষণ' (teachers-modal-save) posts the form — 200 appends the row and shows 'শিক্ষক তৈরি হয়েছে', while 'বাতিল' (teachers-modal-cancel) closes with no request"
+  - id: AC-6
+    description: "রপ্তানি exports the current teacher view as CSV"
+    ui_route: /admin/teachers
+    endpoint: GET /api/admin/teachers
+    expected: "200 — tapping 'রপ্তানি' (teachers-export) downloads a CSV of the fetched rows (name, email, role, content count, status, last login) with Bangla status labels preserved"
+
+boundary_cases:
+  - case: "Last-admin demotion — changing the only remaining 'অ্যাডমিন' row to 'শিক্ষক' is blocked with 'শেষ অ্যাডমিনকে নামানো যায় না' (st-edge) and the role cell keeps its value"
+  - case: "Create-form extremes — a 1-character name fails 'নাম ২-৫০ অক্ষর হতে হবে।'; a 7-char or digit-less temp password fails 'সর্বনিম্ন ৮ অক্ষর ও কমপক্ষে ১টি সংখ্যা।'; an already-used email is flagged before any submit"
+  - case: "Teacher with zero content — content-count cell renders '০' (not blank) and the row stays sortable by content volume without breaking the fixed table layout"
+
+error_scenarios:
+  - scenario: "401 — expired admin session on GET /api/admin/teachers redirects to /auth/login with /admin/teachers preserved as the return route"
+  - scenario: "403 — a teacher or student session reaching /admin/teachers is bounced by the auth:admin guard; the teacher table and modal never mount"
+  - scenario: "500 — GET /api/admin/teachers fails — the body shows inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করুন' retry button; 'মোট ৪৬ জন' is not silently zeroed"
+  - scenario: "409 — a role change applied after another admin edited the same teacher surfaces 'অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।' (st-edge) and the row is refetched before any retry"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton lines at 72% / 100% / 54% replace the table body (st-label 'লোড হচ্ছে'); search and pagination stay disabled until the first response"
+  - state: empty
+    expected: "No teachers onboarded — 'মোট ০ জন' under the heading, an empty table body and the 'নতুন শিক্ষক' CTA (teachers-create) as the primary action"
+  - state: error
+    expected: "Failed load shows the inline retry 'কিছু লোড হয়নি। আবার চেষ্টা করো।'; the export button is disabled until data loads"
+  - state: concurrent-edit
+    expected: "Edit/role-change conflict renders 'অন্য অ্যাডমিন এটি পরিবর্তন করেছেন।' (st-edge, st-label 'একসাথে সম্পাদনা') and the row refreshes with the other admin's values"
+  - state: last-admin
+    expected: "Demoting the final admin blocks with 'শেষ অ্যাডমিনকে নামানো যায় না' (st-edge, st-label 'নিজের ভূমিকা'); the confirm dialog closes with no state change"
+
+fixture_refs:
+  - admin_teachers_list

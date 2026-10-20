@@ -1,0 +1,60 @@
+id: US-10-RETAKE-CLASS
+role: student
+feature: "Retake class — chapter refresher video and Bangla note, three-question understanding check, 2-retake cap and re-exam unlock"
+page: 10-retake-class.html
+goal: |
+  As a student on the আবার দেখুন page I rewatch the chapter refresher video, read the Bangla note and
+  answer the understanding check for the topic I failed, so that completing the retake unlocks my
+  re-exam — or escalates to my teacher once the chapter's 2-retake cap is spent.
+scenarios_total: 16
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The chapter refresher video, Bangla note and verification set load for the assigned retake"
+    ui_route: /retake/:retakeId
+    endpoint: GET /api/remedial/:id
+    expected: "200 — media caption 'রিমিডিয়াল ভিডিও' (retake-media-caption), source badge 'শিক্ষকের লাইব্রেরি' (retake-source), title 'ভগ্নাংশের তুলনা — সহজ ব্যাখ্যা' (retake-title-text), meta '৪ মিনিট · বাংলা ভয়েস সহ' (retake-meta), note row 'রিটেক নোট' with '১ পৃষ্ঠা · বাংলা' and a 'পড়ো' button (retake-pdf-title / retake-pdf-meta / retake-pdf-open)"
+  - id: AC-2
+    description: "Hero states why the retake was assigned and how much of the cap is spent"
+    ui_route: /retake/:retakeId
+    endpoint: none
+    expected: "Badge 'চলছে' (retake-status), heading 'ভগ্নাংশের তুলনা — আবার শিখি' (retake-heading), reason body (retake-desc), cap label 'অগ্রগতি' (retake-cap-label), value '১ / ২ রিটেক শেষ' (retake-cap-value), bar at 50% (retake-cap-bar) and note 'দুটির একটি শেষ হয়েছে — বাকিটা শেষ হলে রি-এক্সাম খুলবে।' (retake-cap-note)"
+  - id: AC-3
+    description: "Answer the three-question understanding check, one question at a time"
+    ui_route: /retake/:retakeId
+    endpoint: none
+    expected: "Panel 'বোঝাপড়া যাচাই' (retake-check-label) shows count '১ / ৩' (retake-check-count), question '১। ৩/৪ এর সমান কোনটি?' (retake-check-q1) and stacked option pills (retake-check-option) where only the chosen pill has aria-pressed=true; note 'সবগুলো প্রশ্নের উত্তর দিতে হবে — নইলে সম্পন্ন করা যাবে না।' (retake-check-note) stays visible"
+  - id: AC-4
+    description: "Complete the retake once every check question is answered"
+    ui_route: /retake/:retakeId
+    endpoint: POST /api/remedial/:id/complete
+    expected: "200 — response carries RETAKE_COMPLETED and the re-exam unlock; 'সম্পন্ন করুন' (retake-complete) drops rt-off/aria-disabled and success feedback 'রিটেক সম্পন্ন হয়েছে' is announced before the re-exam route opens"
+  - id: AC-5
+    description: "The unlocked re-exam button routes to the exam list"
+    ui_route: /retake/:retakeId
+    endpoint: none
+    expected: "'রি-এক্সাম' (retake-reexam) is inert (rt-off, aria-disabled=true) while the check is incomplete and becomes a live link to /exams after completion; 'হোমে ফিরে যান' (retake-skip) always routes to /"
+
+boundary_cases:
+  - case: "Complete tapped while the check is at ১ / ৩ — no POST is fired, 'সম্পন্ন করুন' keeps aria-disabled=true and 'সবগুলো প্রশ্নের উত্তর দিতে হবে — নইলে সম্পন্ন করা যাবে না।' remains on screen"
+  - case: "Second retake for the same chapter already spent (২ / ২ রিটেক শেষ, bar at 100%) — no third retake is created; escalation edge 'শিক্ষক দেখছেন — রিটেক শেষ হলে শিক্ষক দেখবেন' (st-edge) takes over and the re-exam stays locked until teacher review"
+  - case: "Chapter with no refresher video or note authored — media and PDF panels are omitted, while hero, cap meter and the verification check still render"
+error_scenarios:
+  - scenario: "401 session expired on POST /api/remedial/:id/complete — redirect to /auth/login for the 4-digit PIN; the check answers are not marked complete"
+  - scenario: "POST /api/remedial/:id/complete returns 500 — 'রিটেক শেষ করা যায়নি।' (st-err-msg) shows and 'সম্পন্ন করুন' returns to its tappable state for a retry"
+  - scenario: "Retake already completed elsewhere returns 409 — 'রিটেক আগেই শেষ হয়েছে।' (st-err-msg) shows and the page falls back to the 'রি-এক্সাম' route"
+state_transitions:
+  - state: loading
+    expected: "Skeleton bars 72% / 100% / 54% at 16px height under 'লোড হচ্ছে' (st-label); both CTAs stay disabled"
+  - state: empty
+    expected: "empty-state 'এই রিটেক ক্লাস এখনো তৈরি হয়নি।' (st-empty) with 'হোমে ফিরে যান' as the only live action"
+  - state: error
+    expected: "inline 'রিটেক লোড হয়নি। আবার চেষ্টা করো।' (st-error) with an 'আবার চেষ্টা করো' retry control"
+  - state: offline
+    expected: "edge copy 'ইন্টারনেট সংযোগ নেই।' (st-edge); completion is queued and 'সম্পন্ন করুন' stays disabled until the POST succeeds"
+  - state: escalated
+    expected: "edge copy 'শিক্ষক দেখছেন — রিটেক শেষ হলে শিক্ষক দেখবেন' (st-edge) once the 2-retake cap for the chapter is reached"
+
+fixture_refs:
+  - retake_class
+  - lesson

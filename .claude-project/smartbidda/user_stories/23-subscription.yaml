@@ -1,0 +1,77 @@
+id: US-23-SUBSCRIPTION
+role: parent
+feature: "Subscription and payments — active plan cycle, what is included, monthly/annual plans, crash packs, Bangla payment methods, checkout and payment history"
+page: 23-subscription.html
+goal: |
+  As a parent on the সাবস্ক্রিপশন page I can see that my family plan is active until ২৫ অক্টোবর, compare
+  the monthly and annual plans and the exam crash packs, choose বিকাশ, নগদ, আপায় or card and pay, so
+  that I can renew or buy a pack in Bangla without leaving the app or wondering whether the payment
+  went through.
+scenarios_total: 20
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The current-plan hero shows status, expiry, plan name, price, cycle progress and subscription number"
+    ui_route: /parent/subscription
+    endpoint: GET /api/parent/subscription
+    expected: "200 — sb-status 'সক্রিয়', sb-plan-expiry '২৫ অক্টোবর পর্যন্ত', sb-plan-name 'পরিবার প্ল্যান', sb-price '৳৩৯৯' with sb-price-cycle '/ মাস', progressbar aria-valuenow=22 / aria-valuemax=30 with sb-cycle-bar at 73%, sb-cycle-note '৩০ দিনের মধ্যে ২২ দিন শেষ · স্বয়ংক্রিয় নবায়ন', sb-sub-no 'সাবস্ক্রিপশন নং SB-SUB-20260901-1041'"
+  - id: AC-2
+    description: "'যা যা থাকছে' lists the four family-plan entitlements"
+    ui_route: /parent/subscription
+    endpoint: GET /api/parent/subscription
+    expected: "sb-included-label 'যা যা থাকছে' with four rows, each prefixed by the green check icon: 'সর্বোচ্চ ৩ জন সন্তান', 'সব বিষয় ও পরীক্ষা', 'বিশ্লেষণ ও রিমিডিয়াল পাঠ', 'বাংলা ভয়েস সহ পাঠ'"
+  - id: AC-3
+    description: "The plan rail compares the monthly and annual plans with prices and savings"
+    ui_route: /parent/subscription
+    endpoint: GET /api/parent/subscription
+    expected: "sb-plans-label 'প্ল্যান বেছে নিন'; মাসিক tagged 'নির্বাচিত' at ৳৩৯৯ 'প্রতি মাসে · যেকোনো সময় বাতিল করা যায়'; বার্ষিক tagged '২৭% সাশ্রয়' at ৳৩,৪৯৯ '১২ মাস · ৳১,২৮৯ কম দিতে হবে'"
+  - id: AC-4
+    description: "Crash packs show exam-season packs with duration, contents and a buy action"
+    ui_route: /parent/subscription
+    endpoint: GET /api/parent/subscription
+    expected: "sb-packs-label 'ক্র্যাশ প্যাক'; '১ম সাময়িক প্যাক' tagged 'পরীক্ষার আগে' at ৳১৪৯ with '১৫ দিন · প্রতি বিষয়ে ২ টি বিশেষ পাঠ'; 'বার্ষিক ক্র্যাশ প্যাক' tagged 'বার্ষিক' at ৳২৯৯ with '৩০ দিন · সব বিষয়ের পুনরাবৃত্তি'; each sb-pack-cta 'কিনুন' selects that pack"
+  - id: AC-5
+    description: "Payment methods default to বিকাশ and switching method updates the pressed chip"
+    ui_route: /parent/subscription
+    endpoint: none
+    expected: "sb-methods-label 'পেমেন্ট মাধ্যম' with বিকাশ / নগদ / আপায় / কার্ড; বিকাশ starts is-on / aria-pressed=true 'নির্বাচিত' and the others show 'বেছে নিন'; selecting নগদ moves the pressed state and sb-method-note stays 'সব লেনদেন SSLCommerz দিয়ে হয় — বিকাশ, নগদ, আপায় ও কার্ড গ্রহণযোগ্য।'"
+  - id: AC-6
+    description: "The pay button reflects the selected plan or pack and starts a payment intent"
+    ui_route: /parent/subscription
+    endpoint: POST /api/payments/intents
+    expected: "Default sb-pay 'পেমেন্ট করুন (৳৩৯৯)'; selecting বার্ষিক changes it to 'পেমেন্ট করুন (৳৩,৪৯৯)' and selecting a crash pack to its ৳১৪৯ / ৳২৯৯; tapping it posts the plan or pack id with the chosen method, returns 201 with a checkout URL, shows the modal copy 'পেমেন্ট শুরু হয়েছে', and opens SSLCommerz"
+  - id: AC-7
+    description: "Payment history lists the last invoice with amount, method and status"
+    ui_route: /parent/subscription
+    endpoint: GET /api/parent/subscription
+    expected: "sb-invoices-label 'পেমেন্ট ইতিহাস'; sb-invoice-title 'পরিবার প্ল্যান · ১ মাস', sb-invoice-meta '২৫ সেপ্টেম্বর ২০২৬ · বিকাশ', sb-invoice-no 'পেমেন্ট নং SB-PAY-20260925-4181', sb-invoice-amount '৳৩৯৯', sb-invoice-status 'সফল'"
+
+boundary_cases:
+  - case: "An active plan already exists and the parent picks another — the confirmation reads 'আপনার আগে থেকেই সক্রিয় প্ল্যান আছে' and shows the prorated switch before any intent is created, so the family is never charged twice for the same cycle"
+  - case: "Plan already carries the maximum three children — the plan features still read 'সর্বোচ্চ ৩ জন সন্তান' and the screen offers no fourth-seat add-on; the quota copy in the dashboard stays ২ / ৩"
+  - case: "Annual saving arithmetic — ১২ × ৳৩৯৯ = ৳৪,৭৮৮ against ৳৩,৪৯৯ must keep the '৳১,২৮৯ কম দিতে হবে' line and the '২৭% সাশ্রয়' badge consistent; no rounding to ২৬% or ২৮% is shown"
+  - case: "Prototype and fixture plan labels differ (HTML 'পরিবার প্ল্যান' at ৳৩৯৯, fixture 'ফ্যামিলি প্যাক' at ৳৪৯৯/মাস) — the page renders exactly one source from GET /api/parent/subscription and never both names or both prices at once"
+
+error_scenarios:
+  - scenario: "POST /api/payments/intents returns 502 — the modal closes with 'পেমেন্ট শুরু হয়নি।' and the pay button returns to idle; no order is left in a pending state and the plan selection is preserved"
+  - scenario: "The gateway returns a failed or abandoned payment — 'পেমেন্ট সম্পন্ন হয়নি। আবার চেষ্টা করুন।' is shown, entitlement is not granted from the page return alone, and the invoice history is unchanged"
+  - scenario: "The parent is not the subscription owner (403) — 'পেমেন্ট করতে পারবেন না।' and sb-pay is disabled while the plan details remain readable"
+  - scenario: "Offline while paying — 'ইন্টারনেট সংযোগ নেই।' toast, no intent request is sent, and the chosen plan and method stay selected for retry"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton bars (72% / 100% / 54%) replace the plan hero, plan rail, packs and invoice; sb-pay is not tappable"
+  - state: empty
+    expected: "No invoice history — 'কোনো পেমেন্ট হিস্ট্রি নেই।' under sb-invoices-label; the current plan hero and buy actions remain usable"
+  - state: error
+    expected: "st-error 'পেমেন্ট লোড হয়নি। আবার চেষ্টা করো।' with a refresh-cw retry button; the plan hero falls back to the last known subscription state"
+  - state: verifying
+    expected: "After returning from SSLCommerz the page shows a spinner with 'পেমেন্ট যাচাই হচ্ছে...' and the note 'গেটওয়ে থেকে ফল ফিরে আসার আগ পর্যন্ত'; buy actions are disabled and no status badge flips to সক্রিয় early"
+  - state: abandoned
+    expected: "The payment is abandoned or fails — 'পেমেন্ট সম্পন্ন হয়নি।' replaces the verifying spinner, sb-status stays at its previous value, and the parent can retry"
+
+fixture_refs:
+  - subscription
+  - identity.subscriptionId
+  - identity.paymentId
+  - identity.parent

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পুরস্কার · অবস্থা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* state sheet — every class below is shared (styles/components.css) */
+</style>
+</head>
+<body data-component="dev-states" data-app="frontend" data-layout="StudentLayout">
+
+  <header class="ksr-appbar" data-shell="topbar">
+    <span class="ksr-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="ksr-round" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+      </button>
+      <button class="ksr-round" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="ksr-main" data-shell="content">
+    <div class="stwrap" data-testid="st-wrap">
+      <div class="stnote" data-testid="st-intro">
+        <i data-lucide="layers" class="icon-md" aria-hidden="true"></i>
+        <p class="t-caption">প্রতিটি কার্ড একটি আলাদা অবস্থা · একসাথে কখনও দেখানো হবে না</p>
+      </div>
+
+      <section class="ksr-panel" data-component="card" aria-labelledby="st-1-label">
+        <div class="stcard-head">
+          <span class="stcard-kind" data-testid="st-kind">লোডিং</span>
+          <code class="t-code" data-testid="st-ref">/rewards</code>
+        </div>
+        <p class="t-body t-semibold" id="st-1-label" data-testid="st-label">লোড হচ্ছে</p>
+        <div class="stcard-body" data-testid="st-frame">
+          <div class="skeleton" style="height:120px;width:100%"></div>
+          <div class="skeleton" style="height:56px;width:100%"></div>
+          <div class="skeleton" style="height:96px;width:100%"></div>
+        </div>
+      </section>
+
+      <section class="ksr-panel" data-component="card" aria-labelledby="st-2-label">
+        <div class="stcard-head">
+          <span class="stcard-kind" data-testid="st-kind">খালি</span>
+          <code class="t-code" data-testid="st-ref">/rewards</code>
+        </div>
+        <p class="t-body t-semibold" id="st-2-label" data-testid="st-label">কিছু নেই</p>
+        <div class="stcard-body" data-testid="st-frame">
+          <div class="empty-state" data-testid="st-empty">
+            <i data-lucide="award" class="icon-lg" aria-hidden="true"></i>
+            <p class="t-body" style="margin-top:var(--space-sm)">এখনো কোনো পয়েন্ট অর্জিত হয়নি। প্রথম কুইজ দিয়ে শুরু করো!</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="ksr-panel" data-component="card" aria-labelledby="st-3-label">
+        <div class="stcard-head">
+          <span class="stcard-kind" data-testid="st-kind">ত্রুটি</span>
+          <code class="t-code" data-testid="st-ref">/rewards</code>
+        </div>
+        <p class="t-body t-semibold" id="st-3-label" data-testid="st-label">লোড করা যায়নি</p>
+        <div class="stcard-body" data-testid="st-frame">
+          <p class="t-body" data-testid="st-error">কিছু লোড হয়নি। আবার চেষ্টা করো।</p>
+          <button class="ksr-btn is-quiet" type="button">
+            <i data-lucide="refresh-cw" class="icon-sm" aria-hidden="true"></i>
+            আবার চেষ্টা করো
+          </button>
+        </div>
+      </section>
+
+      <section class="ksr-panel" data-component="card" aria-labelledby="st-4-label">
+        <div class="stcard-head">
+          <span class="stcard-kind" data-testid="st-kind">ত্রুটি বার্তা</span>
+          <code class="t-code" data-testid="st-ref">/rewards</code>
+        </div>
+        <p class="t-body t-semibold" id="st-4-label" data-testid="st-label">কোন অবস্থায় কী দেখাবে</p>
+        <div class="stcard-body" data-testid="st-frame">
+          <div class="strow">
+            <span class="t-caption" data-testid="st-err-kind">ইন্টারনেট সংযোগ</span>
+            <span class="t-body-sm" data-testid="st-err-msg">ইন্টারনেট সংযোগ নেই।</span>
+          </div>
+          <div class="strow">
+            <span class="t-caption" data-testid="st-err-kind">সার্ভার ত্রুটি</span>
+            <span class="t-body-sm" data-testid="st-err-msg">কিছু লোড হয়নি। আবার চেষ্টা করো।</span>
+          </div>
+          <div class="strow">
+            <span class="t-caption" data-testid="st-err-kind">পয়েন্ট হিসাব নেই</span>
+            <span class="t-body-sm" data-testid="st-err-msg">পয়েন্টের হিসাব এখনো প্রস্তুত হয়নি।</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="ksr-panel" data-component="card" aria-labelledby="st-5-label">
+        <div class="stcard-head">
+          <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+          <code class="t-code" data-testid="st-ref">/rewards</code>
+        </div>
+        <p class="t-body t-semibold" id="st-5-label" data-testid="st-label">সব পদক অর্জিত</p>
+        <div class="stcard-body" data-testid="st-frame">
+          <p class="t-body" data-testid="st-edge">১২ / ১২ পদক অর্জিত — নতুন পদক শীঘ্রই যুক্ত হবে।</p>
+        </div>
+      </section>
+
+      <section class="ksr-panel" data-component="card" aria-labelledby="st-6-label">
+        <div class="stcard-head">
+          <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+          <code class="t-code" data-testid="st-ref">/rewards</code>
+        </div>
+        <p class="t-body t-semibold" id="st-6-label" data-testid="st-label">ধারাবাহিকতা ভেঙে গেছে</p>
+        <div class="stcard-body" data-testid="st-frame">
+          <p class="t-body" data-testid="st-edge">গত দিনে পড়া হয়নি — ধারাবাহিকতা শূন্য থেকে শুরু হবে।</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="ksr-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="ksr-tab" href="../frontend/01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="ksr-tab-ico" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="ksr-tab" href="../frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="ksr-tab-ico" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="ksr-tab" href="../frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="ksr-tab-ico" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="ksr-tab" href="../frontend/14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="ksr-tab-ico" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="ksr-tab is-on" href="../frontend/15-rewards.html" data-testid="nav-rewards" aria-current="page">
+      <i data-lucide="award" class="ksr-tab-ico" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

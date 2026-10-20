@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>আজকের পাঠ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-linear-console.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local selectors for 01-home only */
+  .kh-greet { display: flex; align-items: center; gap: var(--space-md); }
+  .kh-voice { margin-top: var(--space-xxs); }
+  .kh-lesson { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .kh-lesson-top { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+  .kh-lesson-bar { display: flex; align-items: center; gap: var(--space-md); margin-top: var(--space-xs); }
+  .kh-bar { flex: 1 1 auto; min-width: 0; }
+  .kh-subjects { display: flex; flex-direction: column; }
+  .kh-track { flex: 1 1 auto; min-width: 0; }
+  .kh-nudge { display: flex; align-items: flex-start; gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg); }
+  .kh-nudge-ico { margin-top: 3px; }
+  .kh-w40 { width: 40%; }
+  .kh-w65 { width: 65%; }
+  .kh-w17 { width: 17%; }
+  .kh-w56 { width: 56%; }
+  .kh-w36 { width: 36%; }
+  .kh-w47 { width: 47%; }
+</style>
+</head>
+<body class="klc-page" data-app="frontend" data-layout="StudentLayout">
+
+  <header class="klc-appbar" data-shell="topbar">
+    <span class="klc-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="klc-appbar-spacer"></span>
+    <button class="klc-iconbtn" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+      <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+    </button>
+    <button class="klc-iconbtn" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+      <span class="avatar klc-avatar-sm" aria-hidden="true">র</span>
+    </button>
+  </header>
+
+  <main class="klc-main" data-shell="content">
+
+    <!-- ১ · অভিবাদন + কণ্ঠস্বর -->
+    <div class="kh-greet">
+      <span class="avatar avatar-lg" data-testid="home-avatar" aria-hidden="true">র</span>
+      <div class="klc-col">
+        <h1 class="t-title-lg" data-testid="home-greeting">আসসালামু আলাইকুম, রাফিদ</h1>
+        <p class="t-caption" data-testid="home-class">চতুর্থ শ্রেণি · ৫ দিনের ধারাবাহিকতা</p>
+        <p class="t-caption kh-voice" data-testid="home-voice-state">পাতাটি একবার পড়ে শোনানো হয়েছে</p>
+      </div>
+      <button class="klc-btn is-quiet is-sm" type="button" aria-pressed="true" data-testid="home-voice-toggle">
+        <i data-lucide="volume-2" class="icon-sm" aria-hidden="true"></i>
+        কণ্ঠস্বর চালু
+      </button>
+    </div>
+
+    <!-- ২ · ইন্সট্রুমেন্ট প্যানেল -->
+    <section class="klc-panel" aria-label="আজকের সারসংক্ষেপ" data-component="kpi">
+      <div class="klc-kpi">
+        <div class="klc-kpi-cell">
+          <span class="klc-eyebrow" data-testid="home-time-label">স্ক্রিন টাইম</span>
+          <span class="klc-stat is-sm klc-num" data-testid="home-time-value">২৪ / ৬০ মিনিট</span>
+          <span class="klc-track" role="progressbar" aria-valuenow="24" aria-valuemin="0" aria-valuemax="60" aria-label="আজকের স্ক্রিন টাইম">
+            <span class="kh-w40" data-testid="home-time-bar"></span>
+          </span>
+          <span class="t-caption" data-testid="home-time-remaining">আরও ৩৬ মিনিট বাকি</span>
+        </div>
+        <a class="klc-kpi-cell is-link" href="14-leaderboard.html" data-testid="home-points-rank" aria-label="লিডারবোর্ডে তোমার অবস্থান — ১,২৪০ পয়েন্ট · #৪">
+          <span class="klc-eyebrow" data-testid="home-points-label">পয়েন্ট ও র‍্যাংক</span>
+          <span class="klc-stat is-sm klc-num" data-testid="home-points-value">১,২৪০</span>
+          <span class="t-caption">পয়েন্ট · র‍্যাংক #৪</span>
+        </a>
+        <div class="klc-kpi-cell">
+          <span class="klc-eyebrow" data-testid="home-streak-label">ধারাবাহিকতা</span>
+          <span class="klc-stat is-sm klc-num" data-testid="home-streak-value">৫ দিন</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ৩ · আজকের কাজ -->
+    <section class="klc-panel" aria-labelledby="home-tasks-heading" data-component="list">
+      <div class="klc-panel-hd">
+        <h2 class="klc-hd" id="home-tasks-heading" data-testid="home-tasks-heading">আজকের কাজ</h2>
+        <span class="klc-eyebrow">৩ টি বাকি</span>
+      </div>
+      <div class="klc-list">
+        <a class="klc-row is-link" href="../../base/frontend/10-retake-class.html" data-testid="home-task-retake">
+          <span class="klc-dot is-warn" aria-hidden="true"></span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold" data-testid="home-task-retake-label">২ টি রিটেক বাকি</span>
+          </span>
+          <span class="t-caption">বাকি</span>
+          <i data-lucide="chevron-right" class="icon-sm" aria-hidden="true"></i>
+        </a>
+        <a class="klc-row is-link" href="../../base/frontend/11-exam-list.html" data-testid="home-task-exam">
+          <span class="klc-dot is-warn" aria-hidden="true"></span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold" data-testid="home-task-exam-label">১ম সাময়িক পরীক্ষা দিতে হবে</span>
+          </span>
+          <span class="t-caption">আজ</span>
+          <i data-lucide="chevron-right" class="icon-sm" aria-hidden="true"></i>
+        </a>
+        <a class="klc-row is-link" href="../../base/frontend/07-lesson.html" data-testid="home-task-lesson">
+          <span class="klc-dot is-ok" aria-hidden="true"></span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold" data-testid="home-task-lesson-label">ভগ্নাংশ চিহ্নিতকরণ শেষ করুন</span>
+          </span>
+          <span class="t-caption klc-num">৬৫%</span>
+          <i data-lucide="chevron-right" class="icon-sm" aria-hidden="true"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- ৪ · আজকের পাঠ -->
+    <section class="klc-panel" aria-labelledby="home-today-heading">
+      <div class="klc-panel-hd">
+        <span class="klc-col">
+          <h2 class="klc-hd" id="home-today-heading" data-testid="home-today-heading">আজকের পাঠ</h2>
+          <span class="t-caption">সবচেয়ে সাম্প্রতিক পাঠ</span>
+        </span>
+        <a class="klc-btn" href="../../base/frontend/07-lesson.html" data-testid="home-lesson-cta">
+          <i data-lucide="play" class="icon-sm" aria-hidden="true"></i>
+          পড়া চালিয়ে যান
+        </a>
+      </div>
+      <div class="klc-panel-body kh-lesson">
+        <div class="kh-lesson-top">
+          <span class="klc-chip" data-testid="home-lesson-subject">গণিত</span>
+          <span class="t-caption" data-testid="home-lesson-chapter">অধ্যায় ৪ · ভগ্নাংশ</span>
+        </div>
+        <p class="t-title-md" data-testid="home-lesson-title">ভগ্নাংশ চিহ্নিতকরণ</p>
+        <p class="t-caption" data-testid="home-lesson-meta">ভিডিও ১২ মিনিট · ভয়েস সহ</p>
+        <div class="kh-lesson-bar">
+          <span class="klc-track kh-bar" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="পাঠের অগ্রগতি">
+            <span class="kh-w65" data-testid="home-lesson-progress"></span>
+          </span>
+          <span class="t-caption klc-num">৬৫%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ৫ · বিষয়সমূহ -->
+    <section aria-labelledby="home-subjects-heading">
+      <div class="klc-sec-hd">
+        <h2 class="klc-hd" id="home-subjects-heading" data-testid="home-subjects-heading">তোমার বিষয়সমূহ</h2>
+        <a class="klc-sec-link" href="../../base/frontend/05-subject-list.html" data-testid="home-subjects-all">সব দেখুন</a>
+      </div>
+      <div class="klc-panel kh-subjects">
+        <a class="klc-row is-link" href="06-chapter-list.html" data-testid="home-subject-ganit">
+          <i data-lucide="calculator" class="icon-sm" aria-hidden="true"></i>
+          <span class="t-body-sm t-semibold" data-testid="home-subject-ganit-name">গণিত</span>
+          <span class="klc-track kh-track" aria-hidden="true"><span class="kh-w17"></span></span>
+          <span class="t-caption klc-num is-end" data-testid="home-subject-ganit-progress">৩ / ১৮ অধ্যায় শেষ</span>
+        </a>
+        <a class="klc-row is-link" href="06-chapter-list.html" data-testid="home-subject-bangla">
+          <i data-lucide="book-open" class="icon-sm" aria-hidden="true"></i>
+          <span class="t-body-sm t-semibold" data-testid="home-subject-bangla-name">বাংলা</span>
+          <span class="klc-track kh-track" aria-hidden="true"><span class="kh-w56"></span></span>
+          <span class="t-caption klc-num is-end" data-testid="home-subject-bangla-progress">৯ / ১৬ অধ্যায় শেষ</span>
+        </a>
+        <a class="klc-row is-link" href="06-chapter-list.html" data-testid="home-subject-science">
+          <i data-lucide="flask-conical" class="icon-sm" aria-hidden="true"></i>
+          <span class="t-body-sm t-semibold" data-testid="home-subject-science-name">বিজ্ঞান</span>
+          <span class="klc-track kh-track" aria-hidden="true"><span class="kh-w36"></span></span>
+          <span class="t-caption klc-num is-end" data-testid="home-subject-science-progress">৫ / ১৪ অধ্যায় শেষ</span>
+        </a>
+        <a class="klc-row is-link" href="06-chapter-list.html" data-testid="home-subject-english">
+          <i data-lucide="languages" class="icon-sm" aria-hidden="true"></i>
+          <span class="t-body-sm t-semibold" data-testid="home-subject-english-name">ইংরেজি</span>
+          <span class="klc-track kh-track" aria-hidden="true"><span class="kh-w47"></span></span>
+          <span class="t-caption klc-num is-end" data-testid="home-subject-english-progress">৭ / ১৫ অধ্যায় শেষ</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ৬ · মায়ের বার্তা -->
+    <section class="klc-panel kh-nudge" aria-labelledby="home-nudge-heading">
+      <i data-lucide="message-circle" class="icon-sm kh-nudge-ico" aria-hidden="true"></i>
+      <span class="klc-col">
+        <span class="klc-eyebrow" id="home-nudge-heading" data-testid="home-nudge-from">মায়ের বার্তা</span>
+        <span class="t-body-sm" data-testid="home-nudge-body">আজ গণিতের অধ্যায় ৪ শেষ করলে পুরস্কার পাবে।</span>
+      </span>
+    </section>
+
+  </main>
+
+  <nav class="klc-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="klc-tab is-on" href="01-home.html" data-testid="nav-home" aria-current="page">
+      <i data-lucide="home" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">হোম</span>
+    </a>
+    <a class="klc-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">পড়াশোনা</span>
+    </a>
+    <a class="klc-tab" href="08-quiz.html" data-testid="nav-quiz">
+      <i data-lucide="clipboard-check" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">কুইজ</span>
+    </a>
+    <a class="klc-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">লিডারবোর্ড</span>
+    </a>
+    <a class="klc-tab" href="18-parent-dashboard.html" data-testid="nav-parent">
+      <i data-lucide="users" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">অভিভাবক</span>
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

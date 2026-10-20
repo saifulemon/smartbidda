@@ -1,0 +1,54 @@
+/* concepts/spotify-rails/theme.css — token overrides (contrast-gated).
+   DNA: Spotify — near-black canvas, one functional green, content rails of
+   media cards, pill controls, thumb-reach primary action. Text on green is
+   near-black (#08090A ≈ 7.7:1). Plain hex only. */
+:root {
+  /* colour */
+  --c-primary: #1DB954;
+  --c-primary-active: #159B46;
+  --c-primary-soft: #173322;
+  --c-on-primary: #08090A;
+  --c-canvas: #131214;
+  --c-surface: #1D1C20;
+  --c-surface-soft: #26252A;
+  --c-ink: #FFFFFF;
+  --c-body: #E6E3E9;
+  --c-muted: #A6A2AD;
+  --c-link: #1DB954;
+  --c-hairline: #2C2B30;
+  --c-hairline-strong: #3E3D44;
+  --c-success: #4ADE80;
+  --c-warning: #F5C451;
+  --c-error: #F2555A;
+  --c-focus-ring: #1DB954;
+  --hero-bg: linear-gradient(180deg, #0E0D0F, #221F26);
+  --overlay-scrim: rgba(0, 0, 0, 0.68);
+  --sr-glow: radial-gradient(120% 90% at 20% 0%, rgba(29, 185, 84, 0.22), transparent 60%);
+
+  /* type — geometric, generous sizes, pill-friendly */
+  --font-display: 'Mina', 'Hind Siliguri', system-ui, sans-serif;
+  --font-body: 'Hind Siliguri', system-ui, sans-serif;
+  --font-mono: 'Mina', ui-monospace, monospace;
+  --t-display-xl-size: 40px;  --t-display-xl-weight: 700; --t-display-xl-ls: 0;
+  --t-display-lg-size: 32px;  --t-display-lg-weight: 700; --t-display-lg-ls: 0;
+  --t-display-md-size: 24px;  --t-display-md-weight: 700;
+  --t-title-lg-size: 20px;    --t-title-lg-weight: 700;
+  --t-title-md-size: 17.5px;  --t-title-md-weight: 700;
+  --t-body-lg-size: 16.5px;
+  --t-body-md-size: 15.5px;
+  --t-body-sm-size: 14px;
+  --t-caption-size: 13px;     --t-caption-weight: 600;    --t-caption-ls: 0.01em;
+  --t-button-size: 16px;      --t-button-weight: 700;
+  --t-weight-bold: 700; --t-weight-semibold: 600; --t-weight-medium: 500; --t-weight-regular: 400;
+
+  /* shape — rounded cards, full pills for controls */
+  --radius-xs: 4px; --radius-sm: 7px; --radius-md: 11px;
+  --radius-lg: 16px; --radius-xl: 22px; --radius-pill: 999px;
+
+  /* elevation — depth on black */
+  --shadow-0: none;
+  --shadow-1: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.55);
+  --shadow-3: 0 16px 44px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 8px 22px rgba(0, 0, 0, 0.5);
+}

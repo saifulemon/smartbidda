@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পরীক্ষা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .exams-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .exam-card { display: flex; flex-direction: column; gap: var(--space-md); }
+  .exam-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-md); }
+  .exam-meta { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .exam-window { display: flex; align-items: center; gap: var(--space-sm); }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-md"></i>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="exams-wrap">
+
+        <div>
+          <p class="t-title-lg" data-testid="exams-heading">পরীক্ষা</p>
+          <p class="t-body-sm t-muted" data-testid="exams-sub">চতুর্থ শ্রেণি · ২০২৬ সাল</p>
+        </div>
+
+        <section aria-label="চলমান ও আসন্ন পরীক্ষা">
+
+          <article class="card card-interactive exam-card" data-component="card" data-testid="exams-item">
+            <div class="exam-card-head">
+              <div>
+                <p class="t-title-md" data-testid="exams-item-title">১ম সাময়িক পরীক্ষা</p>
+                <p class="t-caption" data-testid="exams-item-sub">গণিত · বাংলা · ইংরেজি</p>
+              </div>
+              <span class="badge badge-success" data-testid="exams-item-status">উত্তীর্ণ</span>
+            </div>
+            <div class="exam-meta">
+              <span class="chip" data-testid="exams-item-date"><i data-lucide="calendar" class="icon-sm"></i> ১০–১৬ অক্টোবর ২০২৬</span>
+              <span class="chip" data-testid="exams-item-pass">উত্তীর্ণ ৬০%</span>
+              <span class="chip" data-testid="exams-item-time">১ ঘণ্টা</span>
+            </div>
+            <div class="exam-window">
+              <i data-lucide="check-circle-2" class="icon-sm" aria-hidden="true"></i>
+              <span class="t-body-sm" data-testid="exams-item-window">ফলাফল প্রকাশিত হয়েছে</span>
+              <span class="t-caption t-muted" data-testid="exams-item-score">· সর্বশেষ ফলাফল ৬৯%</span>
+            </div>
+            <div class="progress is-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="পরীক্ষার অগ্রগতি">
+              <div class="progress-fill" style="width:100%" data-testid="exams-item-progress"></div>
+            </div>
+            <p class="t-caption" data-testid="exams-item-progress-label">৩ / ৩ বিষয় দেওয়া হয়েছে</p>
+            <a class="btn btn-primary" href="13-exam-result.html" data-testid="exams-item-cta">ফলাফল দেখুন</a>
+          </article>
+
+          <article class="card card-interactive exam-card" style="margin-top:var(--space-lg)" data-component="card" data-testid="exams-item">
+            <div class="exam-card-head">
+              <div>
+                <p class="t-title-md" data-testid="exams-item-title">অর্ধবার্ষিক পরীক্ষা</p>
+                <p class="t-caption" data-testid="exams-item-sub">সকল বিষয়</p>
+              </div>
+              <span class="badge" data-testid="exams-item-status">আসন্ন</span>
+            </div>
+            <div class="exam-meta">
+              <span class="chip" data-testid="exams-item-date"><i data-lucide="calendar" class="icon-sm"></i> ১২–২০ ডিসেম্বর ২০২৬</span>
+              <span class="chip" data-testid="exams-item-pass">উত্তীর্ণ ৬০%</span>
+              <span class="chip" data-testid="exams-item-time">২ ঘণ্টা</span>
+            </div>
+            <div class="exam-window">
+              <i data-lucide="calendar-clock" class="icon-sm" aria-hidden="true"></i>
+              <span class="t-body-sm" data-testid="exams-item-window">৫৬ দিন পরে শুরু</span>
+            </div>
+            <p class="t-body-sm t-muted" data-testid="exams-item-locked">শুরুর আগে প্রস্তুতির পাঠ দেখা যাবে</p>
+            <button class="btn btn-primary" aria-disabled="true" style="width:100%" data-testid="exams-item-start">শুরু করো</button>
+          </article>
+
+        </section>
+
+        <article class="card card-interactive exam-card" style="margin-top:var(--space-lg)" data-component="card" data-testid="exams-item">
+          <div class="exam-card-head">
+            <div>
+              <p class="t-title-md" data-testid="exams-item-title">বার্ষিক পরীক্ষা</p>
+              <p class="t-caption" data-testid="exams-item-sub">সকল বিষয়</p>
+            </div>
+            <span class="badge" data-testid="exams-item-status">আসন্ন</span>
+          </div>
+          <div class="exam-meta">
+            <span class="chip" data-testid="exams-item-date"><i data-lucide="calendar" class="icon-sm"></i> ০৫–১৫ মে ২০২৭</span>
+            <span class="chip" data-testid="exams-item-pass">উত্তীর্ণ ৬০%</span>
+            <span class="chip" data-testid="exams-item-time">২ ঘণ্টা</span>
+          </div>
+          <div class="exam-window">
+            <i data-lucide="calendar-clock" class="icon-sm" aria-hidden="true"></i>
+            <span class="t-body-sm" data-testid="exams-item-window">২০০ দিন পরে শুরু</span>
+          </div>
+          <!-- PRD L1813: Start button is greyed when the exam is upcoming -->
+          <button class="btn btn-primary" aria-disabled="true" style="width:100%" data-testid="exams-item-start">শুরু করো</button>
+        </article>
+
+      </div>
+  </main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md"></i>
+      হোম
+    </a>
+    <a class="tabbar-item" href="05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="icon-md"></i>
+      পড়াশোনা
+    </a>
+    <a class="tabbar-item" href="11-exam-list.html" data-testid="nav-exams" aria-current="page">
+      <i data-lucide="clipboard-check" class="icon-md"></i>
+      পরীক্ষা
+    </a>
+    <a class="tabbar-item" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="icon-md"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="tabbar-item" href="15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

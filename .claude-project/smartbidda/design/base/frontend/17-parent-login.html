@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>অভিভাবক প্রবেশ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .plogin-wrap {
+    min-height: 100dvh;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    gap: var(--space-xl);
+    padding: var(--space-xl) var(--space-lg);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xl));
+  }
+  .plogin-head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+  .plogin-mark {
+    display: grid; place-items: center;
+    width: 72px; height: 72px;
+    background: var(--c-primary-soft);
+    border-radius: var(--radius-pill);
+  }
+  .plogin-dots { display: flex; justify-content: center; gap: var(--space-md); }
+  .plogin-dot {
+    width: 16px; height: 16px;
+    background: var(--c-surface-soft);
+    border: var(--border-w) solid var(--c-hairline-strong);
+    border-radius: var(--radius-pill);
+  }
+  .plogin-dot.is-filled { background: var(--c-primary); border-color: var(--c-primary); }
+  .plogin-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+  .plogin-key {
+    display: grid; place-items: center;
+    min-height: 56px;
+    background: var(--c-surface);
+    border: var(--border-w) solid var(--c-hairline);
+    border-radius: var(--radius-lg);
+    font-family: var(--t-button-family);
+    font-size: var(--t-title-lg-size);
+    font-weight: var(--t-button-weight);
+    color: var(--c-ink);
+    cursor: pointer;
+  }
+  .plogin-key:hover { background: var(--c-surface-soft); }
+  .plogin-key.is-ghost { background: transparent; border-color: transparent; }
+  .plogin-foot { display: flex; flex-direction: column; gap: var(--space-md); }
+  .plogin-expander {
+    display: flex; align-items: center; gap: var(--space-sm);
+    width: 100%; padding: 0;
+    background: transparent; border: 0;
+    color: var(--c-ink); cursor: pointer;
+    font-family: var(--t-body-md-family);
+  }
+  .plogin-fields { display: flex; flex-direction: column; gap: var(--space-md); }
+  
+</style>
+</head>
+<body data-app="frontend" data-layout="PinLayout">
+
+
+  <main class="app-body" data-shell="content">
+
+      <div class="plogin-wrap">
+
+        <div class="plogin-head">
+          <span class="plogin-mark" data-component="media"><i data-lucide="shield" class="icon-lg" aria-hidden="true"></i></span>
+          <p class="t-title-lg" data-testid="plogin-heading">অভিভাবক প্রবেশ</p>
+          <p class="t-body-sm t-muted" data-testid="plogin-sub">৬ সংখ্যার পিন দিয়ে ঢুকুন</p>
+        </div>
+
+        <div class="plogin-dots" role="group" aria-label="পিনের অঙ্ক" aria-describedby="plogin-hint">
+          <span class="plogin-dot is-filled" data-testid="plogin-dot"></span>
+          <span class="plogin-dot is-filled" data-testid="plogin-dot"></span>
+          <span class="plogin-dot is-filled" data-testid="plogin-dot"></span>
+          <span class="plogin-dot" data-testid="plogin-dot"></span>
+          <span class="plogin-dot" data-testid="plogin-dot"></span>
+          <span class="plogin-dot" data-testid="plogin-dot"></span>
+        </div>
+        <p class="t-caption" id="plogin-hint" style="text-align:center" data-testid="plogin-hint">
+          ভুল হলে আবার দিতে পারবেন — ৩ বার ভুল হলে ১০ মিনিট বন্ধ থাকবে
+        </p>
+
+        <div class="plogin-keys" role="group" aria-label="সংখ্যা নির্বাচন">
+          <button class="plogin-key" data-testid="plogin-key">১</button>
+          <button class="plogin-key" data-testid="plogin-key">২</button>
+          <button class="plogin-key" data-testid="plogin-key">৩</button>
+          <button class="plogin-key" data-testid="plogin-key">৪</button>
+          <button class="plogin-key" data-testid="plogin-key">৫</button>
+          <button class="plogin-key" data-testid="plogin-key">৬</button>
+          <button class="plogin-key" data-testid="plogin-key">৭</button>
+          <button class="plogin-key" data-testid="plogin-key">৮</button>
+          <button class="plogin-key" data-testid="plogin-key">৯</button>
+          <button class="plogin-key is-ghost" data-testid="plogin-key-blank" aria-hidden="true" disabled></button>
+          <button class="plogin-key" data-testid="plogin-key">০</button>
+          <button class="plogin-key" data-testid="plogin-key-delete" aria-label="মুছুন">
+            <i data-lucide="delete" class="icon-md"></i>
+          </button>
+        </div>
+
+        <div class="plogin-foot">
+          <button class="btn btn-primary" style="width:100%" data-testid="plogin-submit">প্যারেন্ট মোডে ঢোকো</button>
+          <!-- PRD L2269: Email/password fallback | collapsed "পিন মনে নেই?" expander |
+               expanded shows the form with inline errors (L2286 parentPin is the pin row) -->
+          <section class="card" data-component="form" aria-labelledby="plogin-fallback-label">
+            <button class="plogin-expander" type="button" aria-expanded="true" aria-controls="plogin-fallback"
+                    data-testid="plogin-fallback-toggle">
+              <i data-lucide="key-round" class="icon-sm" aria-hidden="true"></i>
+              <span class="t-body-sm t-semibold" id="plogin-fallback-label">পিন মনে নেই?</span>
+              <i data-lucide="chevron-up" class="icon-sm" style="margin-left:auto" aria-hidden="true"></i>
+            </button>
+            <div id="plogin-fallback" class="plogin-fields" style="margin-top:var(--space-md)">
+              <label class="plogin-field">
+                <span class="t-caption" data-testid="plogin-email-label">ইমেইল</span>
+                <input class="input" type="email" autocomplete="email" data-testid="plogin-email-input">
+              </label>
+              <label class="plogin-field">
+                <span class="t-caption" data-testid="plogin-pass-label">পাসওয়ার্ড</span>
+                <input class="input" type="password" autocomplete="current-password" data-testid="plogin-pass-input">
+              </label>
+            </div>
+          </section>
+        </div>
+
+      </div>
+  </main>
+
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

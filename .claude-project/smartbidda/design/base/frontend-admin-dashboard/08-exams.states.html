@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পরীক্ষা · অবস্থা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* state sheet — every class below is shared (styles/components.css) */
+</style>
+</head>
+<body data-component="dev-states" data-app="frontend-admin-dashboard" data-layout="AdminLayout">
+<div class="app-shell">
+    <aside class="sidebar" data-shell="sidebar" data-component="nav" aria-label="প্রধান নেভিগেশন">
+      <span class="nav-brand" style="padding:var(--space-sm) var(--space-md)" data-testid="admin-brand">স্মার্টবিদ্যা</span>
+      <a class="nav-link" href="01-dashboard.html" data-testid="side-dashboard"><i data-lucide="layout-dashboard" class="icon-md"></i>ড্যাশবোর্ড</a>
+      <a class="nav-link" href="02-students.html" data-testid="side-students"><i data-lucide="users" class="icon-md"></i>শিক্ষার্থী</a>
+      <a class="nav-link" href="03-parents.html" data-testid="side-parents"><i data-lucide="users-round" class="icon-md"></i>অভিভাবক</a>
+      <a class="nav-link" href="04-teachers.html" data-testid="side-teachers"><i data-lucide="graduation-cap" class="icon-md"></i>শিক্ষক</a>
+      <a class="nav-link" href="05-curriculum.html" data-testid="side-curriculum"><i data-lucide="library" class="icon-md"></i>পাঠ্যক্রম</a>
+      <a class="nav-link" href="06-content.html" data-testid="side-content"><i data-lucide="play-square" class="icon-md"></i>কনটেন্ট</a>
+      <a class="nav-link" href="07-questions.html" data-testid="side-questions"><i data-lucide="help-circle" class="icon-md"></i>প্রশ্নব্যাংক</a>
+      <a class="nav-link" href="08-exams.html" data-testid="side-exams" aria-current="page"><i data-lucide="file-text" class="icon-md"></i>পরীক্ষা</a>
+      <a class="nav-link" href="09-remedial.html" data-testid="side-remedial"><i data-lucide="refresh-cw" class="icon-md"></i>রিমিডিয়াল</a>
+      <a class="nav-link" href="10-subscriptions.html" data-testid="side-subscriptions"><i data-lucide="credit-card" class="icon-md"></i>সাবস্ক্রিপশন</a>
+      <a class="nav-link" href="11-notifications.html" data-testid="side-notifications"><i data-lucide="mail" class="icon-md"></i>নোটিফিকেশন</a>
+      <a class="nav-link" href="12-audit.html" data-testid="side-audit"><i data-lucide="scroll-text" class="icon-md"></i>অডিট লগ</a>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar" data-shell="topbar">
+        <button class="nav-toggle" data-testid="admin-nav-toggle" aria-label="মেনু" aria-expanded="false"
+          onclick="const s=this.closest('.app-shell').querySelector('.sidebar');const o=s.classList.toggle('is-open');this.setAttribute('aria-expanded',o)">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="topbar-title">
+          <h1 data-slot="title" data-testid="admin-title">পরীক্ষা</h1>
+        </div>
+        <div class="row" style="margin-left:auto">
+          <button class="btn btn-ghost btn-sm" data-testid="admin-user-menu" aria-label="ব্যবহারকারী মেনু">
+            <span class="avatar" aria-hidden="true">প</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-body" data-shell="content">
+        <div class="stwrap" data-testid="st-wrap">
+        <div class="stnote" data-testid="st-intro">
+          <i data-lucide="layers" class="icon-md" aria-hidden="true"></i>
+          <p class="t-caption">প্রতিটি কার্ড একটি আলাদা অবস্থা · একসাথে কখনও দেখানো হবে না</p>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="st-1-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">লোডিং</span>
+            <code class="t-code" data-testid="st-ref">/admin/exams</code>
+          </div>
+          <p class="t-body t-semibold" id="st-1-label" data-testid="st-label">লোড হচ্ছে</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <div class="skeleton" style="height:16px;width:72%"></div>
+            <div class="skeleton" style="height:16px;width:100%"></div>
+            <div class="skeleton" style="height:16px;width:54%"></div>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-2-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/admin/exams</code>
+          </div>
+          <p class="t-body t-semibold" id="st-2-label" data-testid="st-label">একসাথে সম্পাদনা</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">অন্য শিক্ষক এটি পরিবর্তন করেছেন।</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-3-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/admin/exams</code>
+          </div>
+          <p class="t-body t-semibold" id="st-3-label" data-testid="st-label">সংযুক্ত রেকর্ড</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">শুধু প্রচেষ্টাহীন পরীক্ষা মুছা যায়</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-4-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/admin/exams</code>
+          </div>
+          <p class="t-body t-semibold" id="st-4-label" data-testid="st-label">পাস মান বদল</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">চলমান পরীক্ষার কাট-অফ বদলানো যায় না</p>
+          </div>
+        </section>
+
+        <section class="card" data-component="card" aria-labelledby="st-5-label">
+          <div class="stcard-head">
+            <span class="stcard-kind" data-testid="st-kind">এজকেস</span>
+            <code class="t-code" data-testid="st-ref">/admin/exams</code>
+          </div>
+          <p class="t-body t-semibold" id="st-5-label" data-testid="st-label">প্রশ্ন কম</p>
+          <div class="stcard-body" data-testid="st-frame">
+            <p class="t-body" data-testid="st-edge">শুধু ১২টি প্রশ্ন পাওয়া গেছে</p>
+          </div>
+        </section>
+        </div>
+</main>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

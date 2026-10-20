@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>কুইজ — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .quiz-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .quiz-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .quiz-options { display: flex; flex-direction: column; gap: var(--space-md); padding: 0; }
+  .quiz-option {
+    display: flex; align-items: center; gap: var(--space-md);
+    width: 100%;
+    min-height: 64px;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--c-surface);
+    color: var(--c-body);
+    border: var(--border-w) solid var(--c-hairline);
+    border-radius: var(--radius-lg);
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--t-body-md-family);
+    font-size: var(--t-body-lg-size);
+    font-weight: var(--t-body-md-weight);
+  }
+  .quiz-option:hover { border-color: var(--c-primary); color: var(--c-ink); }
+  .quiz-option[aria-pressed="true"] { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-ink); }
+  .quiz-marker { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .quiz-timer {
+    display: inline-flex; align-items: center; gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--c-primary-soft); color: var(--c-ink);
+    border-radius: var(--radius-pill);
+    font-size: var(--t-caption-size); font-weight: var(--t-body-weight);
+  }
+  .quiz-dots { display: flex; gap: var(--space-sm); list-style: none; margin: 0; padding: 0; }
+  .quiz-dot { width: 10px; height: 10px; border-radius: var(--radius-pill); background: var(--c-primary-soft); }
+  .quiz-dot.is-done { background: var(--c-primary); }
+  .quiz-dot.is-current { box-shadow: 0 0 0 3px var(--c-primary-soft); }
+    .quiz-hint { display: flex; align-items: center; gap: var(--space-sm); }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <a class="back" href="07-lesson.html" aria-label="ফিরে যান" data-testid="quiz-back-appbar">
+      <i data-lucide="arrow-left" class="icon-md"></i>
+    </a>
+    <span class="appbar-title" data-slot="title" data-testid="quiz-title">কুইজ</span>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="quiz-wrap">
+
+        <div class="quiz-head">
+          <span class="t-caption" data-testid="quiz-counter">প্রশ্ন ৩ / ১০</span>
+          <span class="quiz-timer" role="timer" data-testid="quiz-timer">
+            <i data-lucide="timer" class="icon-sm" aria-hidden="true"></i>
+            ৪৮ সেকেন্ড বাকি
+          </span>
+        </div>
+
+        <ol class="quiz-dots" role="group" aria-label="কুইজের অগ্রগতি" data-testid="quiz-dots">
+          <li class="quiz-dot is-done" data-testid="quiz-dot" aria-label="প্রশ্ন 1"></li>
+          <li class="quiz-dot is-done" data-testid="quiz-dot" aria-label="প্রশ্ন 2"></li>
+          <li class="quiz-dot is-done is-current" data-testid="quiz-dot" aria-current="step" aria-label="প্রশ্ন 3"></li>
+          <li class="quiz-dot " data-testid="quiz-dot" aria-label="প্রশ্ন 4"></li>
+          <li class="quiz-dot " data-testid="quiz-dot" aria-label="প্রশ্ন 5"></li>
+          <li class="quiz-dot " data-testid="quiz-dot" aria-label="প্রশ্ন 6"></li>
+          <li class="quiz-dot " data-testid="quiz-dot" aria-label="প্রশ্ন 7"></li>
+          <li class="quiz-dot " data-testid="quiz-dot" aria-label="প্রশ্ন 8"></li>
+          <li class="quiz-dot " data-testid="quiz-dot" aria-label="প্রশ্ন 9"></li>
+          <li class="quiz-dot " data-testid="quiz-dot" aria-label="প্রশ্ন 10"></li>
+        </ol>
+
+        <section aria-labelledby="quiz-question">
+          <p class="t-caption" data-testid="quiz-subject">গণিত · অধ্যায় ৪</p>
+          <p class="t-title-lg" id="quiz-question" style="margin-top:var(--space-xs)" data-testid="quiz-question">
+            নিচের কোন অংশটি অর্ধেকের চেয়ে বড়?
+          </p>
+          <div class="quiz-hint" style="margin-top:var(--space-md)">
+            <i data-lucide="image" class="icon-md" aria-hidden="true"></i>
+            <span class="t-caption" data-testid="quiz-stimulus">ছবি: ভগ্নাংশের চিত্র</span>
+          </div>
+        </section>
+
+        <div class="quiz-options" role="group" aria-label="উত্তরের বিকল্প">
+          <button class="quiz-option" aria-pressed="false" data-testid="quiz-option">
+            <span class="quiz-marker"><i data-lucide="circle" class="icon-sm" aria-hidden="true"></i></span>
+            ১ / ৪
+          </button>
+          <button class="quiz-option" aria-pressed="true" data-testid="quiz-option" data-id="q3-b">
+            <span class="quiz-marker"><i data-lucide="check-circle-2" class="icon-sm" aria-hidden="true"></i></span>
+            ৩ / ৪
+          </button>
+          <button class="quiz-option" aria-pressed="false" data-testid="quiz-option">
+            <span class="quiz-marker"><i data-lucide="circle" class="icon-sm" aria-hidden="true"></i></span>
+            ১ / ৫
+          </button>
+          <button class="quiz-option" aria-pressed="false" data-testid="quiz-option">
+            <span class="quiz-marker"><i data-lucide="circle" class="icon-sm" aria-hidden="true"></i></span>
+            ২ / ৩
+          </button>
+        </div>
+
+        <div class="card" data-component="card" data-testid="quiz-voice-panel">
+          <div class="row">
+            <i data-lucide="volume-2" class="icon-md" aria-hidden="true"></i>
+            <span class="t-body-sm" data-testid="quiz-voice-label">প্রশ্নটি শুনে নিন</span>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto" data-testid="quiz-voice-play">
+              <i data-lucide="play" class="icon-sm"></i>
+              শুনুন
+            </button>
+          </div>
+        </div>
+
+        <p class="t-caption" data-testid="quiz-auto-note">
+          উত্তর দিলেই ০.৪ সেকেন্ড পরে পরের প্রশ্ন আসবে। শেষ প্রশ্নের উত্তর দেওয়া মাত্রই
+          নিজে থেকেই জমা হয়ে যাবে — আলাদা করে জমা দিতে হবে না।
+        </p>
+
+      </div>
+  </main>
+
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>লিডারবোর্ড — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-linear-console.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local selectors for 14-leaderboard only */
+  .kl-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-md); }
+  .kl-chips { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .kl-rank { flex: 0 0 26px; text-align: center; color: var(--c-muted); }
+  .kl-track { flex: 0 1 96px; width: 96px; }
+  .kl-pts { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-xxs); flex: 0 0 auto; }
+  .kl-w100 { width: 100%; }
+  .kl-w94 { width: 94%; }
+  .kl-w88 { width: 88%; }
+  .kl-w80 { width: 80%; }
+  .kl-w77 { width: 77%; }
+  .kl-w71 { width: 71%; }
+  .kl-more { display: flex; justify-content: center; padding: var(--space-md) var(--space-lg); }
+  .kl-myrank {
+    position: sticky; bottom: 52px; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--c-surface); border: 1px solid var(--c-hairline-strong);
+    border-radius: var(--radius-md); box-shadow: inset 2px 0 0 var(--c-primary);
+  }
+</style>
+</head>
+<body class="klc-page" data-app="frontend" data-layout="StudentLayout">
+
+  <header class="klc-appbar" data-shell="topbar">
+    <span class="klc-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="klc-appbar-spacer"></span>
+    <button class="klc-iconbtn" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+      <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+    </button>
+    <button class="klc-iconbtn" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+      <span class="avatar klc-avatar-sm" aria-hidden="true">র</span>
+    </button>
+  </header>
+
+  <main class="klc-main" data-shell="content">
+
+    <div class="kl-head">
+      <div class="klc-col">
+        <h1 class="t-title-lg" data-testid="lb-heading">লিডারবোর্ড</h1>
+        <p class="t-caption" data-testid="lb-sub">পয়েন্ট অনুযায়ী · সব সময়</p>
+      </div>
+      <span class="klc-status"><span class="klc-dot is-ok" aria-hidden="true"></span>নিরাপদ তালিকা</span>
+    </div>
+
+    <div class="kl-chips" role="group" aria-label="শ্রেণি" data-testid="lb-class-chips">
+      <button class="klc-chip" type="button" aria-pressed="false" data-testid="lb-class-1">১</button>
+      <button class="klc-chip" type="button" aria-pressed="false" data-testid="lb-class-2">২</button>
+      <button class="klc-chip" type="button" aria-pressed="false" data-testid="lb-class-3">৩</button>
+      <button class="klc-chip is-on" type="button" aria-pressed="true" data-testid="lb-class-4">৪</button>
+      <button class="klc-chip" type="button" aria-pressed="false" data-testid="lb-class-5">৫</button>
+    </div>
+
+    <section class="klc-panel" aria-labelledby="lb-list-label" data-component="list">
+      <div class="klc-panel-hd">
+        <span class="klc-col">
+          <h2 class="klc-hd" id="lb-list-label" data-testid="lb-list-label">১ থেকে ১০০</h2>
+          <span class="t-caption">চতুর্থ শ্রেণি · প্রদর্শন নাম</span>
+        </span>
+        <span class="klc-eyebrow">পয়েন্ট</span>
+      </div>
+
+      <div class="klc-list">
+
+        <div class="klc-row is-tint" data-testid="lb-row">
+          <span class="kl-rank t-body-sm t-bold klc-num" data-testid="lb-rank">১</span>
+          <span class="avatar" aria-hidden="true">ম</span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold truncate" data-testid="lb-name">মাবুল</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="klc-track kl-track" aria-hidden="true"><span class="kl-w100"></span></span>
+          <span class="kl-pts">
+            <span class="t-body-sm t-bold klc-num" data-testid="lb-points" aria-label="১,২৪০ এর চেয়ে বেশি পয়েন্ট">১,২৪০+</span>
+            <span class="t-caption">তোমার উপরে</span>
+          </span>
+        </div>
+
+        <div class="klc-row is-tint" data-testid="lb-row">
+          <span class="kl-rank t-body-sm t-bold klc-num" data-testid="lb-rank">২</span>
+          <span class="avatar" aria-hidden="true">স</span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold truncate" data-testid="lb-name">সাদিয়া</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="klc-track kl-track" aria-hidden="true"><span class="kl-w94"></span></span>
+          <span class="kl-pts">
+            <span class="t-body-sm t-bold klc-num" data-testid="lb-points" aria-label="১,২৪০ এর চেয়ে বেশি পয়েন্ট">১,২৪০+</span>
+            <span class="t-caption">তোমার উপরে</span>
+          </span>
+        </div>
+
+        <div class="klc-row is-tint" data-testid="lb-row">
+          <span class="kl-rank t-body-sm t-bold klc-num" data-testid="lb-rank">৩</span>
+          <span class="avatar" aria-hidden="true">ত</span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold truncate" data-testid="lb-name">তানজিলা</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="klc-track kl-track" aria-hidden="true"><span class="kl-w88"></span></span>
+          <span class="kl-pts">
+            <span class="t-body-sm t-bold klc-num" data-testid="lb-points" aria-label="১,২৪০ এর চেয়ে বেশি পয়েন্ট">১,২৪০+</span>
+            <span class="t-caption">তোমার উপরে</span>
+          </span>
+        </div>
+
+        <div class="klc-row is-on" data-testid="lb-row">
+          <span class="kl-rank t-body-sm t-bold klc-num" data-testid="lb-rank">৪</span>
+          <span class="avatar" aria-hidden="true">র</span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold truncate" data-testid="lb-name">রাফিদ · তুমি</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="klc-track kl-track" aria-hidden="true"><span class="kl-w80"></span></span>
+          <span class="kl-pts">
+            <span class="t-body-sm t-bold klc-num" data-testid="lb-points">১,২৪০</span>
+            <span class="t-caption">পয়েন্ট</span>
+          </span>
+        </div>
+
+        <div class="klc-row" data-testid="lb-row">
+          <span class="kl-rank t-body-sm t-bold klc-num" data-testid="lb-rank">৫</span>
+          <span class="avatar" aria-hidden="true">আ</span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold truncate" data-testid="lb-name">আরিশা</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="klc-track kl-track" aria-hidden="true"><span class="kl-w77"></span></span>
+          <span class="kl-pts">
+            <span class="t-body-sm t-bold klc-num" data-testid="lb-points">১,১৯০</span>
+            <span class="t-caption">পয়েন্ট</span>
+          </span>
+        </div>
+
+        <div class="klc-row" data-testid="lb-row">
+          <span class="kl-rank t-body-sm t-bold klc-num" data-testid="lb-rank">৬</span>
+          <span class="avatar" aria-hidden="true">ন</span>
+          <span class="klc-col">
+            <span class="t-body-sm t-semibold truncate" data-testid="lb-name">নাফিসা</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+          </span>
+          <span class="klc-track kl-track" aria-hidden="true"><span class="kl-w71"></span></span>
+          <span class="kl-pts">
+            <span class="t-body-sm t-bold klc-num" data-testid="lb-points">১,১০৫</span>
+            <span class="t-caption">পয়েন্ট</span>
+          </span>
+        </div>
+
+        <div class="kl-more">
+          <button class="klc-btn is-quiet is-sm" type="button" data-testid="lb-more">আরও দেখুন</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="kl-myrank" data-testid="lb-myrank">
+      <span class="t-caption" data-testid="lb-myrank-label">আমার অবস্থান</span>
+      <span class="t-body-sm t-bold klc-num" data-testid="lb-myrank-text">#৪ · ১,২৪০</span>
+    </div>
+
+    <div class="klc-note">
+      <i data-lucide="shield-check" class="icon-sm" aria-hidden="true"></i>
+      <span data-testid="lb-privacy-body">
+        শুধু প্রদর্শন নাম ও শ্রেণি দেখা যায় — কোনো ছবি বা ব্যক্তিগত তথ্য নয়। অভিভাবক চাইলে নাম লুকানো যাবে।
+      </span>
+    </div>
+
+  </main>
+
+  <nav class="klc-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="klc-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">হোম</span>
+    </a>
+    <a class="klc-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">পড়াশোনা</span>
+    </a>
+    <a class="klc-tab" href="08-quiz.html" data-testid="nav-quiz">
+      <i data-lucide="clipboard-check" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">কুইজ</span>
+    </a>
+    <a class="klc-tab is-on" href="14-leaderboard.html" data-testid="nav-leaderboard" aria-current="page">
+      <i data-lucide="trophy" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">লিডারবোর্ড</span>
+    </a>
+    <a class="klc-tab" href="18-parent-dashboard.html" data-testid="nav-parent">
+      <i data-lucide="users" class="klc-tab-ico" aria-hidden="true"></i>
+      <span class="klc-tab-label">অভিভাবক</span>
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

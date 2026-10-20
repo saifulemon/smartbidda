@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>অগ্রগতি — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .pp-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .pp-switch { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  .pp-overall { display: flex; flex-direction: column; gap: var(--space-md); }
+  .pp-overall-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); }
+  .pp-subject { display: flex; flex-direction: column; gap: var(--space-xs); }
+  .pp-subject-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .pp-subject-meta { display: flex; align-items: center; gap: var(--space-sm); }
+  .pp-weak { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) 0; }
+  .pp-weak-text { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; flex: 1; }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="ParentLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <span class="nav-brand" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <!-- PRD DV-7 L2940: unread notification count on the /parent header -->
+      <button class="btn btn-ghost btn-sm" style="position:relative" data-testid="appbar-notifications" aria-label="নোটিফিকেশন — 3 টি না পড়া">
+        <i data-lucide="bell" class="icon-md"></i>
+        <span data-testid="appbar-unread" style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 4px;background:var(--c-error);color:var(--c-on-primary);border-radius:var(--radius-pill);font-size:var(--t-caption-size);line-height:18px;text-align:center;">3</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">ম</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="pp-wrap">
+
+        <div class="pp-switch" role="group" aria-label="সন্তান নির্বাচন">
+          <button class="chip" aria-pressed="true" data-testid="pp-switch-rafid">রাফিদ</button>
+          <button class="chip" aria-pressed="false" data-testid="pp-switch-mahin">মাহিন</button>
+        </div>
+
+        <section class="card" data-component="card" aria-labelledby="pp-overall-label">
+          <div class="pp-overall">
+            <div class="pp-overall-head">
+              <p class="t-body t-semibold" id="pp-overall-label" data-testid="pp-overall-label">সামগ্রিক অগ্রগতি</p>
+              <p class="t-display-md" data-testid="pp-overall-value">৩৬%</p>
+            </div>
+            <div class="progress" role="progressbar" aria-valuenow="36" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="সামগ্রিক অগ্রগতি">
+              <div class="progress-fill" style="width:35%" data-testid="pp-overall-bar"></div>
+            </div>
+            <p class="t-caption" data-testid="pp-overall-note">চতুর্থ শ্রেণির ১২২ টি অধ্যায়ের মধ্যে ৪৩ টি শেষ</p>
+          </div>
+        </section>
+
+        <div class="pd-switch" role="group" aria-label="বিষয় নির্বাচন">
+          <button class="chip" aria-pressed="true" data-testid="pp-subject-tab">গণিত</button>
+          <button class="chip" aria-pressed="false" data-testid="pp-subject-tab">বাংলা</button>
+          <button class="chip" aria-pressed="false" data-testid="pp-subject-tab">ইংরেজি</button>
+          <button class="chip" aria-pressed="false" data-testid="pp-subject-tab">বিজ্ঞান</button>
+        </div>
+
+        <section class="card" data-component="list" aria-labelledby="pp-chapters-label">
+          <p class="t-body t-semibold" id="pp-chapters-label" data-testid="pp-chapters-label">অধ্যায়ভিত্তিক দক্ষতা</p>
+          <p class="t-caption t-muted" data-testid="pp-chapters-note">গণিত · ১৮ টি অধ্যায়ের মধ্যে ৩ টি শেষ</p>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-chapter-name">সংখ্যা পদ্ধতি</span>
+              <span class="t-body-sm t-bold" data-testid="pp-chapter-mastery">১০০%</span>
+            </div>
+            <div class="pp-subject-meta" style="margin-top:var(--space-xxs)">
+              <span class="badge badge badge-success" data-testid="pp-chapter-state">শেষ</span>
+              <span class="t-caption" data-testid="pp-chapter-expand">টপিক দেখতে সরান</span>
+            </div>
+          </div>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-chapter-name">যোগ-বিয়োগ গুণ-ভাগ</span>
+              <span class="t-body-sm t-bold" data-testid="pp-chapter-mastery">১০০%</span>
+            </div>
+            <div class="pp-subject-meta" style="margin-top:var(--space-xxs)">
+              <span class="badge badge badge-success" data-testid="pp-chapter-state">শেষ</span>
+              <span class="t-caption" data-testid="pp-chapter-expand">টপিক দেখতে সরান</span>
+            </div>
+          </div>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-chapter-name">সংখ্যারেখা</span>
+              <span class="t-body-sm t-bold" data-testid="pp-chapter-mastery">১০০%</span>
+            </div>
+            <div class="pp-subject-meta" style="margin-top:var(--space-xxs)">
+              <span class="badge badge badge-success" data-testid="pp-chapter-state">শেষ</span>
+              <span class="t-caption" data-testid="pp-chapter-expand">টপিক দেখতে সরান</span>
+            </div>
+          </div>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-chapter-name">ভগ্নাংশ চিহ্নিতকরণ</span>
+              <span class="t-body-sm t-bold" data-testid="pp-chapter-mastery">৬৫%</span>
+            </div>
+            <div class="pp-subject-meta" style="margin-top:var(--space-xxs)">
+              <span class="badge badge badge-warning" data-testid="pp-chapter-state">রিটেক প্রয়োজন</span>
+              <span class="t-caption" data-testid="pp-chapter-expand">টপিক দেখতে সরান</span>
+            </div>
+          </div>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-chapter-name">ভগ্নাংশের যোগ</span>
+              <span class="t-body-sm t-bold" data-testid="pp-chapter-mastery">০%</span>
+            </div>
+            <div class="pp-subject-meta" style="margin-top:var(--space-xxs)">
+              <span class="badge badge" data-testid="pp-chapter-state">শুরু হয়নি</span>
+              <span class="t-caption" data-testid="pp-chapter-expand">টপিক দেখতে সরান</span>
+            </div>
+          </div>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-chapter-name">ভগ্নাংশের বিয়োগ</span>
+              <span class="t-body-sm t-bold" data-testid="pp-chapter-mastery">০%</span>
+            </div>
+            <div class="pp-subject-meta" style="margin-top:var(--space-xxs)">
+              <span class="badge badge" data-testid="pp-chapter-state">শুরু হয়নি</span>
+              <span class="t-caption" data-testid="pp-chapter-expand">টপিক দেখতে সরান</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pp-topics-label">
+          <p class="t-body t-semibold" id="pp-topics-label" data-testid="pp-topics-label">টপিকভিত্তিক নম্বর</p>
+          <p class="t-caption t-muted" data-testid="pp-topics-note">কম নম্বর আগে দেখানো হয়েছে</p>
+          <div style="margin-top:var(--space-md)">
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-topic-name">ভগ্নাংশের তুলনা</span>
+              <span class="t-body-sm t-bold" data-testid="pp-topic-v">৪৮%</span>
+            </div>
+            <div class="progress is-sm" role="progressbar" aria-valuenow="48" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="ভগ্নাংশের তুলনা-এর নম্বর">
+              <div class="progress-fill is-warning" style="width:48%" data-testid="pp-topic-bar"></div>
+            </div>
+          </div>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-topic-name">ভগ্নাংশ চিহ্নিতকরণ</span>
+              <span class="t-body-sm t-bold" data-testid="pp-topic-v">৭২%</span>
+            </div>
+            <div class="progress is-sm" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="ভগ্নাংশ চিহ্নিতকরণ-এর নম্বর">
+              <div class="progress-fill" style="width:72%" data-testid="pp-topic-bar"></div>
+            </div>
+          </div>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-topic-name">জ্যামিতিক আকৃতি</span>
+              <span class="t-body-sm t-bold" data-testid="pp-topic-v">৭৫%</span>
+            </div>
+            <div class="progress is-sm" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="জ্যামিতিক আকৃতি-এর নম্বর">
+              <div class="progress-fill" style="width:75%" data-testid="pp-topic-bar"></div>
+            </div>
+            <span class="t-caption" data-testid="pp-topic-low">কম প্রশ্নের উপর ভিত্তি করে — আরও প্রশ্ন দিলে ঠিক হবে</span>
+          </div>
+          <div class="pp-subject" style="margin-bottom:var(--space-md)">
+            <div class="pp-subject-head">
+              <span class="t-body-sm t-semibold" data-testid="pp-topic-name">সংখ্যারেখা</span>
+              <span class="t-body-sm t-bold" data-testid="pp-topic-v">৮০%</span>
+            </div>
+            <div class="progress is-sm" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="সংখ্যারেখা-এর নম্বর">
+              <div class="progress-fill" style="width:80%" data-testid="pp-topic-bar"></div>
+            </div>
+          </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pp-weak-label">
+          <p class="t-body t-semibold" id="pp-weak-label" data-testid="pp-weak-label">শনাক্ত দুর্বলতা</p>
+          <div class="pp-weak" data-testid="pp-weak-row">
+            <i data-lucide="target" class="icon-md" aria-hidden="true"></i>
+            <div class="pp-weak-text">
+              <span class="t-body-sm t-semibold" data-testid="pp-weak-name">ভগ্নাংশের তুলনা</span>
+              <span class="t-caption" data-testid="pp-weak-meta">গণিত · ২ বার ভুল</span>
+            </div>
+            <a class="btn btn-secondary btn-sm" href="10-retake-class.html" data-testid="pp-weak-cta">দেখুন</a>
+          </div>
+          <div class="pp-weak" data-testid="pp-weak-row">
+            <i data-lucide="target" class="icon-md" aria-hidden="true"></i>
+            <div class="pp-weak-text">
+              <span class="t-body-sm t-semibold" data-testid="pp-weak-name">বাক্য গঠন</span>
+              <span class="t-caption" data-testid="pp-weak-meta">ইংরেজি · ২ বার ভুল</span>
+            </div>
+            <a class="btn btn-secondary btn-sm" href="10-retake-class.html" data-testid="pp-weak-cta">দেখুন</a>
+          </div>
+        </section>
+        <section class="card" data-component="chart" aria-labelledby="pp-compare-label">
+          <p class="t-body t-semibold" id="pp-compare-label" data-testid="pp-compare-label">পুনরুদ্ধারের তুলনা</p>
+          <p class="t-caption t-muted" data-testid="pp-compare-note">রি-এক্সাম দেওয়া হয়নি, তাই একটিমাত্র বার দেখানো হয়েছে।</p>
+          <div class="pp-subject-head" style="margin-top:var(--space-md)">
+            <span class="t-body-sm" data-testid="pp-compare-name">১ম সাময়িক · ১৬ অক্টোবর ২০২৬</span>
+            <span class="t-body-sm t-bold" data-testid="pp-compare-v">৬৯%</span>
+          </div>
+          <div class="progress" style="margin-top:var(--space-sm)" role="progressbar" aria-valuenow="69"
+               aria-valuemin="0" aria-valuemax="100" aria-label="১ম সাময়িকের নম্বর">
+            <div class="progress-fill" style="width:69%" data-testid="pp-compare-bar"></div>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;margin-top:var(--space-md)" data-testid="pp-print">
+            <i data-lucide="printer"></i>
+            প্রিন্ট
+          </button>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="pp-timeline-label">
+          <p class="t-body t-semibold" id="pp-timeline-label" data-testid="pp-timeline-label">সময়রেখা</p>
+          <div class="pp-weak" style="margin-top:var(--space-md)">
+            <i data-lucide="clipboard-check" class="icon-md" aria-hidden="true"></i>
+            <div class="pp-weak-text">
+              <span class="t-body-sm t-semibold" data-testid="pp-timeline-name">১ম সাময়িক পরীক্ষা</span>
+              <span class="t-caption" data-testid="pp-timeline-meta">১৬ অক্টোবর ২০২৬ · ৬৯%</span>
+            </div>
+            <span class="badge badge-success" data-testid="pp-timeline-status">উত্তীর্ণ</span>
+          </div>
+          <div class="pp-weak">
+            <i data-lucide="circle-help" class="icon-md" aria-hidden="true"></i>
+            <div class="pp-weak-text">
+              <span class="t-body-sm t-semibold" data-testid="pp-timeline-name">কুইজ: ভগ্নাংশ চিহ্নিতকরণ</span>
+              <span class="t-caption" data-testid="pp-timeline-meta">১৭ অক্টোবর ২০২৬ · ৮০%</span>
+            </div>
+            <span class="badge badge-success" data-testid="pp-timeline-status">উত্তীর্ণ</span>
+          </div>
+          <div class="pp-weak">
+            <i data-lucide="circle-help" class="icon-md" aria-hidden="true"></i>
+            <div class="pp-weak-text">
+              <span class="t-body-sm t-semibold" data-testid="pp-timeline-name">কুইজ: সংখ্যারেখা</span>
+              <span class="t-caption" data-testid="pp-timeline-meta">১৬ অক্টোবর ২০২৬ · ১০০%</span>
+            </div>
+            <span class="badge badge-success" data-testid="pp-timeline-status">উত্তীর্ণ</span>
+          </div>
+        </section>
+<a class="btn btn-primary" href="20-parent-analytics.html" style="width:100%" data-testid="pp-analytics-cta">
+          <i data-lucide="sparkles"></i>
+          বিশ্লেষণ ও সুপারিশ
+        </a>
+
+      </div>
+  </main>
+
+  <nav class="tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="tabbar-item" href="18-parent-dashboard.html" data-testid="nav-dashboard">
+      <i data-lucide="layout-dashboard" class="icon-md"></i>
+      ড্যাশবোর্ড
+    </a>
+    <a class="tabbar-item" href="19-parent-progress.html" data-testid="nav-progress" aria-current="page">
+      <i data-lucide="trending-up" class="icon-md"></i>
+      অগ্রগতি
+    </a>
+    <a class="tabbar-item" href="21-screen-time.html" data-testid="nav-screentime">
+      <i data-lucide="timer" class="icon-md"></i>
+      স্ক্রিন টাইম
+    </a>
+    <a class="tabbar-item" href="22-alerts.html" data-testid="nav-alerts">
+      <i data-lucide="bell" class="icon-md"></i>
+      অ্যালার্ট
+    </a>
+    <a class="tabbar-item" href="24-parent-settings.html" data-testid="nav-settings">
+      <i data-lucide="settings" class="icon-md"></i>
+      সেটিংস
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

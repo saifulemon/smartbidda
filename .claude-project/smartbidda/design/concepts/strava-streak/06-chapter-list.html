@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>গণিত — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-strava-streak.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local selectors only — every colour / size / radius / shadow is a token */
+  .ch-num { min-width: 22px; text-align: center; color: var(--c-muted);
+    font-variant-numeric: tabular-nums; }
+  .ch-head { display: flex; align-items: flex-start; gap: var(--space-lg); min-width: 0; }
+  .ch-cover { flex: 0 0 auto; }
+  .ch-title { display: flex; align-items: center; gap: var(--space-sm); min-width: 0; flex-wrap: wrap; }
+  .ch-meta { display: flex; align-items: center; gap: var(--space-sm); min-width: 0; flex-wrap: wrap; }
+</style>
+</head>
+<body class="kss-app" data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="kss-appbar" data-shell="topbar">
+    <a class="kss-wordmark" href="01-home.html" data-testid="appbar-brand">স্মার্টবিদ্যা</a>
+    <span class="kss-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="kss-iconbtn" type="button" aria-label="নোটিফিকেশন" data-testid="appbar-notifications">
+        <i data-lucide="bell" class="icon-md" aria-hidden="true"></i>
+      </button>
+      <button class="kss-iconbtn" type="button" aria-label="প্রোফাইল" data-testid="appbar-profile">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="kss-page" data-shell="content">
+
+    <!-- 1 · subject header — the number is the headline -->
+    <section class="kss-sec" aria-labelledby="chapter-subject-name">
+      <div class="ch-head">
+        <div class="media media-square ch-cover" style="max-width:76px">
+          <img class="pimg" src="https://picsum.photos/seed/sb-ganit/640/480"
+               alt="গণিত বিষয়ের প্রচ্ছদ" loading="lazy">
+        </div>
+        <div class="kss-lrow-body">
+          <h1 class="t-display-md" id="chapter-subject-name" data-testid="chapter-subject-name">গণিত</h1>
+          <p class="t-caption" data-testid="chapter-subject-class">চতুর্থ শ্রেণি</p>
+        </div>
+        <div class="kss-lrow-end" data-component="kpi">
+          <p class="kss-eyebrow" data-testid="chapter-progress-label">অগ্রগতি</p>
+          <p class="t-display-lg kss-num" data-testid="chapter-progress-value">৩ / ১৮</p>
+        </div>
+      </div>
+      <div class="kss-micro" role="progressbar" aria-valuenow="17" aria-valuemin="0" aria-valuemax="100"
+           aria-label="গণিতের অগ্রগতি">
+        <span style="width:17%" data-testid="chapter-progress-fill"></span>
+      </div>
+      <a class="kss-btn is-block" href="../../base/frontend/07-lesson.html" data-testid="chapter-continue">
+        <i data-lucide="play" class="icon-sm" aria-hidden="true"></i>
+        চালিয়ে যাও
+      </a>
+      <div class="kss-hdrow">
+        <p class="t-caption" data-testid="chapter-list-meta">১৮ টির মধ্যে ৩ টি অধ্যায় শেষ</p>
+        <a class="kss-link" href="../../base/frontend/05-subject-list.html" data-testid="chapter-back">সব বিষয়</a>
+      </div>
+    </section>
+
+    <!-- 2 · chapters as a flat ledger -->
+    <section class="kss-sec" aria-labelledby="chapter-list-heading">
+      <div class="kss-hdrow">
+        <h2 class="kss-hd" id="chapter-list-heading" data-testid="chapter-list-heading">অধ্যায়সমূহ</h2>
+      </div>
+      <ul class="kss-ledger" data-component="list" data-testid="chapter-list">
+
+        <li>
+          <a class="kss-lrow" href="../../base/frontend/07-lesson.html" data-testid="chapter-row" data-id="ch-1">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">১</span>
+            <i data-lucide="check-circle-2" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="t-body-sm t-semibold" data-testid="chapter-row-title">সংখ্যা পদ্ধতি</span>
+              <span class="ch-meta">
+                <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ১১ মিনিট · কুইজ ১০ প্রশ্ন</span>
+                <span class="kss-badge is-ok" data-testid="chapter-row-status">শেষ</span>
+              </span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">১০০%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:100%"></span></span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="kss-lrow" href="../../base/frontend/07-lesson.html" data-testid="chapter-row" data-id="ch-2">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">২</span>
+            <i data-lucide="check-circle-2" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="t-body-sm t-semibold" data-testid="chapter-row-title">যোগ-বিয়োগ গুণ-ভাগ</span>
+              <span class="ch-meta">
+                <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ১৪ মিনিট · কুইজ ১০ প্রশ্ন</span>
+                <span class="kss-badge is-ok" data-testid="chapter-row-status">শেষ</span>
+              </span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">১০০%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:100%"></span></span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="kss-lrow" href="../../base/frontend/07-lesson.html" data-testid="chapter-row" data-id="ch-3">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">৩</span>
+            <i data-lucide="check-circle-2" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="t-body-sm t-semibold" data-testid="chapter-row-title">সংখ্যারেখা</span>
+              <span class="ch-meta">
+                <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ৯ মিনিট · কুইজ ১০ প্রশ্ন</span>
+                <span class="kss-badge is-ok" data-testid="chapter-row-status">শেষ</span>
+              </span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">১০০%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:100%"></span></span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="kss-lrow is-marked" href="../../base/frontend/10-retake-class.html" data-testid="chapter-row" data-id="ch-4">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">৪</span>
+            <i data-lucide="play-circle" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="ch-title">
+                <span class="t-body-sm t-semibold" data-testid="chapter-row-title">ভগ্নাংশ চিহ্নিতকরণ</span>
+                <span class="kss-badge" data-testid="chapter-row-status">রিটেক প্রয়োজন</span>
+              </span>
+              <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ১২ মিনিট · কুইজ ১০ প্রশ্ন</span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">৬৫%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:65%"></span></span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="kss-lrow" href="../../base/frontend/07-lesson.html" data-testid="chapter-row" data-id="ch-5">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">৫</span>
+            <i data-lucide="play-circle" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="ch-title">
+                <span class="t-body-sm t-semibold" data-testid="chapter-row-title">ভগ্নাংশের যোগ</span>
+                <span class="kss-badge" data-testid="chapter-row-status">শুরু হয়নি</span>
+              </span>
+              <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ১০ মিনিট · কুইজ ১০ প্রশ্ন</span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">০%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:0%"></span></span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="kss-lrow" href="../../base/frontend/07-lesson.html" data-testid="chapter-row" data-id="ch-6">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">৬</span>
+            <i data-lucide="play-circle" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="ch-title">
+                <span class="t-body-sm t-semibold" data-testid="chapter-row-title">ভগ্নাংশের বিয়োগ</span>
+                <span class="kss-badge" data-testid="chapter-row-status">শুরু হয়নি</span>
+              </span>
+              <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ১১ মিনিট · কুইজ ১০ প্রশ্ন</span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">০%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:0%"></span></span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="kss-lrow" href="../../base/frontend/07-lesson.html" data-testid="chapter-row" data-id="ch-7">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">৭</span>
+            <i data-lucide="play-circle" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="ch-title">
+                <span class="t-body-sm t-semibold" data-testid="chapter-row-title">দশমিক সংখ্যা</span>
+                <span class="kss-badge" data-testid="chapter-row-status">শুরু হয়নি</span>
+              </span>
+              <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ১৩ মিনিট · কুইজ ১০ প্রশ্ন</span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">০%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:0%"></span></span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="kss-lrow" href="../../base/frontend/07-lesson.html" data-testid="chapter-row" data-id="ch-8">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">৮</span>
+            <i data-lucide="play-circle" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="t-body-sm t-semibold" data-testid="chapter-row-title">মৌলিক ও জটিল সংখ্যা</span>
+              <span class="ch-meta">
+                <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ৯ মিনিট · কুইজ ১০ প্রশ্ন</span>
+                <span class="kss-badge" data-testid="chapter-row-weakness">দুর্বলতা শনাক্ত</span>
+              </span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">০%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:0%"></span></span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="kss-lrow is-dim" href="#chapter-row" data-testid="chapter-row" data-id="ch-9" aria-disabled="true">
+            <span class="ch-num t-body-sm t-bold" data-testid="chapter-row-num">৯</span>
+            <i data-lucide="lock" class="icon-md" aria-hidden="true" data-testid="chapter-row-icon"></i>
+            <span class="kss-lrow-body">
+              <span class="ch-title">
+                <span class="t-body-sm t-semibold" data-testid="chapter-row-title">জ্যামিতিক আকৃতি</span>
+                <span class="kss-badge" data-testid="chapter-row-status">লকড</span>
+              </span>
+              <span class="t-caption" data-testid="chapter-row-meta">ভিডিও ১০ মিনিট · কুইজ ১০ প্রশ্ন</span>
+            </span>
+            <span class="kss-lrow-end">
+              <span class="t-body-sm t-bold" data-testid="chapter-row-mastery">০%</span>
+              <span class="kss-micro is-fixed" style="width:72px" aria-hidden="true"><span style="width:0%"></span></span>
+            </span>
+          </a>
+        </li>
+
+      </ul>
+    </section>
+
+  </main>
+
+  <nav class="kss-tabbar" data-shell="bottomnav" aria-label="প্রধান নেভিগেশন">
+    <a class="kss-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="icon-md" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="kss-tab is-on" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn" aria-current="page">
+      <i data-lucide="book-open" class="icon-md" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="kss-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="icon-md" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="kss-tab" href="14-leaderboard.html" data-testid="nav-leaderboard">
+      <i data-lucide="trophy" class="icon-md" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="kss-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="icon-md" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

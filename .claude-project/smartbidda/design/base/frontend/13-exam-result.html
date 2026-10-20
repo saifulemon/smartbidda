@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ফলাফল — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .examres-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .examres-head { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .examres-compare { display: flex; flex-direction: column; gap: var(--space-md); }
+  .examres-compare-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .examres-subjects { display: flex; flex-direction: column; gap: var(--space-md); }
+  .examres-subject-row { display: flex; flex-direction: column; gap: var(--space-xs); }
+  .examres-subject-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .examres-actions { display: flex; flex-direction: column; gap: var(--space-md); }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <a class="back" href="11-exam-list.html" aria-label="ফিরে যান" data-testid="examres-back-appbar">
+      <i data-lucide="arrow-left" class="icon-md"></i>
+    </a>
+    <span class="appbar-title" data-slot="title" data-testid="examres-title">ফলাফল</span>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="examres-wrap">
+
+        <div class="examres-head">
+          <span class="badge badge-success" data-testid="examres-status">উত্তীর্ণ</span>
+          <p class="t-display-lg" data-testid="examres-heading">১ম সাময়িক পরীক্ষা</p>
+          <p class="t-body-sm t-muted" data-testid="examres-date">চতুর্থ শ্রেণি · ১৬ অক্টোবর ২০২৬</p>
+        </div>
+
+        <section class="card" data-component="kpi" aria-label="ফলাফল">
+          <div class="row" style="justify-content:center;gap:var(--space-lg)">
+            <div style="text-align:center">
+              <p class="t-caption" data-testid="examres-score-label">প্রাপ্ত</p>
+              <p class="t-display-lg" data-testid="examres-score">৬৯%</p>
+            </div>
+            <div style="text-align:center">
+              <p class="t-caption" data-testid="examres-pass-label">উত্তীর্ণ</p>
+              <p class="t-display-md" data-testid="examres-pass">৬০%</p>
+            </div>
+            <div style="text-align:center">
+              <p class="t-caption" data-testid="examres-rank-label">শ্রেণি অবস্থান</p>
+              <p class="t-display-md" data-testid="examres-rank">১৮তম</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3.6: a term exam attempt is support-quotable; the UUID never shows -->
+        <p class="t-caption t-muted" style="text-align:center" data-testid="examres-attempt-no">
+          প্রচেষ্টা নং <span class="t-code">SB-EXM-20261016-0487</span>
+        </p>
+
+        <section class="card" data-component="card" aria-labelledby="examres-compare-label">
+          <p class="t-body t-semibold" id="examres-compare-label" data-testid="examres-compare-label">সামগ্রিক নম্বর</p>
+          <p class="t-caption t-muted" data-testid="examres-compare-note">
+            রি-এক্সাম দেওয়া হয়নি, তাই একটিমাত্র বার দেখানো হচ্ছে।
+          </p>
+          <div class="examres-compare" style="margin-top:var(--space-md)">
+            <div class="examres-compare-row">
+              <span class="t-body-sm" data-testid="examres-before">১ম সাময়িক · ১৬ অক্টোবর ২০২৬</span>
+              <span class="t-body-sm t-bold" data-testid="examres-before-v">৬৯%</span>
+            </div>
+            <div class="progress" role="progressbar" aria-valuenow="69" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="এই পরীক্ষার নম্বর">
+              <div class="progress-fill" style="width:69%" data-testid="examres-bar"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" data-component="list" aria-labelledby="examres-subjects-label">
+          <p class="t-body t-semibold" id="examres-subjects-label" data-testid="examres-subjects-label">পাঠভিত্তিক নম্বর</p>
+          <p class="t-caption t-muted" data-testid="examres-subjects-note">কম পাওয়া বিষয় আগে দেখানো হচ্ছে।</p>
+          <div class="examres-subjects" style="margin-top:var(--space-md)">
+            <div class="examres-subject-row">
+              <div class="examres-subject-head">
+                <span class="t-body-sm" data-testid="examres-topic-name">ভগ্নাংশের তুলনা · গণিত</span>
+                <span class="t-body-sm t-bold" data-testid="examres-topic-v">৪৮%</span>
+              </div>
+              <div class="progress is-sm" role="progressbar" aria-valuenow="48" aria-valuemin="0" aria-valuemax="100"
+                   aria-label="গণিত নম্বর">
+                <div class="progress-fill is-warning" style="width:48%" data-testid="examres-topic-bar"></div>
+              </div>
+            </div>
+            <div class="examres-subject-row">
+              <div class="examres-subject-head">
+                <span class="t-body-sm" data-testid="examres-topic-name">বাক্য গঠন · ইংরেজি</span>
+                <span class="t-body-sm t-bold" data-testid="examres-topic-v">৫৮%</span>
+              </div>
+              <div class="progress is-sm" role="progressbar" aria-valuenow="58" aria-valuemin="0" aria-valuemax="100"
+                   aria-label="ই ং র ে জ ি নম্বর">
+                <div class="progress-fill is-warning" style="width:58%" data-testid="examres-topic-bar"></div>
+              </div>
+            </div>
+            <div class="examres-subject-row">
+              <div class="examres-subject-head">
+                <span class="t-body-sm" data-testid="examres-topic-name">বাংলা ব্যাকরণ · বাংলা</span>
+                <span class="t-body-sm t-bold" data-testid="examres-topic-v">৬৪%</span>
+              </div>
+              <div class="progress is-sm" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"
+                   aria-label="ব া ং ল া নম্বর">
+                <div class="progress-fill" style="width:64%" data-testid="examres-topic-bar"></div>
+              </div>
+            </div>
+            <div class="examres-subject-row">
+              <div class="examres-subject-head">
+                <span class="t-body-sm" data-testid="examres-topic-name">ভগ্নাংশচিহ্নিতকরণ · গণিত</span>
+                <span class="t-body-sm t-bold" data-testid="examres-topic-v">৭২%</span>
+              </div>
+              <div class="progress is-sm" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"
+                   aria-label="গ ণ ি ত নম্বর">
+                <div class="progress-fill" style="width:72%" data-testid="examres-topic-bar"></div>
+              </div>
+            </div>
+            <div class="examres-subject-row">
+              <div class="examres-subject-head">
+                <span class="t-body-sm" data-testid="examres-topic-name">মৌখিক প্রকাশ · গণিত</span>
+                <span class="t-body-sm t-bold" data-testid="examres-topic-v">৮২%</span>
+              </div>
+              <div class="progress is-sm" role="progressbar" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100"
+                   aria-label="গ ণ ি ত নম্বর">
+                <div class="progress-fill" style="width:82%" data-testid="examres-topic-bar"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- PRD L1973: Weak-topic list — topic names + retake status, hidden when none -->
+        <section class="card" data-component="list" aria-labelledby="examres-weak-label">
+          <p class="t-body t-semibold" id="examres-weak-label" data-testid="examres-weak-label">দুর্বল পাঠ</p>
+          <div class="examres-subjects" style="margin-top:var(--space-md)">
+            <div class="examres-subject-row">
+              <div class="examres-subject-head">
+                <span class="t-body-sm" data-testid="examres-weak-name">ভগ্নাংশের তুলনা</span>
+                <span class="badge badge-warning" data-testid="examres-weak-status">রিটেক প্রয়োজন</span>
+              </div>
+              <p class="t-caption" data-testid="examres-weak-meta">গণিত · ৪৮% · উত্তীর্ণের নিচে ১২ পয়েন্ট</p>
+            </div>
+            <div class="examres-subject-row">
+              <div class="examres-subject-head">
+                <span class="t-body-sm" data-testid="examres-weak-name">বাক্য গঠন</span>
+                <span class="badge badge-warning" data-testid="examres-weak-status">রিটেক প্রয়োজন</span>
+              </div>
+              <p class="t-caption" data-testid="examres-weak-meta">ইংরেজি · ৫৮% · উত্তীর্ণের নিচে ২ পয়েন্ট</p>
+            </div>
+          </div>
+          <!-- PRD L1816: a pending retake blocks the re-exam and routes here -->
+          <a class="btn btn-secondary" href="10-retake-class.html" style="width:100%;margin-top:var(--space-md)" data-testid="examres-weak-retake">
+            রিটেক ক্লাসে যান
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </section>
+
+        <div class="examres-actions">
+          <a class="btn btn-primary" href="06-chapter-list.html" style="width:100%" data-testid="examres-next">
+            পরের পড়ায় যাও
+            <i data-lucide="arrow-right"></i>
+          </a>
+          <button class="btn btn-secondary" style="width:100%" data-testid="examres-print">
+            <i data-lucide="printer"></i>
+            প্রিন্ট
+          </button>
+          <a class="btn btn-ghost" href="01-home.html" style="width:100%" data-testid="examres-home">হোমে ফিরে যান</a>
+        </div>
+
+      </div>
+  </main>
+
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

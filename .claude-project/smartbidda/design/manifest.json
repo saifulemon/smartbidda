@@ -1,0 +1,1016 @@
+{
+  "contractVersion": 2,
+  "version": "2026-10-19",
+  "app": "smartbidda",
+  "selected_reference": "spotify-rails",
+  "brandSpec": "design/BRAND_SPEC.md",
+  "tokenContract": "design/FEATURE_CONTRACT.md",
+  "globalStyles": {
+    "frontend": [
+      "styles/theme.css",
+      "styles/components.css"
+    ],
+    "frontend-admin-dashboard": [
+      "styles/theme.css",
+      "styles/components.css"
+    ]
+  },
+  "layouts": [
+    "AuthLayout",
+    "PinLayout",
+    "StudentLayout",
+    "StudentSubLayout",
+    "ParentLayout",
+    "AdminLayout"
+  ],
+  "screens": [
+    {
+      "file": "html/frontend/01-home.html",
+      "route": "/",
+      "app": "frontend",
+      "layout": "StudentLayout",
+      "component": "HomePage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/student/home",
+          "shows": [
+            "greeting",
+            "continueLesson",
+            "subjects",
+            "pendingTasks",
+            "streak",
+            "points",
+            "screenTime"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/02-login.html",
+      "route": "/auth/login",
+      "app": "frontend",
+      "layout": "AuthLayout",
+      "component": "LoginPage",
+      "guard": "guest",
+      "reads": [
+        {
+          "endpoint": "GET /api/auth/children",
+          "shows": [
+            "childSelector"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/auth/student-login",
+          "produces": "greeting",
+          "feedback": "redirect",
+          "success": "সফলভাবে প্রবেশ করা হয়েছে",
+          "failure": "পিন ভুল হয়েছে"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/03-signup.html",
+      "route": "/auth/signup",
+      "app": "frontend",
+      "layout": "AuthLayout",
+      "component": "SignupPage",
+      "guard": "guest",
+      "reads": [
+        {
+          "endpoint": "GET /api/auth/prefill",
+          "shows": [
+            "childSelector"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/auth/signup",
+          "produces": "childSelector",
+          "feedback": "redirect",
+          "success": "অ্যাকাউন্ট তৈরি হয়েছে",
+          "failure": "অ্যাকাউন্ট তৈরি করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/04-onboarding.html",
+      "route": "/onboarding",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "OnboardingPage",
+      "guard": "auth:parent",
+      "reads": [
+        {
+          "endpoint": "GET /api/onboarding",
+          "shows": [
+            "steps",
+            "profile"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/students",
+          "produces": "profile",
+          "feedback": "inline",
+          "success": "তথ্য সংরক্ষিত হয়েছে",
+          "failure": "সংরক্ষণ করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/05-subject-list.html",
+      "route": "/learn",
+      "app": "frontend",
+      "layout": "StudentLayout",
+      "component": "SubjectListPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/curriculum/subjects",
+          "shows": [
+            "subjects",
+            "progress",
+            "search"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/remedial",
+          "produces": "chapter",
+          "feedback": "redirect",
+          "success": "রিটেক তৈরি হয়েছে",
+          "failure": "রিটেক তৈরি করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/06-chapter-list.html",
+      "route": "/learn/:classNo/:subjectSlug",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "ChapterListPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/curriculum/chapters",
+          "shows": [
+            "chapters",
+            "progress",
+            "continue"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/07-lesson.html",
+      "route": "/learn/:classNo/:subjectSlug/:chapterSlug",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "LessonPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/curriculum/chapters/:slug",
+          "shows": [
+            "lessonBody",
+            "steps",
+            "media",
+            "titleBn",
+            "watchedPct"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/lessons/:slug/progress",
+          "produces": "progress",
+          "feedback": "inline",
+          "success": "অগ্রগতি সংরক্ষিত",
+          "failure": "অগ্রগতি সংরক্ষণ করা যায়নি"
+        },
+        {
+          "endpoint": "POST /api/quizzes/sessions",
+          "produces": "sessionId",
+          "feedback": "redirect",
+          "success": "কুইজ শুরু হয়েছে",
+          "failure": "কুইজ শুরু করা যায়নি"
+        },
+        {
+          "endpoint": "POST /api/lessons/:slug/start",
+          "produces": "media",
+          "feedback": "inline",
+          "success": "লেসন শুরু হয়েছে",
+          "failure": "লেসন শুরু করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/08-quiz.html",
+      "route": "/quiz/:sessionId",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "QuizPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/quizzes/sessions/:id",
+          "shows": [
+            "question",
+            "options",
+            "timer",
+            "progress",
+            "sessionId"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/quizzes/sessions/:id/answers",
+          "produces": "score",
+          "feedback": "inline",
+          "success": "উত্তর গৃহীত হয়েছে",
+          "failure": "উত্তর জমা দেওয়া যায়নি"
+        },
+        {
+          "endpoint": "POST /api/quizzes/sessions/:id/complete",
+          "produces": "verdict",
+          "feedback": "redirect",
+          "success": "কুইজ সম্পন্ন হয়েছে",
+          "failure": "কুইজ সম্পন্ন করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/09-quiz-result.html",
+      "route": "/quiz/:sessionId/result",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "QuizResultPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/quizzes/sessions/:id",
+          "shows": [
+            "score",
+            "points",
+            "verdict",
+            "weakTopics"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/10-retake-class.html",
+      "route": "/retake/:retakeId",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "RetakeClassPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/remedial/:id",
+          "shows": [
+            "chapter",
+            "video",
+            "note",
+            "verification"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/remedial/:id/complete",
+          "produces": "score",
+          "feedback": "redirect",
+          "success": "রিটেক সম্পন্ন হয়েছে",
+          "failure": "রিটেক সম্পন্ন করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/11-exam-list.html",
+      "route": "/exams",
+      "app": "frontend",
+      "layout": "StudentLayout",
+      "component": "ExamListPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/exams",
+          "shows": [
+            "upcoming",
+            "lastAttempt"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/12-exam.html",
+      "route": "/exams/:examId",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "ExamPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/exams/:id",
+          "shows": [
+            "questions",
+            "timer",
+            "nav",
+            "autosave",
+            "attemptId"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/exams/:id/attempts/:aid/submit",
+          "produces": "score",
+          "feedback": "redirect",
+          "success": "পরীক্ষা জমা হয়েছে",
+          "failure": "পরীক্ষা জমা দেওয়া যায়নি"
+        },
+        {
+          "endpoint": "POST /api/exams/:id/attempts",
+          "produces": "attemptId",
+          "feedback": "redirect",
+          "success": "পরীক্ষা শুরু হয়েছে",
+          "failure": "পরীক্ষা শুরু করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/13-exam-result.html",
+      "route": "/exams/:examId/result",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "ExamResultPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/exams/:id/attempts/:aid",
+          "shows": [
+            "score",
+            "passLine",
+            "rank",
+            "weakTopics"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/14-leaderboard.html",
+      "route": "/leaderboard",
+      "app": "frontend",
+      "layout": "StudentLayout",
+      "component": "LeaderboardPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/leaderboard",
+          "shows": [
+            "top3",
+            "myRank",
+            "rows",
+            "classFilter"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/15-rewards.html",
+      "route": "/rewards",
+      "app": "frontend",
+      "layout": "StudentLayout",
+      "component": "RewardsPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/rewards",
+          "shows": [
+            "balance",
+            "streak",
+            "badges",
+            "recentPoints"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/16-settings.html",
+      "route": "/settings",
+      "app": "frontend",
+      "layout": "StudentSubLayout",
+      "component": "SettingsPage",
+      "guard": "auth:student",
+      "reads": [
+        {
+          "endpoint": "GET /api/student/settings",
+          "shows": [
+            "language",
+            "fontSize",
+            "voice",
+            "account"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "PATCH /api/student/settings",
+          "produces": "fontSize",
+          "feedback": "inline",
+          "success": "সেটিংস সংরক্ষিত",
+          "failure": "সেটিংস সংরক্ষণ করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/17-parent-login.html",
+      "route": "/parent/login",
+      "app": "frontend",
+      "layout": "PinLayout",
+      "component": "ParentLoginPage",
+      "guard": "guest",
+      "reads": [],
+      "writes": [
+        {
+          "endpoint": "POST /api/parent/verify-pin",
+          "produces": "children",
+          "feedback": "redirect",
+          "success": "প্যারেন্ট মোড চালু হয়েছে",
+          "failure": "পিন ভুল হয়েছে"
+        },
+        {
+          "endpoint": "POST /api/auth/login",
+          "produces": "children",
+          "feedback": "redirect",
+          "success": "প্যারেন্ট মোড চালু হয়েছে",
+          "failure": "পিন ভুল হয়েছে"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/18-parent-dashboard.html",
+      "route": "/parent",
+      "app": "frontend",
+      "layout": "ParentLayout",
+      "component": "ParentDashboardPage",
+      "guard": "auth:parent",
+      "reads": [
+        {
+          "endpoint": "GET /api/parent/dashboard",
+          "shows": [
+            "children",
+            "subjectScores",
+            "forecast",
+            "weakTopic",
+            "subscription"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/parent/nudge",
+          "produces": "alerts",
+          "feedback": "toast",
+          "success": "নাজ পাঠানো হয়েছে",
+          "failure": "নাজ পাঠানো যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/19-parent-progress.html",
+      "route": "/parent/progress",
+      "app": "frontend",
+      "layout": "ParentLayout",
+      "component": "ParentProgressPage",
+      "guard": "auth:parent",
+      "reads": [
+        {
+          "endpoint": "GET /api/parent/students/:id/progress",
+          "shows": [
+            "subjectScores",
+            "trend"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/20-parent-analytics.html",
+      "route": "/parent/analytics",
+      "app": "frontend",
+      "layout": "ParentLayout",
+      "component": "ParentAnalyticsPage",
+      "guard": "auth:parent",
+      "reads": [
+        {
+          "endpoint": "GET /api/parent/students/:id/forecast",
+          "shows": [
+            "forecast",
+            "alerts",
+            "disclaimer"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/21-screen-time.html",
+      "route": "/parent/screen-time",
+      "app": "frontend",
+      "layout": "ParentLayout",
+      "component": "ScreenTimePage",
+      "guard": "auth:parent",
+      "reads": [
+        {
+          "endpoint": "GET /api/parent/students/:id/screen-time",
+          "shows": [
+            "used",
+            "limit",
+            "presets"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "PUT /api/parent/students/:id/screen-time",
+          "produces": "limit",
+          "feedback": "inline",
+          "success": "সীমা আপডেট হয়েছে",
+          "failure": "সীমা আপডেট করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/22-alerts.html",
+      "route": "/parent/alerts",
+      "app": "frontend",
+      "layout": "ParentLayout",
+      "component": "AlertsPage",
+      "guard": "auth:parent",
+      "reads": [
+        {
+          "endpoint": "GET /api/notifications",
+          "shows": [
+            "alerts",
+            "unread"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend/23-subscription.html",
+      "route": "/parent/subscription",
+      "app": "frontend",
+      "layout": "ParentLayout",
+      "component": "SubscriptionPage",
+      "guard": "auth:parent",
+      "reads": [
+        {
+          "endpoint": "GET /api/parent/subscription",
+          "shows": [
+            "currentPlan",
+            "plans",
+            "crashPacks",
+            "payment"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/payments/intents",
+          "produces": "payment",
+          "feedback": "modal",
+          "success": "পেমেন্ট শুরু হয়েছে",
+          "failure": "পেমেন্ট শুরু করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend/24-parent-settings.html",
+      "route": "/parent/settings",
+      "app": "frontend",
+      "layout": "ParentLayout",
+      "component": "ParentSettingsPage",
+      "guard": "auth:parent",
+      "reads": [
+        {
+          "endpoint": "GET /api/parent/settings",
+          "shows": [
+            "notifications",
+            "screenTimeEnforced",
+            "children"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "PATCH /api/parent/settings",
+          "produces": "notifications",
+          "feedback": "inline",
+          "success": "সেটিংস সংরক্ষিত",
+          "failure": "সেটিংস সংরক্ষণ করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/01-dashboard.html",
+      "route": "/admin",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminDashboardPage",
+      "guard": "auth:teacher",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/dashboard",
+          "shows": [
+            "kpis",
+            "activity"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend-admin-dashboard/02-students.html",
+      "route": "/admin/students",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminStudentsPage",
+      "guard": "auth:admin",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/students",
+          "shows": [
+            "rows",
+            "search",
+            "sort",
+            "pagination"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/admin/students",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "শিক্ষার্থী তৈরি হয়েছে",
+          "failure": "শিক্ষার্থী তৈরি করা যায়নি"
+        },
+        {
+          "endpoint": "DELETE /api/admin/students/:id",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "শিক্ষার্থী মুছে ফেলা হয়েছে",
+          "failure": "মুছে ফেলা যায়নি"
+        },
+        {
+          "endpoint": "PATCH /api/admin/students/:id/status",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "স্ট্যাটাস বদলানো হয়েছে",
+          "failure": "স্ট্যাটাস বদলানো যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/03-parents.html",
+      "route": "/admin/parents",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminParentsPage",
+      "guard": "auth:admin",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/parents",
+          "shows": [
+            "rows",
+            "search",
+            "sort",
+            "export"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend-admin-dashboard/04-teachers.html",
+      "route": "/admin/teachers",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminTeachersPage",
+      "guard": "auth:admin",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/teachers",
+          "shows": [
+            "rows",
+            "search",
+            "sort",
+            "roles"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/admin/teachers",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "শিক্ষক তৈরি হয়েছে",
+          "failure": "শিক্ষক তৈরি করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/05-curriculum.html",
+      "route": "/admin/curriculum",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminCurriculumPage",
+      "guard": "auth:teacher",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/curriculum",
+          "shows": [
+            "tree",
+            "classes",
+            "subjects",
+            "chapters"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/admin/curriculum",
+          "produces": "tree",
+          "feedback": "modal",
+          "success": "অধ্যায় তৈরি হয়েছে",
+          "failure": "অধ্যায় তৈরি করা যায়নি"
+        },
+        {
+          "endpoint": "PATCH /api/admin/curriculum/:id",
+          "produces": "tree",
+          "feedback": "modal",
+          "success": "অধ্যায় সংরক্ষিত হয়েছে",
+          "failure": "অধ্যায় সংরক্ষণ করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/06-content.html",
+      "route": "/admin/content",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminContentPage",
+      "guard": "auth:teacher",
+      "reads": [
+        {
+          "endpoint": "GET /api/content",
+          "shows": [
+            "rows",
+            "search",
+            "sort",
+            "formats"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/content",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "কনটেন্ট যোগ হয়েছে",
+          "failure": "কনটেন্ট যোগ করা যায়নি"
+        },
+        {
+          "endpoint": "PATCH /api/content/:id",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "কনটেন্ট সংরক্ষিত হয়েছে",
+          "failure": "কনটেন্ট সংরক্ষণ করা যায়নি"
+        },
+        {
+          "endpoint": "DELETE /api/content/:id",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "কনটেন্ট মুছে ফেলা হয়েছে",
+          "failure": "কনটেন্ট মোছা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/07-questions.html",
+      "route": "/admin/questions",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminQuestionsPage",
+      "guard": "auth:teacher",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/questions",
+          "shows": [
+            "rows",
+            "search",
+            "sort",
+            "topics"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/admin/questions",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "প্রশ্ন তৈরি হয়েছে",
+          "failure": "প্রশ্ন তৈরি করা যায়নি"
+        },
+        {
+          "endpoint": "PATCH /api/admin/questions/:id",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "প্রশ্ন সংরক্ষিত হয়েছে",
+          "failure": "প্রশ্ন সংরক্ষণ করা যায়নি"
+        },
+        {
+          "endpoint": "POST /api/admin/questions/:id/duplicate",
+          "produces": "rows",
+          "feedback": "inline",
+          "success": "প্রশ্ন কপি হয়েছে",
+          "failure": "প্রশ্ন কপি করা যায়নি"
+        },
+        {
+          "endpoint": "DELETE /api/admin/questions/:id",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "প্রশ্ন মুছে ফেলা হয়েছে",
+          "failure": "প্রশ্ন মোছা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/08-exams.html",
+      "route": "/admin/exams",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminExamsPage",
+      "guard": "auth:teacher",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/exams",
+          "shows": [
+            "rows",
+            "search",
+            "sort",
+            "types"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/admin/exams",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "পরীক্ষা তৈরি হয়েছে",
+          "failure": "পরীক্ষা তৈরি করা যায়নি"
+        },
+        {
+          "endpoint": "PATCH /api/admin/exams/:id",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "পরীক্ষা সংরক্ষিত হয়েছে",
+          "failure": "পরীক্ষা সংরক্ষণ করা যায়নি"
+        },
+        {
+          "endpoint": "POST /api/admin/exams/:id/close",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "পরীক্ষা বন্ধ হয়েছে",
+          "failure": "পরীক্ষা বন্ধ করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/09-remedial.html",
+      "route": "/admin/remedial",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminRemedialPage",
+      "guard": "auth:teacher",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/remedial",
+          "shows": [
+            "rows",
+            "search",
+            "sort",
+            "subjects"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "PATCH /api/admin/remedial/:id",
+          "produces": "rows",
+          "feedback": "modal",
+          "success": "রিটেক হালনাগাদ হয়েছে",
+          "failure": "রিটেক হালনাগাদ করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/10-subscriptions.html",
+      "route": "/admin/subscriptions",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminSubscriptionsPage",
+      "guard": "auth:admin",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/subscriptions",
+          "shows": [
+            "rows",
+            "search",
+            "sort",
+            "payment"
+          ]
+        },
+        {
+          "endpoint": "GET /api/admin/payments",
+          "shows": [
+            "payments"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "endpoint": "POST /api/admin/subscriptions/:id/refund",
+          "produces": "payment",
+          "feedback": "modal",
+          "success": "রিফান্ড সম্পন্ন",
+          "failure": "রিফান্ড করা যায়নি"
+        }
+      ]
+    },
+    {
+      "file": "html/frontend-admin-dashboard/11-notifications.html",
+      "route": "/admin/notifications",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminNotificationsPage",
+      "guard": "auth:admin",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/notifications",
+          "shows": [
+            "templates",
+            "channels"
+          ]
+        }
+      ],
+      "writes": []
+    },
+    {
+      "file": "html/frontend-admin-dashboard/12-audit.html",
+      "route": "/admin/audit",
+      "app": "frontend-admin-dashboard",
+      "layout": "AdminLayout",
+      "component": "AdminAuditPage",
+      "guard": "auth:admin",
+      "reads": [
+        {
+          "endpoint": "GET /api/admin/audit-logs",
+          "shows": [
+            "entries",
+            "search",
+            "sort"
+          ]
+        }
+      ],
+      "writes": []
+    }
+  ],
+  "counts": {
+    "frontendRoutes": 24,
+    "adminRoutes": 12,
+    "totalRoutes": 36,
+    "stateSheets": 36
+  },
+  "statesDir": "html/states/",
+  "status": "d2-complete"
+}

@@ -1,0 +1,70 @@
+id: US-05-CURRICULUM
+role: teacher
+feature: "Curriculum tree — class→subject→chapter listing with sort order, topic tags, content counts and the create/edit/reorder/archive chapter modal"
+page: 05-curriculum.html
+goal: |
+  As an admin on the curriculum page I can browse the NCTB class-subject-chapter tree, create a chapter with
+  its sort order and topic tags, reorder or archive existing chapters, so that the syllabus structure students
+  unlock against stays accurate and up to date.
+scenarios_total: 20
+
+acceptance_criteria:
+  - id: AC-1
+    description: "The chapter tree loads class, subject, chapter, order, topic tags, content count and publish status"
+    ui_route: /admin/curriculum
+    endpoint: GET /api/admin/curriculum
+    expected: "200 — 'পাঠ্যক্রম' heading (curriculum-heading) with '৫ শ্রেণি · ৬১০ টি অধ্যায়' (curriculum-count); rows (curriculum-row) render e.g. চতুর্থ · গণিত · ভগ্নাংশ চিহ্নিতকরণ · ৪ · 'ভগ্নাংশ, চিহ্নিতকরণ' · '৩ টি' · badge 'প্রকাশিত', and the draft row ইংরেজি · Sentence Building with badge 'খসড়া'"
+  - id: AC-2
+    description: "Search and the removable class chip narrow the tree"
+    ui_route: /admin/curriculum
+    endpoint: GET /api/admin/curriculum
+    expected: "200 — curriculum-search (placeholder 'বিষয় বা অধ্যায় খুঁজুন') filters chapters server-side while chip 'চতুর্থ শ্রেণি' (curriculum-filter-class) is active; 'ফিল্টার সরান' (curriculum-filter-class-remove) clears it and the note 'ক্রম ও টপিক ট্যাগ সরাসরি সম্পাদনা করা যায়' (curriculum-note) stays visible"
+  - id: AC-3
+    description: "Creating a chapter from the modal persists class, subject, title, sort order and topic tags"
+    ui_route: /admin/curriculum
+    endpoint: POST /api/admin/curriculum
+    expected: "201 — saving 'নতুন অধ্যায়' (curriculum-modal-save) with শ্রেণি চতুর্থ, বিষয় গণিত, title, ক্রম ৬ and tags 'ভগ্নাংশ, যোগ' appends a new curriculum-row with badge 'খসড়া' and updates '৫ শ্রেণি · ৬১০ টি অধ্যায়' to ৬১১"
+  - id: AC-4
+    description: "Reordering a chapter via সম্পাদনা/সরান persists the new sort order"
+    ui_route: /admin/curriculum
+    endpoint: PATCH /api/admin/curriculum/:id
+    expected: "200 — curriculum-menu-move 'সরান' (or curriculum-menu-edit 'সম্পাদনা' changing ক্রম) sends the new sort order; the row's 'ক্রম' cell and its position in curriculum-table update without a full reload"
+  - id: AC-5
+    description: "Archiving a chapter from the row menu hides it from the published tree"
+    ui_route: /admin/curriculum
+    endpoint: PATCH /api/admin/curriculum/:id
+    expected: "200 — curriculum-menu-archive 'সংরক্ষণ' sends { archived: true }; the row badge leaves 'প্রকাশিত' and the chapter drops out of the student-facing published tree"
+  - id: AC-6
+    description: "রপ্তানি exports the current curriculum view"
+    ui_route: /admin/curriculum
+    endpoint: none
+    expected: "'রপ্তানি' (curriculum-export) downloads the currently filtered rows (class, subject, chapter, order, topics, content count, status) client-side; no export endpoint exists in the spine"
+
+boundary_cases:
+  - case: "Duplicate sort order — saving ক্রম 4 when it is taken in the same subject blocks the save with 'এই ক্রম আগেই ব্যবহৃত হয়েছে' (st-edge) under the field whose help already warns 'একই বিষয়ে এই ক্রম আগেই ব্যবহৃত হলে সেভ হবে না।'"
+  - case: "Title length bounds — a 1-char or 121-char অধ্যায়ের শিরোনাম is rejected by minlength=2 / maxlength=120 before any request"
+  - case: "Sort order bounds — ক্রম 0 or a negative number is rejected (min=1); the field defaults to ১ on modal open"
+  - case: "Empty topic tags — saving with no টপিক ট্যাগ fails the 'কমপক্ষে ১টি ট্যাগ চাই।' guard; comma-only input (' , ') counts as empty"
+
+error_scenarios:
+  - scenario: "401 — expired admin session on the curriculum tree redirects to /auth/login with /admin/curriculum preserved as the return route"
+  - scenario: "403 — a student or parent session reaching /admin/curriculum is bounced by the route guard; the tree and modal never mount"
+  - scenario: "409 — PATCH /api/admin/curriculum/:id after another author reordered shows 'অন্য শিক্ষক ক্রম বদলেছেন। রিফ্রেশ করুন।' (st-edge) and the row refetches instead of overwriting"
+  - scenario: "500 — the tree read fails — the body shows inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করুন' retry button; the header count is not replaced with a wrong total"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton lines at 72% / 100% / 54% stand in for the table body (st-label 'লোড হচ্ছে'); the bulk bar and pagination stay hidden/disabled"
+  - state: empty
+    expected: "No chapters authored yet — the body shows 'প্রথম অধ্যায় তৈরি করুন' (st-edge, st-label 'খালি তথ্য') with the 'নতুন অধ্যায়' CTA (curriculum-create) opening the modal"
+  - state: error
+    expected: "Failed read shows the inline retry 'কিছু লোড হয়নি। আবার চেষ্টা করো।'; create and archive actions are disabled until a successful load"
+  - state: concurrent-edit
+    expected: "Order conflict from another author renders 'অন্য শিক্ষক ক্রম বদলেছেন। রিফ্রেশ করুন।' (st-edge, st-label 'একসাথে সম্পাদনা') on the affected row"
+  - state: linked-record
+    expected: "Archiving a chapter that still has lessons blocks with 'আগে লেসনগুলো সরান' (st-edge, st-label 'সংযুক্ত রেকর্ড'); the badge stays 'প্রকাশিত' until lessons are moved"
+  - state: order-conflict
+    expected: "Saving a taken order surfaces 'এই ক্রম আগেই ব্যবহৃত হয়েছে' (st-edge, st-label 'অর্ডার সংঘাত') in the modal; the entered values stay for correction"
+
+fixture_refs:
+  - admin_curriculum

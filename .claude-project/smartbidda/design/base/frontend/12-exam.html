@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পরীক্ষা — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .exam-wrap {
+    display: flex; flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0 var(--space-xxl);
+    /* notch / home-indicator clearance — this page's own layout class */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+    max-width: 760px;
+  }
+  .exam-status { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  .exam-timer {
+    display: inline-flex; align-items: center; gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--c-primary-soft); color: var(--c-ink);
+    border-radius: var(--radius-pill);
+    font-size: var(--t-caption-size); font-weight: var(--t-body-weight);
+  }
+  .exam-nav-flag { background: color-mix(in srgb, var(--c-warning) 12%, var(--c-canvas)); border-color: var(--c-warning); }
+  .exam-saved { display: flex; align-items: center; gap: var(--space-xs); }
+  .exam-nav { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .exam-q { display: flex; flex-direction: column; gap: var(--space-md); }
+  .exam-options { display: flex; flex-direction: column; gap: var(--space-md); padding: 0; }
+  .exam-choice {
+    display: flex; align-items: center; gap: var(--space-md);
+    width: 100%; min-height: 64px;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--c-surface); color: var(--c-body);
+    border: var(--border-w) solid var(--c-hairline);
+    border-radius: var(--radius-lg);
+    text-align: left; cursor: pointer;
+    font-family: var(--t-body-md-family);
+    font-size: var(--t-body-lg-size);
+    font-weight: var(--t-body-md-weight);
+  }
+  .exam-choice[aria-pressed="true"] { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-ink); }
+  .exam-foot { display: flex; gap: var(--space-md); }
+
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentSubLayout">
+
+  <header class="appbar" data-shell="topbar">
+    <a class="back" href="11-exam-list.html" aria-label="ফিরে যান" data-testid="exam-back-appbar">
+      <i data-lucide="arrow-left" class="icon-md"></i>
+    </a>
+    <span class="appbar-title" data-slot="title" data-testid="exam-title">পরীক্ষা</span>
+  </header>
+
+  <main class="app-body" data-shell="content">
+
+      <div class="exam-wrap">
+
+        <div class="exam-status">
+          <span class="t-caption" data-testid="exam-counter">প্রশ্ন ২ / ৫০</span>
+          <span class="exam-timer" role="timer" data-testid="exam-timer">
+            <i data-lucide="timer" class="icon-sm" aria-hidden="true"></i>
+            ৫৭:৩২
+          </span>
+          <span class="exam-saved t-caption" data-testid="exam-saved">
+            <i data-lucide="check-circle-2" class="icon-sm" aria-hidden="true"></i>
+            সংরক্ষিত হয়েছে
+          </span>
+        </div>
+
+        <div class="progress" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100"
+             aria-label="পরীক্ষার অগ্রগতি">
+          <div class="progress-fill" style="width:4%" data-testid="exam-bar"></div>
+        </div>
+
+        <div class="exam-nav" role="group" aria-label="প্রশ্ন নেভিগেশন">
+          <button class="chip" aria-pressed="true" data-testid="exam-nav-q1">১</button>
+          <button class="chip exam-nav-flag" aria-pressed="true" data-testid="exam-nav-q2">২</button>
+          <button class="chip" data-testid="exam-nav-q3">৩</button>
+          <button class="chip" data-testid="exam-nav-q4">৪</button>
+          <button class="chip" data-testid="exam-nav-q5">৫</button>
+          <button class="chip" data-testid="exam-nav-more">+৪৫</button>
+        </div>
+
+        <section class="exam-q" aria-labelledby="exam-question">
+          <div class="row">
+            <span class="badge badge-primary" data-testid="exam-subject">গণিত</span>
+            <span class="t-caption" data-testid="exam-qtype">বহুনির্বাচনী</span>
+          </div>
+          <p class="t-title-lg" id="exam-question" data-testid="exam-question">
+            ২৫ এর ২০% কত?
+          </p>
+        </section>
+
+        <div class="exam-options" role="group" aria-label="উত্তরের বিকল্প">
+          <button class="exam-choice" aria-pressed="false" data-testid="exam-option">৫</button>
+          <button class="exam-choice" aria-pressed="true" data-testid="exam-option" data-id="q2-b">৪</button>
+          <button class="exam-choice" aria-pressed="false" data-testid="exam-option">৬</button>
+          <button class="exam-choice" aria-pressed="false" data-testid="exam-option">১০</button>
+        </div>
+
+        <div class="card" data-component="card" data-testid="exam-note">
+          <div class="row">
+            <i data-lucide="info" class="icon-md" aria-hidden="true"></i>
+            <p class="t-caption" data-testid="exam-note-text">
+              উত্তর নির্বাচন করলে নিজে থেকে সংরক্ষণ হবে। পরে ফিরে এসে বদলাতে পারবে।
+            </p>
+          </div>
+        </div>
+
+        <div class="exam-foot">
+          <button class="btn btn-secondary" style="flex:1" data-testid="exam-prev">
+            <i data-lucide="chevron-left"></i>
+            আগের
+          </button>
+          <button class="btn btn-primary" style="flex:1" data-testid="exam-next">
+            পরের প্রশ্ন
+            <i data-lucide="chevron-right"></i>
+          </button>
+        </div>
+        <button class="btn btn-secondary" aria-pressed="false" data-testid="exam-flag">
+          <i data-lucide="flag" class="icon-sm"></i>
+          ফ্ল্যাগ
+        </button>
+        <button class="btn btn-primary" data-testid="exam-submit">জমা দাও</button>
+
+      </div>
+  </main>
+
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

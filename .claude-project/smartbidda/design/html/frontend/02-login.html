@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>শিক্ষার্থী লগ ইন — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local LAYOUT only — every colour / font-size / radius / shadow is a var(--…).
+     AuthLayout: no appbar, no tabbar — one centred full-screen column. */
+  .au-shell {
+    display: flex; flex-direction: column; justify-content: center;
+    gap: var(--space-xl);
+    min-height: 100dvh;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg);
+    /* notch / home-indicator clearance */
+    padding-bottom: env(safe-area-inset-bottom, var(--space-xxl));
+  }
+  .au-brand { aspect-ratio: var(--aspect-video); }
+  .au-head { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); text-align: center; }
+
+  /* PRD L1030: child selector cards — grid of linked children (avatar + name) */
+  .au-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-md); margin-top: var(--space-md); }
+  .au-child {
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-xs);
+    width: 100%; padding: var(--space-md);
+    background: var(--c-lift); color: var(--c-body);
+    border: var(--border-w) solid var(--c-hairline-strong); border-radius: var(--radius-lg);
+    text-align: center; cursor: pointer;
+    font-family: var(--t-body-md-family);
+  }
+  /* PRD L1053: tap child card → ring + scale animation */
+  .au-child[aria-pressed="true"] { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-ink); }
+  .au-av {
+    display: grid; place-items: center; width: 52px; height: 52px;
+    background: var(--c-surface-soft); color: var(--c-ink);
+    border-radius: var(--radius-pill);
+    font-size: var(--t-title-lg-size); font-weight: var(--t-weight-bold);
+  }
+  .au-child[aria-pressed="true"] .au-av { background: var(--c-primary); color: var(--c-on-primary); }
+
+  /* PRD L1031: 4-digit PIN keypad — 4 dots + large Bangla numerals */
+  .au-dots { display: flex; justify-content: center; gap: var(--space-md); margin-top: var(--space-lg); }
+  .au-dot { width: 16px; height: 16px; border-radius: var(--radius-pill);
+    background: var(--c-surface-soft); border: var(--border-w) solid var(--c-hairline-strong); }
+  .au-dot.is-filled { background: var(--c-primary); border-color: var(--c-primary); }
+  .au-pad {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-sm); width: 100%; max-width: 320px; margin: var(--space-lg) auto 0;
+  }
+  .au-key {
+    display: grid; place-items: center; min-height: calc(var(--control-h) + var(--space-md));
+    background: var(--c-lift); color: var(--c-ink); cursor: pointer;
+    border: var(--border-w) solid var(--c-hairline-strong); border-radius: var(--radius-lg);
+    font-family: var(--t-body-md-family); font-size: var(--t-title-lg-size); font-weight: var(--t-weight-bold);
+  }
+  .au-key:hover { border-color: var(--c-primary); }
+  .au-key.is-ghost { background: transparent; border-color: transparent; }
+  .au-links { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+</style>
+</head>
+<body data-app="frontend" data-layout="AuthLayout">
+
+  <!-- AuthLayout: NO appbar, NO tabbar — centred full-screen card -->
+  <main class="au-shell" data-shell="content">
+
+    <!-- brand visual — real photo in a framed media slot -->
+    <div class="media au-brand" data-component="media" data-testid="login-brand-visual">
+      <img class="pimg" src="https://picsum.photos/seed/sb-login-brand/800/450" alt="স্মার্টবিদ্যা অ্যাপে পড়াশোনা করছে একটি শিশু" loading="lazy">
+    </div>
+    <p class="t-caption" style="text-align:center" data-testid="login-brand-caption">শেখা হোক প্রতিদিন মজার</p>
+
+    <div class="au-head">
+      <h1 class="t-display-md" data-testid="login-title">শিক্ষার্থী লগ ইন</h1>
+      <p class="t-caption" data-testid="login-subtitle">সন্তান বেছে নিন, তারপর চার সংখ্যার পিন দিন</p>
+      <!-- PRD L1034: voice prompt — speaker control, auto-plays on mount -->
+      <button class="ksr-chip is-on" type="button" aria-pressed="true" data-testid="login-voice">
+        <i data-lucide="volume-2" class="icon-sm" aria-hidden="true"></i>
+        কণ্ঠস্বর চালু
+      </button>
+    </div>
+
+    <!-- PRD L1030: child selector cards | default: grid of linked children |
+         active: ring + scale-up | disabled: greyed when suspended -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="login-children-label">
+      <p class="t-body t-semibold" id="login-children-label" data-testid="login-children-label">সন্তান বাছুন</p>
+      <div class="au-grid">
+        <button class="au-child" type="button" aria-pressed="true" data-testid="login-child">
+          <span class="au-av" aria-hidden="true" data-testid="login-child-avatar">র</span>
+          <span class="t-body t-semibold" data-testid="login-child-name">রাফিদ</span>
+          <span class="t-caption" data-testid="login-child-class">চতুর্থ শ্রেণি</span>
+        </button>
+        <button class="au-child" type="button" aria-pressed="false" data-testid="login-child">
+          <span class="au-av" aria-hidden="true" data-testid="login-child-avatar">ম</span>
+          <span class="t-body t-semibold" data-testid="login-child-name">মাহিন</span>
+          <span class="t-caption" data-testid="login-child-class">দ্বিতীয় শ্রেণি</span>
+        </button>
+      </div>
+      <p class="t-caption" style="margin-top:var(--space-md);text-align:center" data-testid="login-children-hint">
+        পিন ভুল হলে পুরো পিন আবার দিতে হবে — পরপর ভুল হলে কিপ্যাড কিছুক্ষণ বন্ধ থাকবে।
+      </p>
+    </section>
+
+    <!-- PRD L1031: 4-digit PIN keypad | default: large Bangla numerals, 4 dots |
+         disabled: keys off during lockout | error: wrong PIN → dots shake red -->
+    <section class="ksr-panel" data-component="card" aria-labelledby="login-pin-label">
+      <p class="t-body t-semibold" id="login-pin-label" style="text-align:center" data-testid="login-pin-label">৪ সংখ্যার পিন দিন</p>
+
+      <div class="au-dots" role="group" aria-label="পিনের সংখ্যা">
+        <span class="au-dot is-filled" data-testid="login-dot"></span>
+        <span class="au-dot is-filled" data-testid="login-dot"></span>
+        <span class="au-dot is-filled" data-testid="login-dot"></span>
+        <span class="au-dot" data-testid="login-dot"></span>
+      </div>
+
+      <div class="au-pad" role="group" aria-label="সংখ্যার কিপ্যাড">
+        <button class="au-key" type="button" data-testid="login-key">১</button>
+        <button class="au-key" type="button" data-testid="login-key">২</button>
+        <button class="au-key" type="button" data-testid="login-key">৩</button>
+        <button class="au-key" type="button" data-testid="login-key">৪</button>
+        <button class="au-key" type="button" data-testid="login-key">৫</button>
+        <button class="au-key" type="button" data-testid="login-key">৬</button>
+        <button class="au-key" type="button" data-testid="login-key">৭</button>
+        <button class="au-key" type="button" data-testid="login-key">৮</button>
+        <button class="au-key" type="button" data-testid="login-key">৯</button>
+        <button class="au-key is-ghost" type="button" aria-label="শেষ সংখ্যাটি মুছুন" data-testid="login-key-backspace">
+          <i data-lucide="delete" class="icon-sm" aria-hidden="true"></i>
+        </button>
+        <button class="au-key" type="button" data-testid="login-key">০</button>
+        <span class="au-key is-ghost" aria-hidden="true"></span>
+      </div>
+
+      <p class="t-caption" style="margin-top:var(--space-md);text-align:center" data-testid="login-pin-note">
+        চতুর্থ সংখ্যাটি দিলেই নিজে থেকেই প্রবেশ হবে — আলাদা করে বাটন চাপতে হবে না।
+      </p>
+    </section>
+
+    <div class="au-links">
+      <!-- PRD L1032: "প্যারেন্ট হিসেবে লগ ইন" link -->
+      <a class="t-body-sm t-semibold" href="17-parent-login.html" data-testid="login-parent-link">প্যারেন্ট হিসেবে লগ ইন</a>
+      <p class="t-caption" data-testid="login-signup-hint">নতুন পরিবার?</p>
+      <a class="t-body-sm t-semibold" href="03-signup.html" data-testid="login-signup-link">অ্যাকাউন্ট বানাও</a>
+    </div>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

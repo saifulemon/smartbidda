@@ -1,0 +1,89 @@
+id: US-09-QUIZ-RESULT
+role: student
+feature: "Quiz result — pass verdict with points burst, score against the pass mark, correct/wrong/time breakdown, weak-topic card and next-step actions"
+page: 09-quiz-result.html
+goal: |
+  As a student on the ফলাফল page I can see whether I passed, how many points I earned and which
+  topic I got wrong, so that I know immediately what to do next — move on to the next lesson or
+  go back and fix the weak chapter.
+scenarios_total: 22
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Pass verdict hero renders the badge, headline, chapter context and points burst"
+    ui_route: /quiz/:sessionId/result
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — badge 'উত্তীর্ণ', headline 'দারুণ করেছ!', subtitle 'ভগ্নাংশ চিহ্নিতকরণ · কুইজ', burst 'উত্তীর্ণ'; appbar title 'ফলাফল'"
+  - id: AC-2
+    description: "Score panel shows percentage, raw marks and the pass mark"
+    ui_route: /quiz/:sessionId/result
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — '৭০%' (quizres-score), '৭ / ১০' raw, pass note 'উত্তীর্ণ হওয়ার জন্য প্রয়োজন ৬০%' and the bar filled to ৭০%"
+  - id: AC-3
+    description: "Breakdown lists correct, wrong, elapsed time and points earned"
+    ui_route: /quiz/:sessionId/result
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — সঠিক উত্তর ৭, ভুল উত্তর ৩, সময় লেগেছে '৬ মিনিট ২০ সেকেন্ড', পাওয়া পয়েন্ট '+২৫'; the burst reads '+২৫ পয়েন্ট'"
+  - id: AC-4
+    description: "Weak-topic card names the chapter that produced the wrong answers"
+    ui_route: /quiz/:sessionId/result
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — 'দুর্বলতা শনাক্ত' with body 'ভগ্নাংশ চিহ্নিতকরণ — ৩ টি প্রশ্ন ভুল' and a target icon"
+  - id: AC-5
+    description: "Next-lesson action returns to the subject list"
+    ui_route: /quiz/:sessionId/result
+    endpoint: none
+    expected: "'পরের পড়ায় যাও' navigates to /learn with চতুর্থ শ্রেণি still selected"
+  - id: AC-6
+    description: "Home action exits the result flow"
+    ui_route: /quiz/:sessionId/result
+    endpoint: none
+    expected: "'হোমে ফিরে যান' and the appbar back both navigate to /, where the points total already includes this quiz"
+  - id: AC-7
+    description: "Result can be read aloud in Bangla"
+    ui_route: /quiz/:sessionId/result
+    endpoint: none
+    expected: "'ফলাফলের কণ্ঠস্বর' panel with a 'শুনুন' button (quizres-voice-play) reads the verdict, score and points in Bangla"
+  - id: AC-8
+    description: "The completed session's pass outcome unlocks the next lesson"
+    ui_route: /quiz/:sessionId/result
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — verdict পাশ with the unlock path returned; 'পরের পড়ায় যাও' (quizres-next-lesson) becomes the live primary route to the next lesson"
+  - id: AC-9
+    description: "The completed session's fail outcome assigns the mandatory retake"
+    ui_route: /quiz/:sessionId/result
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — verdict ভুল with the remedial path returned; the hero loses the 'উত্তীর্ণ' badge and the weak-topic card (quizres-weakness) promotes the CTA 'রিটেক ক্লাসে যান' routing to /retake/:retakeId instead of unlocking the lesson"
+  - id: AC-10
+    description: "Result refreshes against the live session without losing the displayed score"
+    ui_route: /quiz/:sessionId/result
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — re-fetching the same session returns ৭০% / ৭ / ১০ and '+২৫' and leaves the verdict and breakdown unchanged"
+
+boundary_cases:
+  - case: "Perfect paper — ১০ / ১০ shows '১০০%', ভুল উত্তর ০, badge 'উত্তীর্ণ' and the bonus line '১০ বোনাস' added to the points burst"
+  - case: "Exactly the pass mark — ৬ / ১০ renders '৬০%' with 'উত্তীর্ণ' and the pass note 'উত্তীর্ণ হওয়ার জন্য প্রয়োজন ৬০%'; at ৫ / ১০ the verdict flips away from উত্তীর্ণ and the retake is offered"
+  - case: "Outstanding retakes remain for the chapter — the weak-topic card shows the remaining count as 'আরও ২ টি রিটেক' instead of a single retake link"
+
+error_scenarios:
+  - scenario: "401 session expired on GET /api/quizzes/sessions/:id — redirect to /auth/login for the 4-digit PIN; the verdict is never rendered from a stale session"
+  - scenario: "GET /api/quizzes/sessions/:id returns 500 — 'রেজাল্ট লোড হয়নি। আবার চেষ্টা করো।' replaces the verdict and score panels, with the appbar still titled 'ফলাফল'"
+  - scenario: "GET /api/quizzes/sessions/:id returns 404 for an unknown or expired session — 'রেজাল্ট পাওয়া যায়নি।' empty state with a /learn action"
+  - scenario: "Device offline on entry — 'ইন্টারনেট সংযোগ নেই।' banner shows; the last cached result is read-only and both next-step actions remain tappable"
+
+state_transitions:
+  - state: loading
+    expected: "Three 16px skeleton lines (72% / 100% / 54%) in place of the burst, score and breakdown; no actions are tappable"
+  - state: empty
+    expected: "'রেজাল্ট পাওয়া যায়নি।' with no score, breakdown or weak-topic card"
+  - state: error
+    expected: "'রেজাল্ট লোড হয়নি। আবার চেষ্টা করো।' inline; back to home stays available"
+  - state: pass
+    expected: "Verdict badge 'উত্তীর্ণ', headline 'দারুণ করেছ!', points burst '+২৫ পয়েন্ট' and the weak-topic card still offered for the ৩ wrong answers"
+  - state: fail
+    expected: "Below ৬০% the same layout renders the not-passed verdict with the weak-topic card promoted and the retake route surfaced instead of the next-lesson CTA"
+
+fixture_refs:
+  - quiz_result
+  - quiz_session
+  - student_home

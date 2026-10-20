@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="bn-BD">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>লিডারবোর্ড — স্মার্টবিদ্যা</title>
+<link rel="stylesheet" href="../../styles/theme.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="kit-spotify-rails.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* page-local layout only — every colour / size / radius / shadow is a token */
+  .lb-rank { min-width: 2ch; text-align: center; flex-shrink: 0; color: var(--c-muted); }
+  .lb-row.is-me { background: var(--c-primary-soft); border-radius: var(--radius-md);
+    padding-left: var(--space-sm); padding-right: var(--space-sm); border-bottom-color: transparent; }
+  .lb-row.is-me .lb-rank { color: var(--c-primary); }
+
+  /* my-rank — a floating pill above the tabbar */
+  .lb-myrank { position: sticky; bottom: 84px; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--c-primary); color: var(--c-on-primary);
+    border-radius: var(--radius-pill); box-shadow: var(--shadow-2); }
+</style>
+</head>
+<body data-app="frontend" data-layout="StudentLayout">
+
+  <header class="ksr-appbar" data-shell="topbar">
+    <span class="ksr-wordmark" data-testid="appbar-brand">স্মার্টবিদ্যা</span>
+    <span class="ksr-appbar-title" data-slot="title" data-testid="appbar-title"></span>
+    <div class="row" style="margin-left:auto">
+      <button class="ksr-round" type="button" data-testid="appbar-notifications" aria-label="নোটিফিকেশন">
+        <i data-lucide="bell" class="icon-sm" aria-hidden="true"></i>
+      </button>
+      <button class="ksr-round" type="button" data-testid="appbar-profile" aria-label="প্রোফাইল">
+        <span class="avatar" aria-hidden="true">র</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="ksr-main" data-shell="content">
+
+    <!-- heading + 5 · scope line (a label, not a filter) -->
+    <section class="ksr-section" aria-labelledby="lb-heading">
+      <h1 class="t-display-lg" id="lb-heading" data-testid="lb-heading">লিডারবোর্ড</h1>
+      <p class="t-body-sm t-muted" data-testid="lb-sub">পয়েন্ট অনুযায়ী · সব সময়</p>
+    </section>
+
+    <!-- 1 · class chips ১-৫ -->
+    <div class="row" style="flex-wrap:wrap" role="group" aria-label="শ্রেণি">
+      <button class="ksr-chip" type="button" aria-pressed="false" data-testid="lb-class-1">১</button>
+      <button class="ksr-chip" type="button" aria-pressed="false" data-testid="lb-class-2">২</button>
+      <button class="ksr-chip" type="button" aria-pressed="false" data-testid="lb-class-3">৩</button>
+      <button class="ksr-chip is-on" type="button" aria-pressed="true" data-testid="lb-class-4">৪</button>
+      <button class="ksr-chip" type="button" aria-pressed="false" data-testid="lb-class-5">৫</button>
+    </div>
+
+    <!-- 2 · top three — a rail of art tiles -->
+    <section class="ksr-section" aria-label="শীর্ষ তিন">
+      <div class="ksr-rail is-square" role="list">
+        <div class="ksr-tile" role="listitem">
+          <div class="media media-photo"><img class="pimg" src="https://picsum.photos/seed/sb-mabul/640/480" alt="প্রথম স্থানের প্রতীকচিত্র" loading="lazy"></div>
+          <span class="ksr-badge" style="margin-top:var(--space-xs)" data-testid="lb-first-crown">
+            <i data-lucide="crown" class="icon-sm" aria-hidden="true"></i>
+            ১ম
+          </span>
+          <span class="ksr-tile-title" data-testid="lb-podium-name">মাবুল</span>
+          <span class="ksr-tile-meta" data-testid="lb-podium-class">চতুর্থ শ্রেণি</span>
+        </div>
+        <div class="ksr-tile" role="listitem">
+          <div class="media media-photo"><img class="pimg" src="https://picsum.photos/seed/sb-sadia/640/480" alt="দ্বিতীয় স্থানের প্রতীকচিত্র" loading="lazy"></div>
+          <span class="ksr-tile-title" data-testid="lb-podium-name">সাদিয়া</span>
+          <span class="ksr-tile-meta" data-testid="lb-podium-class">২য় · চতুর্থ শ্রেণি</span>
+        </div>
+        <div class="ksr-tile" role="listitem">
+          <div class="media media-photo"><img class="pimg" src="https://picsum.photos/seed/sb-tanjila/640/480" alt="তৃতীয় স্থানের প্রতীকচিত্র" loading="lazy"></div>
+          <span class="ksr-tile-title" data-testid="lb-podium-name">তানজিলা</span>
+          <span class="ksr-tile-meta" data-testid="lb-podium-class">৩য় · চতুর্থ শ্রেণি</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · list rows — playlist rows (rank · avatar · display name + class · points) -->
+    <section class="ksr-section" aria-labelledby="lb-list-label">
+      <div class="ksr-sec-hd">
+        <h2 class="ksr-hd" id="lb-list-label" data-testid="lb-list-label">৪ থেকে ১০০</h2>
+      </div>
+      <ul class="ksr-list" data-component="list">
+        <li class="ksr-item lb-row is-me" data-testid="lb-row">
+          <span class="lb-rank t-body-sm t-bold" data-testid="lb-rank">৪</span>
+          <span class="avatar" aria-hidden="true">র</span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="lb-name">রাফিদ</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+            <span class="progress is-sm" style="margin-top:var(--space-xs)" aria-hidden="true">
+              <span class="progress-fill" style="width:82%"></span>
+            </span>
+          </span>
+          <span class="t-body-sm t-bold" data-testid="lb-points">১,২৪০</span>
+        </li>
+        <li class="ksr-item lb-row" data-testid="lb-row">
+          <span class="lb-rank t-body-sm t-bold" data-testid="lb-rank">৫</span>
+          <span class="avatar" aria-hidden="true">আ</span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="lb-name">আরিশা</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+            <span class="progress is-sm" style="margin-top:var(--space-xs)" aria-hidden="true">
+              <span class="progress-fill" style="width:78%"></span>
+            </span>
+          </span>
+          <span class="t-body-sm t-bold" data-testid="lb-points">১,১৯০</span>
+        </li>
+        <li class="ksr-item lb-row" data-testid="lb-row">
+          <span class="lb-rank t-body-sm t-bold" data-testid="lb-rank">৬</span>
+          <span class="avatar" aria-hidden="true">ন</span>
+          <span class="ksr-col ksr-grow">
+            <span class="ksr-item-t" data-testid="lb-name">নাফিসা</span>
+            <span class="t-caption" data-testid="lb-class">চতুর্থ শ্রেণি</span>
+            <span class="progress is-sm" style="margin-top:var(--space-xs)" aria-hidden="true">
+              <span class="progress-fill" style="width:72%"></span>
+            </span>
+          </span>
+          <span class="t-body-sm t-bold" data-testid="lb-points">১,১০৫</span>
+        </li>
+      </ul>
+
+      <!-- 6 · more rows -->
+      <button class="ksr-btn is-quiet is-block" type="button" data-testid="lb-more">আরও দেখুন</button>
+    </section>
+
+    <!-- 4 · my-rank bar — floating pill above the tabbar -->
+    <div class="lb-myrank" data-testid="lb-myrank">
+      <span class="t-body-sm" data-testid="lb-myrank-label">আমার অবস্থান</span>
+      <span class="t-body-sm t-semibold" data-testid="lb-myrank-text">#৪ · ১,২৪০</span>
+    </div>
+
+    <!-- privacy note -->
+    <section class="ksr-panel" data-component="card">
+      <div class="row" style="align-items:flex-start">
+        <i data-lucide="shield" class="icon-md ksr-mute" aria-hidden="true"></i>
+        <div class="ksr-grow">
+          <p class="t-body-sm t-semibold" data-testid="lb-privacy-title">নিরাপদ তালিকা</p>
+          <p class="t-caption" style="margin-top:var(--space-xs)" data-testid="lb-privacy-body">
+            শুধু প্রদর্শন নাম ও শ্রেণি দেখা যায় — কোনো ছবি বা ব্যক্তিগত তথ্য নয়।
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="ksr-tabbar" data-shell="bottomnav" data-component="nav" aria-label="প্রধান নেভিগেশন">
+    <a class="ksr-tab" href="01-home.html" data-testid="nav-home">
+      <i data-lucide="home" class="ksr-tab-ico" aria-hidden="true"></i>
+      হোম
+    </a>
+    <a class="ksr-tab" href="../../base/frontend/05-subject-list.html" data-testid="nav-learn">
+      <i data-lucide="book-open" class="ksr-tab-ico" aria-hidden="true"></i>
+      পড়াশোনা
+    </a>
+    <a class="ksr-tab" href="../../base/frontend/11-exam-list.html" data-testid="nav-exams">
+      <i data-lucide="clipboard-check" class="ksr-tab-ico" aria-hidden="true"></i>
+      পরীক্ষা
+    </a>
+    <a class="ksr-tab is-on" href="14-leaderboard.html" data-testid="nav-leaderboard" aria-current="page">
+      <i data-lucide="trophy" class="ksr-tab-ico" aria-hidden="true"></i>
+      লিডারবোর্ড
+    </a>
+    <a class="ksr-tab" href="../../base/frontend/15-rewards.html" data-testid="nav-rewards">
+      <i data-lucide="award" class="ksr-tab-ico" aria-hidden="true"></i>
+      পুরস্কার
+    </a>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

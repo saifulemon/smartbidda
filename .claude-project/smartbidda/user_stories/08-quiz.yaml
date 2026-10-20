@@ -1,0 +1,79 @@
+id: US-08-QUIZ
+role: student
+feature: "Quiz session — illustrated question, four tappable fraction options, countdown timer, Bangla read-aloud and auto-advance on every answer"
+page: 08-quiz.html
+goal: |
+  As a student on the কুইজ page I can read or listen to each question, tap one of four answers
+  and watch the quiz move on by itself, so that I finish all ten questions in one uninterrupted
+  flow and see my result.
+scenarios_total: 21
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Quiz header shows the question counter, subject and chapter"
+    ui_route: /quiz/:sessionId
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — counter 'প্রশ্ন ৩ / ১০', eyebrow 'গণিত · অধ্যায় ৪' and appbar title 'কুইজ'; the session id quiz-20261018-001 is the one from the URL"
+  - id: AC-2
+    description: "Ten progress dots mark answered, current and upcoming questions"
+    ui_route: /quiz/:sessionId
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: '"200 — ten quiz-dot items; dots ১ and ২ are is-done, dot ৩ is is-current with aria-current=\"step\", dots ৪–১০ are unfilled"'
+  - id: AC-3
+    description: "Countdown timer shows remaining seconds and drains its bar"
+    ui_route: /quiz/:sessionId
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: "200 — badge '৪৮ সেকেন্ড বাকি' with clock icon and the top bar at ৮০% of a ৬০-second window; both update once per second"
+  - id: AC-4
+    description: "Question stimulus and four options render, with the picked option visibly chosen"
+    ui_route: /quiz/:sessionId
+    endpoint: GET /api/quizzes/sessions/:id
+    expected: '"200 — fraction stimulus labelled ''ছবি: ভগ্নাংশের চিত্র'', question ''নিচের কোন অংশটি অর্ধেকের চেয়ে বড়?'' and exactly four buttons ''১ / ৪'', ''৩ / ৪'', ''১ / ৫'', ''২ / ৩''; ''৩ / ৪'' is aria-pressed=\"true\" with a check mark"'
+  - id: AC-5
+    description: "Answering a question posts it and advances automatically after the short delay"
+    ui_route: /quiz/:sessionId
+    endpoint: POST /api/quizzes/sessions/:id/answers
+    expected: "200 — 'উত্তর গৃহীত হয়েছে' inline, the picked option locks, and after ০.৪ সেকেন্ড the counter becomes 'প্রশ্ন ৪ / ১০' with dot ৪ current"
+  - id: AC-6
+    description: "The question can be read aloud in Bangla"
+    ui_route: /quiz/:sessionId
+    endpoint: none
+    expected: "quiz-voice-play (aria-label 'প্রশ্নটি শুনুন') speaks the question and options in Bangla; the panel caption reads 'প্রশ্নটি শুনে নিন'"
+  - id: AC-7
+    description: "Answering the tenth question auto-submits and opens the result"
+    ui_route: /quiz/:sessionId
+    endpoint: POST /api/quizzes/sessions/:id/answers
+    expected: "200 — no separate submit button is needed; after the final answer the app navigates to /quiz/quiz-20261018-001/result"
+  - id: AC-8
+    description: "Leaving mid-quiz is possible but warns that answers are already saved"
+    ui_route: /quiz/:sessionId
+    endpoint: none
+    expected: "sub-back opens a confirm sheet stating answered questions stay saved, then returns to the ভগ্নাংশ চিহ্নিতকরণ lesson only after confirmation"
+
+boundary_cases:
+  - case: "All ten questions answered — the last POST returns the score and the session moves to the result page without a second submit; the ০.৪-second delay is skipped on the final question"
+  - case: "Option double-tap — the first tap disables all four options, so a second rapid tap on '২ / ৩' cannot overwrite the '৩ / ৪' answer or send a duplicate POST"
+  - case: "Timer reaches ০ — the bar empties, the badge reads '০ সেকেন্ড বাকি', remaining questions lock and the session is submitted with the answers given so far"
+
+error_scenarios:
+  - scenario: "POST /api/quizzes/sessions/:id/answers returns 500 — 'উত্তর পাঠানো যায়নি। আবার চেষ্টা করো।' renders under the options, the picked option unlocks and the same answer can be retried"
+  - scenario: "POST /api/quizzes/sessions/:id/answers returns 409 because the session already ended — 'কুইজ আগেই শেষ হয়েছে।' shows briefly then redirects to /quiz/quiz-20261018-001/result"
+  - scenario: "401 session expired on GET /api/quizzes/sessions/:id — redirect to /auth/login for the 4-digit PIN; no question renders and the stale session id is dropped"
+  - scenario: "GET /api/quizzes/sessions/:id returns 404 for a stale session — 'কুইজ পাওয়া যায়নি।' renders with a link back to /learn"
+  - scenario: "Device offline mid-quiz — 'ইন্টারনেট সংযোগ নেই।' banner shows, the timer keeps running locally and the pending answer retries once connectivity returns"
+
+state_transitions:
+  - state: loading
+    expected: "Three 16px skeleton lines (72% / 100% / 54%) instead of stimulus, question and options; the timer does not start until the read resolves"
+  - state: empty
+    expected: "'কুইজ পাওয়া যায়নি।' empty state with no options and no timer"
+  - state: answering
+    expected: "Picked option turns primary with a check, all options lock, and the next question replaces the stimulus after ০.৪ সেকেন্ড with the dot row advanced"
+  - state: error
+    expected: "'উত্তর পাঠানো যায়নি। আবার চেষ্টা করো।' inline above the option stack; the selected option stays visible for retry"
+  - state: offline
+    expected: "'ইন্টারনেট সংযোগ নেই।' replaces inline feedback and posts queue until reconnection"
+
+fixture_refs:
+  - quiz_session
+  - lesson

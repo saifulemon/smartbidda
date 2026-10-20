@@ -1,0 +1,57 @@
+id: US-01-HOME
+role: student
+feature: "Student home — greeting, today's lesson, daily task strip, subject rail, screen-time meter, parent nudge, points/rank and streak in one glance"
+page: 01-home.html
+goal: |
+  As a student on the student home page I see my greeting, today's lesson, pending retakes/exams
+  and per-subject progress the moment I log in, so that I can resume learning in one tap instead
+  of hunting through menus.
+scenarios_total: 14
+
+acceptance_criteria:
+  - id: AC-1
+    description: "After PIN login the home page greets the student by name with class and streak"
+    ui_route: /
+    endpoint: GET /api/student/home
+    expected: "200 — greeting 'আসসালামু আলাইকুম, রাফিদ' renders (data-testid home-greeting) with 'চতুর্থ শ্রেণি · ৫ দিনের ধারাবাহিকতা'"
+  - id: AC-2
+    description: "Tap 'পড়া চালিয়ে যান' on the today's-lesson hero to resume the in-progress lesson"
+    ui_route: /
+    endpoint: none
+    expected: "Navigates to the lesson page (/learn/:classNo/:subjectSlug/:chapterSlug) with progress bar at ৬৫%"
+  - id: AC-3
+    description: "Subject rail lists all entitled subjects with chapter completion counts"
+    ui_route: /
+    endpoint: GET /api/student/home
+    expected: "200 — tiles গণিত ৩ / ১৮, বাংলা ৯ / ১৬, বিজ্ঞান ৫ / ১৪, ইংরেজি ৭ / ১৫ render; 'সব দেখুন' links to /learn"
+  - id: AC-4
+    description: "Points and rank panel shows the student's leaderboard standing"
+    ui_route: /
+    endpoint: GET /api/student/home
+    expected: "200 — '১,২৪০ পয়েন্ট · #৪' renders (home-points-value); tap opens /leaderboard"
+  - id: AC-5
+    description: "Daily task strip routes each pending item to its destination"
+    ui_route: /
+    endpoint: none
+    expected: "Retake row '২ টি রিটেক বাকি' → /retake/:retakeId, exam row '১ম সাময়িক পরীক্ষা দিতে হবে' → /exams, lesson row → lesson page"
+
+boundary_cases:
+  - case: "Screen-time already at the daily limit (60/60 used) — remaining shows ০ মিনিট and the hard-block edge 'তোমার আজকের স্ক্রিন টাইম শেষ হয়ে গেছে। আগে পড়া শেষ করো।' replaces the meter caption; bar clamps at 100%"
+  - case: "New student with no completed chapters and no parent nudge — subject tiles show ০ / ১৮ without collapsing the rail, and the nudge card renders 'এই মুহূর্তে কোনো বার্তা নেই।'"
+error_scenarios:
+  - scenario: "GET /api/curriculum/subjects returns 500 — page shows 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with an 'আবার চেষ্টা করো' retry button; greeting still renders from cached profile"
+  - scenario: "Network offline — 'ইন্টারনেট সংযোগ নেই।' banner; task-strip taps are blocked until connectivity returns"
+  - scenario: "Screen-time heartbeat hard-blocked at limit (permission denied) — home shows 'তোমার সময় শেষ হয়ে গেছে।' instead of the continue-lesson CTA"
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack: 16px greeting line, 88px hero block, 100%/78% content bars — no CTA tappable until loaded"
+  - state: empty
+    expected: "empty-state 'তোমার কোনো পড়া শুরু হয়নি। চলো শুরু করি!' with book-open icon; task strip hidden"
+  - state: error
+    expected: "Inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with retry button (refresh-cw icon)"
+  - state: no-nudge
+    expected: "Nudge card shows 'এই মুহূর্তে কোনো বার্তা নেই।' instead of মায়ের বার্তা body"
+
+fixture_refs:
+  - student_home
+  - identity.children

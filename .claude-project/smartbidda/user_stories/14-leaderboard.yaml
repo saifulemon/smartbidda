@@ -1,0 +1,63 @@
+id: US-14-LEADERBOARD
+role: student
+feature: "Leaderboard — class-filtered top-100 points ranking with a podium rail, pinned my-rank pill and parent-controlled opt-out"
+page: 14-leaderboard.html
+goal: |
+  As a student on the leaderboard page I can browse the class-wise top-100 points ranking, switch the
+  class filter and see my own pinned rank at all times so that I know exactly where I stand and how
+  many points I need to climb.
+scenarios_total: 17
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Page loads the leaderboard heading, scope line and class chips with my own class pre-selected"
+    ui_route: /leaderboard
+    endpoint: GET /api/leaderboard
+    expected: "200 — 'লিডারবোর্ড' renders (lb-heading) with scope line 'পয়েন্ট অনুযায়ী · সব সময়' (lb-sub); class chips ১–৫ render with '৪' pressed (lb-class-4, aria-pressed=true); podium rail shows মাবুল with crown badge '১ম' (lb-first-crown), সাদিয়া and তানজিলা (lb-podium-name)"
+  - id: AC-2
+    description: "Ranked list renders the top rows for the selected class with rank, display name, class and points"
+    ui_route: /leaderboard
+    endpoint: GET /api/leaderboard
+    expected: "200 — list header '৪ থেকে ১০০' (lb-list-label); rows (lb-row): রাফিদ · চতুর্থ শ্রেণি · ১,২৪০ highlighted as is-me, আরিশা ৫ · ১,১৯০, নাফিসা ৬ · ১,১০৫ (lb-rank, lb-name, lb-points)"
+  - id: AC-3
+    description: "Tap a class chip (e.g. '৫') to refetch the ranking for that class"
+    ui_route: /leaderboard
+    endpoint: GET /api/leaderboard
+    expected: "200 — exactly one chip keeps aria-pressed=true (the tapped lb-class-5); podium tiles and list rows re-render for the selected class; no stale rows from the previous class remain"
+  - id: AC-4
+    description: "My-rank pill stays visible and pinned above the tabbar regardless of scroll"
+    ui_route: /leaderboard
+    endpoint: GET /api/leaderboard
+    expected: "200 — sticky pill (lb-myrank) shows 'আমার অবস্থান' and '#৪ · ১,২৪০' (lb-myrank-label, lb-myrank-text); the own row is the is-me row in the list"
+  - id: AC-5
+    description: "Tap 'আরও দেখুন' to page in more ranks until the list is exhausted"
+    ui_route: /leaderboard
+    endpoint: GET /api/leaderboard
+    expected: "200 — each tap appends the next block of rows (lb-row) without duplicating ranks; after the 100th rank the button disappears and 'তালিকার শেষে পৌঁছে গেছো — আর কোনো র‍্যাংক নেই।' renders"
+
+boundary_cases:
+  - case: "Class with zero ranked students — list collapses to empty-state 'এই শ্রেণিতে এখনো কেউ পয়েন্ট অর্জি করেনি। তুমি প্রথম হও!' (st-empty); podium rail and 'আরও দেখুন' are hidden"
+  - case: "Student opted out by a parent — GET /api/leaderboard still returns the viewer's own pinned row so lb-myrank renders '#৪ · ১,২৪০', and the edge note 'তুমি লিডারবোর্ডে দেখাচ্ছো না। অভিভাবকের সেটিংস থেকে এটি বদলানো যাবে।' shows; the student cannot re-enable it from this page"
+  - case: "Pagination exhausted — after the 100th rank 'আরও দেখুন' (lb-more) is removed and 'তালিকার শেষে পৌঁছে গেছো — আর কোনো র‍্যাংক নেই।' renders once; no further page request can be fired"
+
+error_scenarios:
+  - scenario: "GET /api/leaderboard returns 500 — inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with the 'আবার চেষ্টা করো' retry button (refresh-cw icon)"
+  - scenario: "Invalid classNo (e.g. 6) — 'এই শ্রেণির র‍্যাংক পাওয়া যায়নি।'; the previously selected chip keeps aria-pressed=true so the student is never left on a broken class"
+  - scenario: "Network offline — 'ইন্টারনেট সংযোগ নেই।'; class chips and 'আরও দেখুন' stay inert until connectivity returns"
+  - scenario: "401 session expired — access token rejected; the app redirects the student to /auth/login instead of rendering a permission error"
+
+state_transitions:
+  - state: loading
+    expected: "Skeleton stack: 16px heading bar, 140px podium block, two 56px list rows — chips and 'আরও দেখুন' not tappable until loaded"
+  - state: empty
+    expected: "empty-state 'এই শ্রেণিতে এখনো কেউ পয়েন্ট অর্জি করেনি। তুমি প্রথম হও!' with trophy icon (st-empty)"
+  - state: error
+    expected: "Inline 'কিছু লোড হয়নি। আবার চেষ্টা করো।' with retry button (st-error)"
+  - state: opted-out
+    expected: "Shield row with edge 'তুমি লিডারবোর্ডে দেখাচ্ছো না। অভিভাবকের সেটিংস থেকে এটি বদলানো যাবে।' while the own row stays pinned at the end of the list"
+  - state: end-of-list
+    expected: "Edge 'তালিকার শেষে পৌঁছে গেছো — আর কোনো র‍্যাংক নেই।' replaces the 'আরও দেখুন' button"
+
+fixture_refs:
+  - identity.children
+  - leaderboard_snapshot
