@@ -1,0 +1,15 @@
+{
+  "loading": "loading",
+  "actions": "actions",
+  "selectedCount": "selectedCount",
+  "clear": "clear",
+  "editEntity": "editEntity",
+  "createEntity": "createEntity",
+  "cancel": "cancel",
+  "save": "save",
+  "create": "create",
+  "view": "view",
+  "edit": "edit",
+  "delete": "delete",
+  "rowMenu": "rowMenu"
+}

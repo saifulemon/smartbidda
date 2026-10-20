@@ -1,0 +1,13 @@
+{
+  "frontend": "frontend-admin-dashboard",
+  "total": 22,
+  "scaffolded": 11,
+  "unconverted_stubs": [
+    "app/pages/admin/audit.tsx",
+    "app/pages/admin/notifications.tsx",
+    "app/pages/admin/parents.tsx",
+    "app/pages/admin/students.tsx",
+    "app/pages/admin/subscriptions.tsx",
+    "app/pages/admin/teachers.tsx"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "app": {
+    "name": "App",
+    "tagline": "Welcome"
+  },
+  "actions": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "actions": "Actions",
+    "selectedCount": "Selected Count",
+    "clear": "Clear",
+    "editEntity": "Edit Entity",
+    "createEntity": "Create Entity",
+    "create": "Create",
+    "view": "View",
+    "rowMenu": "Row Menu"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "We couldn't find the page you were looking for. It may have been moved or removed.",
+    "backToHome": "Back to home",
+    "home": "Back to home"
+  },
+  "empty": {
+    "title": "Nothing here yet",
+    "description": "There's no data to display."
+  },
+  "language": {
+    "en": "English",
+    "ko": "한국어"
+  },
+  "pagination": {
+    "page": "Page",
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "brand": {
+    "name": "Name"
+  },
+  "nav": {
+    "menu": "Menu"
+  },
+  "errors": {
+    "unexpected": "Unexpected"
+  },
+  "auth": {
+    "forgot_password": {
+      "title": "Title",
+      "success": "Success",
+      "email_label": "Email label",
+      "submit": "Submit",
+      "back_to_login": "Back to login"
+    },
+    "login": {
+      "title": "Title",
+      "email_label": "Email label",
+      "password_label": "Password label",
+      "submit": "Submit",
+      "signup_cta": "Signup cta",
+      "forgot_cta": "Forgot cta"
+    },
+    "signup": {
+      "title": "Title",
+      "password_label": "Password label",
+      "submit": "Submit",
+      "login_cta": "Login cta"
+    }
+  }
+}
