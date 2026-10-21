@@ -24,29 +24,29 @@ export class RemoveTokenInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((value) => {
+        // Clear the cookies unconditionally: logout returns 204/void, so the
+        // old `value?.success` guard meant the session cookie was never
+        // cleared and a "logged out" parent stayed authenticated.
+        res.cookie(
+          this.configService.getOrThrow<string>("AUTH_TOKEN_COOKIE_NAME"),
+          "",
+          {
+            httpOnly: true,
+            path: "/",
+          },
+        );
+        res.cookie(
+          this.configService.getOrThrow<string>(
+            "AUTH_REFRESH_TOKEN_COOKIE_NAME",
+          ),
+          "",
+          {
+            httpOnly: true,
+            path: "/",
+          },
+        );
+
         if (value?.success) {
-          // Clear access token cookie
-          res.cookie(
-            this.configService.getOrThrow<string>("AUTH_TOKEN_COOKIE_NAME"),
-            "",
-            {
-              httpOnly: true,
-              path: "/",
-            },
-          );
-
-          // Clear refresh token cookie
-          res.cookie(
-            this.configService.getOrThrow<string>(
-              "AUTH_REFRESH_TOKEN_COOKIE_NAME",
-            ),
-            "",
-            {
-              httpOnly: true,
-              path: "/",
-            },
-          );
-
           // Strip sensitive data — only return success + message
           return {
             success: true,

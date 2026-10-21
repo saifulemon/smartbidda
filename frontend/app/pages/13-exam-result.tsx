@@ -165,7 +165,7 @@ export default function ExamResultPage() {
               পরের পড়ায় যাও
               <ArrowRight  />
             </a>
-            <button className="ksr-btn is-quiet is-block" type="button" data-testid="examres-print">
+            <button className="ksr-btn is-quiet is-block" type="button" onClick={() => window.print()} data-testid="examres-print">
               <Printer  />
               প্রিন্ট
             </button>

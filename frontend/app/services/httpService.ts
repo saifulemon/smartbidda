@@ -48,6 +48,8 @@ class HttpService {
           !original._retried &&
           !original.url?.includes('/auth/refresh') &&
           !original.url?.includes('/auth/login') &&
+          // A wrong PIN is a 401 by design — never bounce it through refresh→redirect.
+          !original.url?.includes('/auth/student-login') &&
           // on-load /auth/me probe 401s for guests — never refresh→redirect (auth-bootstrap-doctor)
           !original.url?.includes('/auth/me')
         ) {

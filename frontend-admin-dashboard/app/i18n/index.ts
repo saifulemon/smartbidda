@@ -49,7 +49,7 @@ import notFoundKo from './locales/ko/notFound.json';
 import paginationKo from './locales/ko/pagination.json';
 // i18n-scaffold-imports-end
 
-const defaultLocale = import.meta.env.VITE_DEFAULT_LOCALE || 'ko';
+const defaultLocale = import.meta.env.VITE_DEFAULT_LOCALE || 'bn';
 
 i18next
   .use(LanguageDetector)

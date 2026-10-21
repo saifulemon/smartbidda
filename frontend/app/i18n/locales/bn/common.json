@@ -1,62 +1,79 @@
 {
+  "app": {
+    "name": "স্মার্টবিদ্যা",
+    "tagline": "স্বাগতম"
+  },
   "actions": {
-    "loading": "loading",
-    "actions": "actions",
-    "selectedCount": "selectedCount",
-    "clear": "clear",
-    "editEntity": "editEntity",
-    "createEntity": "createEntity",
-    "cancel": "cancel",
-    "save": "save",
-    "create": "create",
-    "view": "view",
-    "edit": "edit",
-    "delete": "delete",
-    "rowMenu": "rowMenu"
+    "submit": "জমা দিন",
+    "cancel": "বাতিল",
+    "save": "সংরক্ষণ",
+    "delete": "মুছে ফেলুন",
+    "edit": "সম্পাদনা",
+    "back": "ফিরে যান",
+    "next": "পরের",
+    "confirm": "নিশ্চিত করুন",
+    "close": "বন্ধ",
+    "search": "খুঁজুন",
+    "filter": "ছাঁকুন",
+    "loading": "লোড হচ্ছে…",
+    "actions": "কার্যক্রম",
+    "selectedCount": "নির্বাচিত সংখ্যা",
+    "clear": "মুছুন",
+    "editEntity": "তথ্য সম্পাদনা",
+    "createEntity": "নতুন তৈরি",
+    "create": "তৈরি",
+    "view": "দেখুন",
+    "rowMenu": "সারির মেনু"
+  },
+  "notFound": {
+    "title": "পাতাটি পাওয়া যায়নি",
+    "description": "আপনি যে পাতাটি খুঁজছেন সেটি নেই। এটি সরানো বা স্থানান্তরিত হয়ে থাকতে পারে।",
+    "backToHome": "হোমে ফিরে যান",
+    "home": "হোমে ফিরে যান"
   },
   "empty": {
-    "title": "title"
+    "title": "এখনও কিছু নেই",
+    "description": "দেখানোর মতো কোনো তথ্য নেই।"
+  },
+  "language": {
+    "en": "English",
+    "ko": "한국어"
   },
   "pagination": {
-    "page": "page",
-    "prev": "prev",
-    "next": "next"
+    "page": "পাতা",
+    "prev": "আগের",
+    "next": "পরের"
   },
   "brand": {
-    "name": "name"
+    "name": "স্মার্টবিদ্যা"
   },
   "nav": {
-    "menu": "menu"
+    "menu": "মেনু"
   },
   "errors": {
-    "unexpected": "unexpected"
+    "unexpected": "অপ্রত্যাশিত সমস্যা"
   },
   "auth": {
     "forgot_password": {
-      "title": "title",
-      "success": "success",
-      "email_label": "email_label",
-      "submit": "submit",
-      "back_to_login": "back_to_login"
+      "title": "পাসওয়ার্ড ভুলে গেছেন?",
+      "success": "রিসেট লিংক পাঠানো হয়েছে",
+      "email_label": "ইমেইল",
+      "submit": "লিংক পাঠান",
+      "back_to_login": "লগ ইনে ফিরে যান"
     },
     "login": {
-      "title": "title",
-      "email_label": "email_label",
-      "password_label": "password_label",
-      "submit": "submit",
-      "signup_cta": "signup_cta",
-      "forgot_cta": "forgot_cta"
+      "title": "লগ ইন",
+      "email_label": "ইমেইল",
+      "password_label": "পাসওয়ার্ড",
+      "submit": "লগ ইন",
+      "signup_cta": "অ্যাকাউন্ট তৈরি করুন",
+      "forgot_cta": "পাসওয়ার্ড ভুলে গেছেন?"
     },
     "signup": {
-      "title": "title",
-      "password_label": "password_label",
-      "submit": "submit",
-      "login_cta": "login_cta"
+      "title": "অ্যাকাউন্ট তৈরি",
+      "password_label": "পাসওয়ার্ড",
+      "submit": "সাইন আপ",
+      "login_cta": "লগ ইন"
     }
-  },
-  "notFound": {
-    "title": "title",
-    "description": "We couldn",
-    "backToHome": "Back to home"
   }
 }
