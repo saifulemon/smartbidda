@@ -18,18 +18,18 @@ export default function NotFoundPage() {
       className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center"
       data-testid="not-found-page"
     >
-      <p className="text-sm uppercase tracking-widest text-muted-foreground">404</p>
+      <p className="text-sm uppercase tracking-widest text-muted-foreground">৪০৪</p>
       <h1 className="text-3xl font-semibold sm:text-4xl">
-        {t('notFound.title', 'Page not found')}
+        {t('notFound.title', 'পাতাটি পাওয়া যায়নি')}
       </h1>
       <p className="max-w-md text-base text-muted-foreground">
         {t(
           'notFound.description',
-          "We couldn't find the page you were looking for. It may have been moved or removed.",
+          'আপনি যে পাতাটি খুঁজছেন সেটি নেই। এটি সরানো বা স্থানান্তরিত হয়ে থাকতে পারে।',
         )}
       </p>
       <Button asChild data-testid="not-found-home-link">
-        <Link to="/">{t('notFound.backToHome', 'Back to home')}</Link>
+        <Link to="/">{t('notFound.backToHome', 'হোমে ফিরে যান')}</Link>
       </Button>
     </main>
   );

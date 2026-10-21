@@ -41,7 +41,7 @@ export const handleUnauthorized = (url?: string): void => {
   if (typeof window === 'undefined') return;
   // Auth-infra URLs (esp. the on-load /auth/me probe) 401 by design for guests;
   // hard-redirecting on them loops forever (auth-bootstrap-doctor).
-  if (url && /\/auth\/(me|refresh|login|signup)/.test(url)) return;
+  if (url && /\/auth\/(me|refresh|login|signup|student-login)/.test(url)) return;
   if (window.location.pathname.startsWith('/login')) return;
   window.location.href = '/login';
 };

@@ -52,3 +52,23 @@
   .au-key:hover { border-color: var(--c-primary); }
   .au-key.is-ghost { background: transparent; border-color: transparent; }
   .au-links { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+
+  /* US-02: keypad feedback — disabled during submit/lockout, dots shake on a wrong PIN. */
+  .au-key:disabled { opacity: 0.45; cursor: not-allowed; }
+  .au-error { margin-top: var(--space-md); text-align: center; color: var(--c-error); }
+  .au-dots.is-shake { animation: au-shake 380ms ease-in-out; }
+  .au-dots.is-shake .au-dot { animation: au-dot-error 380ms ease-in-out; }
+  @keyframes au-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  @keyframes au-dot-error {
+    0%, 100% { background: var(--c-surface-soft); border-color: var(--c-hairline-strong); }
+    50% { background: var(--c-error); border-color: var(--c-error); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .au-dots.is-shake, .au-dots.is-shake .au-dot { animation: none; }
+  }

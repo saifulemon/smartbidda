@@ -28,6 +28,11 @@ export function refresh(): Promise<AuthResponse> {
   return post<AuthResponse>(`${BASE}/refresh`, {});
 }
 
+/** Student PIN login (PROJECT_API §2.1) — the api-surface auth-flow controller. */
+export function studentLogin(body: { childId: string; pin: string }): Promise<AuthResponse> {
+  return post<AuthResponse>(`${BASE}/student-login`, body);
+}
+
 export function requestPasswordReset(body: { email: string }): Promise<void> {
   return post<void>(`${BASE}/forgot-password`, body);
 }
